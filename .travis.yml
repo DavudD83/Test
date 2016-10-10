@@ -2,8 +2,8 @@ language: android
 jdk: oraclejdk8
 env:
   global:
-    - ANDROID_TARGET=android-24
-    - ANDROID_ABI=armeabi-v7a
+  - ANDROID_TARGET=android-24
+  - ANDROID_ABI=armeabi-v7a
 android:
   components:
   - tools
@@ -13,4 +13,14 @@ android:
   - extra-android-m2repository
   - sys-img-${ANDROID_ABI}-${ANDROID_TARGET}
 script:
-  - ./gradlew build connectedCheck
+- "./gradlew build connectedCheck"
+deploy:
+  provider: releases
+  api_key:
+    secure: bXO6mpQgTWt5c1ZW4F8kX3Qfg5o6aW88EQWurUGE7hE8WgCkkAhsw2tSGkjNuqkIqGMsYSKEZFl7+8+nQdyZK8NbJkMCWmY3iElmNMZct/1Fyx3eu2zDTwCYLRIQXDODPo1jcJ964j9CKSzjbNuvzFGxeV2YXZRf+6MMG4RPzP3rN3iM8Ta6iv3mWe49rWNj9RTjfXX0oBW2Sy7lzWQ0o4ttLt6s9MX2b9AE63CKnu8ewVV5Vd/xZ1olcvNWPsBRB6PcqrTzveFtX6tDGeV8XEkhphXyJsn9Z7ROt1BGPI9XkmqcVFQxua5J7sT+M8YAeAFqdH1LCR3892/+t09enBrufSRyITvXCGwTtHD42WHCbUkcs5qj+jY8yV+SaN7X7YyxTWSKW6ZGrzp49dWfhHu4sUF3hyz1X10RrOzWSJKFsQ1cg8WpQCu8vt9S7+tkFOvusQ2bvyTtoGG1V3r0SZKFB9hNmL2+78bOLDJrkFBksy46dtjCkGys+oYLnHCJbKKKKdirE9xXtut0ANpB2+QhPYrIlb1jEmnMQY7mlQWDCNkupm06oRX+cQSkdcScCVjiGHtl+tylY6C++7DeR02yFBTZM7Dm74cB51IwqeUZwsOPU2p+ov8ucDEw5pfHdNUJZD6SCG+pNhszgjjEmsT9v4vT2eDEBvKnnBB7gRs=
+  file: app/build/outputs/apk/app*release*.apk
+  file_glob: "true"
+  skip_cleanup: true
+  on:
+    repo: dot-cat/shp_android_clients
+    branch: travis_ci
