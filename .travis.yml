@@ -24,3 +24,5 @@ deploy:
   on:
     repo: dot-cat/shp_android_clients
     branch: travis_ci
+after_success:
+- sh set_tags.sh
