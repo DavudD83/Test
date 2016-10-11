@@ -13,9 +13,8 @@ android:
   components:
   - tools
   - platform-tools
-  - ${BUILD_TOOLS}
+  - build-tools-24.0.2
   - android-24
-  - android-22
   - extra-android-m2repository
   - sys-img-${ANDROID_ABI}-${ANDROID_TARGET}
   licenses:
@@ -37,7 +36,7 @@ script:
 - "./gradlew build connectedCheck"
 before_deploy:
 - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 app/build/outputs/apk/app-release.apk creative_client_test -keystore $TRAVIS_BUILD_DIR/.keystore -storepass ${storepass} -keypass ${keypass}
-- "${ANDROID_HOME}/build-tools/${BUILD_TOOLS_VERSION}/zipalign 4 app/build/outputs/apk/app-release.apk ${APK_PATH}"
+- "${ANDROID_HOME}/build-tools/24.0.2/zipalign 4 app/build/outputs/apk/app-release.apk ${APK_PATH}"
 deploy:
   provider: releases
   api_key:
