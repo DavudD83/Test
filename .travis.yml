@@ -13,11 +13,14 @@ android:
   components:
   - tools
   - platform-tools
-  - build-tools-24.0.2
+  - ${BUILD_TOOLS}
   - android-24
   - android-22
   - extra-android-m2repository
   - sys-img-${ANDROID_ABI}-${ANDROID_TARGET}
+  licenses:
+    - 'android-sdk-license-.+'
+    - 'google-gdk-license-.+'
 before_cache:
 - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 cache:
@@ -44,8 +47,8 @@ deploy:
   on:
     repo: dot-cat/shp_android_clients
     branch: travis_ci
-after_success:
-- sh set_tags.sh
+#after_success:
+#- sh set_tags.sh
 before_install:
 - openssl aes-256-cbc -K $encrypted_c57facf09bea_key -iv $encrypted_c57facf09bea_iv
   -in .keystore.enc -out .keystore -d
