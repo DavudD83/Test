@@ -15,6 +15,7 @@ android:
   - platform-tools
   - build-tools-24.0.2
   - android-24
+  - android-22
   - extra-android-m2repository
   - sys-img-${ANDROID_ABI}-${ANDROID_TARGET}
   licenses:
