@@ -13,7 +13,7 @@ android:
   components:
   - tools
   - platform-tools
-  - ${BUILD_TOOLS}
+  - build-tools-24.0.2
   - android-24
   - android-22
   - extra-android-m2repository
