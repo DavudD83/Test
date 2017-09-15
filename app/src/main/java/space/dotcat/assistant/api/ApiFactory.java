@@ -119,6 +119,6 @@ public final class ApiFactory {
         sClient = null;
 
         sClient = getClient();
-        sService = getApiService();
+        sService = buildRetrofit().create(ApiService.class);
     }
 }
