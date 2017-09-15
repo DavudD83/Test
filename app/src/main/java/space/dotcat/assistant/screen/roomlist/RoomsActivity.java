@@ -1,5 +1,7 @@
 package space.dotcat.assistant.screen.roomlist;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -46,6 +48,12 @@ public class RoomsActivity extends AppCompatActivity implements RoomsView, Rooms
     private RoomsAdapter mAdapter;
 
     private RoomsPresenter mPresenter;
+
+
+    public static void start(@NonNull Activity activity) {
+        Intent intent = new Intent(activity, RoomsActivity.class);
+        activity.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -13,7 +13,6 @@ public class Body {
     @SerializedName("action_params")
     private ActionParams mActionParams;
 
-
     public Body(String action, String id, ActionParams actionParams) {
 
         mAction = action;

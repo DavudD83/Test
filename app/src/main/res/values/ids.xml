@@ -5,6 +5,7 @@
     <item name="action_request" type="id" />
     <item name="reload_things" type="id" />
     <item name="reload_rooms" type="id" />
+    <item name="auth_request" type="id">auth_request</item>
 
 
 </resources>

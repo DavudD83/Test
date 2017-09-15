@@ -40,7 +40,6 @@ public class RoomDetailsPresenter {
     }
 
     public void onItemChange(@NonNull Thing thing) {
-
         ActionParams actionParams = new ActionParams();
         Body body = new Body("toggle", thing.getId(), actionParams);
         Message message = new Message(body);

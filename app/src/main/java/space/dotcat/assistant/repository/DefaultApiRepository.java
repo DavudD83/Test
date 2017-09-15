@@ -6,10 +6,14 @@ import android.support.annotation.NonNull;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
+import space.dotcat.assistant.api.ApiService;
+import space.dotcat.assistant.content.Authorization;
+import space.dotcat.assistant.content.AuthorizationAnswer;
 import space.dotcat.assistant.content.Message;
 import space.dotcat.assistant.content.RoomResponse;
 import space.dotcat.assistant.content.Thing;
 import space.dotcat.assistant.content.ThingResponse;
+import space.dotcat.assistant.utils.AuthorizationUtils;
 import space.dotcat.assistant.utils.RxUtils;
 import space.dotcat.assistant.api.ApiFactory;
 import space.dotcat.assistant.content.Room;
@@ -20,6 +24,21 @@ import rx.Observable;
 
 
 public class DefaultApiRepository implements ApiRepository {
+
+    @NonNull
+    @Override
+    public Observable<AuthorizationAnswer> auth(@NonNull Authorization authorizationInfo) {
+        return ApiFactory.getApiService()
+                .auth(authorizationInfo)
+                .flatMap(authorizationAnswer -> {
+
+                    AuthorizationUtils.saveAuthAnswer(authorizationAnswer);
+                    ApiFactory.recreate();
+
+                    return Observable.just(authorizationAnswer);
+                })
+                .compose(RxUtils.async());
+    }
 
     @NonNull
     @Override

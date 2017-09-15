@@ -27,8 +27,8 @@ import space.dotcat.assistant.content.Thing;
 import space.dotcat.assistant.screen.general.LoadingDialog;
 import space.dotcat.assistant.screen.general.LoadingView;
 
-public class RoomDetailsActivity extends AppCompatActivity implements RoomDetailsView, RoomDetailsAdapter.OnItemChange,
-        SwipeRefreshLayout.OnRefreshListener {
+public class RoomDetailsActivity extends AppCompatActivity implements RoomDetailsView,
+        RoomDetailsAdapter.OnItemChange, SwipeRefreshLayout.OnRefreshListener {
 
     private final static String EXTRA_ROOM = "room";
 
@@ -71,6 +71,7 @@ public class RoomDetailsActivity extends AppCompatActivity implements RoomDetail
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_room_details);
+
         ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
 
@@ -114,6 +115,7 @@ public class RoomDetailsActivity extends AppCompatActivity implements RoomDetail
 
     @Override
     public void showError() {
+
         Snackbar snackbar = Snackbar.make(mSwipeRefreshLayout, R.string.network_problem,
                 Snackbar.LENGTH_INDEFINITE);
 
@@ -145,6 +147,7 @@ public class RoomDetailsActivity extends AppCompatActivity implements RoomDetail
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         int id = item.getItemId();
 
         if(id == android.R.id.home){

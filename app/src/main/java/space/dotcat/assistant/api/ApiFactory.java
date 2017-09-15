@@ -3,6 +3,7 @@ package space.dotcat.assistant.api;
 
 import android.support.annotation.NonNull;
 
+import okhttp3.OkHttpClient;
 import space.dotcat.assistant.BuildConfig;
 import space.dotcat.assistant.content.RealmString;
 import com.google.gson.ExclusionStrategy;
@@ -27,6 +28,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public final class ApiFactory {
 
     private static volatile ApiService sService;
+
+    private static volatile OkHttpClient sClient;
 
     private static Type token = new TypeToken<RealmList<RealmString>>(){}.getType();
     private static Gson gson =  new GsonBuilder()
@@ -82,8 +85,40 @@ public final class ApiFactory {
     private static Retrofit buildRetrofit() {
         return new Retrofit.Builder()
                 .baseUrl(BuildConfig.Base_URL)
+                .client(getClient())
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
+    }
+
+
+    @NonNull
+    private static OkHttpClient buildClient(){
+        return new OkHttpClient.Builder()
+                .addInterceptor(AuthenticationInterceptor.create())
+                .build();
+    }
+
+
+    private static OkHttpClient getClient(){
+        OkHttpClient client = sClient;
+
+        if(client == null){
+            synchronized (ApiFactory.class){
+                client = sClient;
+                if(client == null)
+                    client = sClient = buildClient();
+            }
+        }
+
+        return client;
+    }
+
+    public static void recreate(){
+
+        sClient = null;
+
+        sClient = getClient();
+        sService = getApiService();
     }
 }
