@@ -1,7 +1,5 @@
 language: android
 
-jdk: oraclejdk8
-
 env:
   global:
   - ANDROID_TARGET="android-25"
@@ -15,19 +13,12 @@ env:
 
 android:
   components:
-  - tools
-  - platform-tools
   - ${BUILD_TOOLS}
   - ${ANDROID_TARGET}
   - ${ANDROID_EMUL}
   - extra-android-m2repository
   - sys-img-${ANDROID_ABI}-${ANDROID_EMUL}
   - extra-android-support
-  licenses:
-  - android-sdk-preview-license-.+
-  - android-sdk-license-.+
-  - google-gdk-license-.+
-  - '.+'
 
 before_install:
   - openssl aes-256-cbc -K $encrypted_c57facf09bea_key -iv $encrypted_c57facf09bea_iv
