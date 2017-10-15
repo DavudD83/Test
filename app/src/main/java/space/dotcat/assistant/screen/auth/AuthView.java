@@ -7,9 +7,13 @@ public interface AuthView extends LoadingView {
 
     void showRoomList();
 
+    void showUrlEmptyError();
+
+    void showUrlNotCorrectError();
+
     void showLoginError();
 
     void showPasswordError();
 
-    void showAuthError();
+    void showAuthError(Throwable t);
 }

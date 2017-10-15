@@ -21,4 +21,10 @@
 
     <string name="password_error">You must write your password here</string>
 
+    <string name="url_label">Url</string>
+
+    <string name="url_empty_error">You must write your url here</string>
+
+    <string name="url_is_not_correct_error">Url must start with http:// or https://</string>
+
 </resources>

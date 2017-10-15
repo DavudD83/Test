@@ -13,7 +13,6 @@ public class AuthorizationAnswer extends RealmObject {
     @SerializedName("token")
     private String mToken;
 
-
     public AuthorizationAnswer() {
     }
 

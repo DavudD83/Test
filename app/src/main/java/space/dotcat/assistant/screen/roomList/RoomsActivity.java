@@ -1,4 +1,4 @@
-package space.dotcat.assistant.screen.roomlist;
+package space.dotcat.assistant.screen.roomList;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -6,16 +6,14 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import space.dotcat.assistant.R;
 import space.dotcat.assistant.content.Room;
+import space.dotcat.assistant.screen.general.BaseActivity;
 import space.dotcat.assistant.screen.general.LoadingDialog;
 import space.dotcat.assistant.screen.general.LoadingView;
 import space.dotcat.assistant.screen.roomDetail.RoomDetailsActivity;
@@ -24,11 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import ru.arturvasilov.rxloader.LifecycleHandler;
 import ru.arturvasilov.rxloader.LoaderLifecycleHandler;
 
-public class RoomsActivity extends AppCompatActivity implements RoomsView, RoomsAdapter.OnItemClick,
+public class RoomsActivity extends BaseActivity implements RoomsView, RoomsAdapter.OnItemClick,
         SwipeRefreshLayout.OnRefreshListener {
 
     @BindView(R.id.recyclerView)
@@ -36,9 +33,6 @@ public class RoomsActivity extends AppCompatActivity implements RoomsView, Rooms
 
     @BindView(R.id.swipeRefresh)
     SwipeRefreshLayout mSwipeRefreshLayout;
-
-    @BindView(R.id.toolbar)
-    Toolbar mToolbar;
 
     @BindView(R.id.tv_error_message)
     TextView mErrorMessage;
@@ -49,7 +43,6 @@ public class RoomsActivity extends AppCompatActivity implements RoomsView, Rooms
 
     private RoomsPresenter mPresenter;
 
-
     public static void start(@NonNull Activity activity) {
         Intent intent = new Intent(activity, RoomsActivity.class);
         activity.startActivity(intent);
@@ -59,9 +52,6 @@ public class RoomsActivity extends AppCompatActivity implements RoomsView, Rooms
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rooms);
-        ButterKnife.bind(this);
-
-        setSupportActionBar(mToolbar);
 
         if(getSupportActionBar() != null)
             getSupportActionBar().setTitle(getString(R.string.app_name));
@@ -91,7 +81,6 @@ public class RoomsActivity extends AppCompatActivity implements RoomsView, Rooms
 
     @Override
     public void showRooms(@NonNull List<Room> rooms) {
-
         if (!rooms.isEmpty()) {
             mRecyclerView.setVisibility(View.VISIBLE);
             mErrorMessage.setVisibility(View.INVISIBLE);
@@ -109,9 +98,8 @@ public class RoomsActivity extends AppCompatActivity implements RoomsView, Rooms
     }
 
     @Override
-    public void showError() {
-        Toast.makeText(this, "Some Problem", Toast.LENGTH_SHORT).show();
-        //TODO
+    public void showError(Throwable throwable) {
+        super.showBaseError(throwable, mSwipeRefreshLayout);
     }
 
     @Override

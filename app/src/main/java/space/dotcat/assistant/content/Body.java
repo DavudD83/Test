@@ -19,9 +19,4 @@ public class Body {
         mId = id;
         mActionParams = actionParams;
     }
-
-
-
-
-
 }

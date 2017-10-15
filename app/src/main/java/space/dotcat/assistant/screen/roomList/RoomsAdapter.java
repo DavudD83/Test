@@ -1,4 +1,4 @@
-package space.dotcat.assistant.screen.roomlist;
+package space.dotcat.assistant.screen.roomList;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;

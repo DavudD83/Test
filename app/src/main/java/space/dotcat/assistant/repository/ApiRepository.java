@@ -13,6 +13,7 @@ import space.dotcat.assistant.content.Thing;
 import java.util.List;
 
 import rx.Observable;
+import space.dotcat.assistant.content.Url;
 
 public interface ApiRepository {
 
@@ -27,4 +28,13 @@ public interface ApiRepository {
 
     @NonNull
     Observable<Message> action(@NonNull Message message);
+
+    String token();
+
+    void deleteToken();
+
+    void saveUrl(Url url);
+
+    @NonNull
+    String url();
 }

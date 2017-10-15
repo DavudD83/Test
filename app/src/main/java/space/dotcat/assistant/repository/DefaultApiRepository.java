@@ -6,14 +6,13 @@ import android.support.annotation.NonNull;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-import space.dotcat.assistant.api.ApiService;
 import space.dotcat.assistant.content.Authorization;
 import space.dotcat.assistant.content.AuthorizationAnswer;
 import space.dotcat.assistant.content.Message;
 import space.dotcat.assistant.content.RoomResponse;
 import space.dotcat.assistant.content.Thing;
 import space.dotcat.assistant.content.ThingResponse;
-import space.dotcat.assistant.utils.AuthorizationUtils;
+import space.dotcat.assistant.content.Url;
 import space.dotcat.assistant.utils.RxUtils;
 import space.dotcat.assistant.api.ApiFactory;
 import space.dotcat.assistant.content.Room;
@@ -31,11 +30,21 @@ public class DefaultApiRepository implements ApiRepository {
         return ApiFactory.getApiService()
                 .auth(authorizationInfo)
                 .flatMap(authorizationAnswer -> {
+                    Realm realmInstance = Realm.getDefaultInstance();
 
-                    AuthorizationUtils.saveAuthAnswer(authorizationAnswer);
+                    realmInstance.executeTransaction(transaction -> {
+                        transaction.delete(AuthorizationAnswer.class);
+                        transaction.insert(authorizationAnswer);
+                    });
+
                     ApiFactory.recreate();
 
+                    realmInstance.close();
+
                     return Observable.just(authorizationAnswer);
+                })
+                .doOnError(throwable -> {
+                    ApiFactory.deleteInstance();
                 })
                 .compose(RxUtils.async());
     }
@@ -47,7 +56,6 @@ public class DefaultApiRepository implements ApiRepository {
                 .rooms()
                 .map(RoomResponse::getRooms)
                 .flatMap(rooms -> {
-
                     Realm instance = Realm.getDefaultInstance();
 
                     instance.executeTransaction(realm -> {
@@ -59,7 +67,6 @@ public class DefaultApiRepository implements ApiRepository {
                     return Observable.just(rooms);
                 })
                 .onErrorResumeNext(throwable -> {
-
                     Realm realm = Realm.getDefaultInstance();
                     RealmResults<Room> rooms = realm.where(Room.class).findAll();
 
@@ -67,7 +74,8 @@ public class DefaultApiRepository implements ApiRepository {
 
                     realm.close();
 
-                    return Observable.just(resultRooms);
+                    return Observable.mergeDelayError(Observable.just(resultRooms),
+                            Observable.error(throwable));
                 })
                 .compose(RxUtils.async());
     }
@@ -79,7 +87,6 @@ public class DefaultApiRepository implements ApiRepository {
                 .things(id)
                 .map(ThingResponse::getThings)
                 .flatMap(things -> {
-
                     Realm instance = Realm.getDefaultInstance();
 
                     instance.executeTransaction(realm ->{
@@ -90,14 +97,15 @@ public class DefaultApiRepository implements ApiRepository {
                     return Observable.just(things);
                 })
                 .onErrorResumeNext(throwable -> {
-
                     Realm realm = Realm.getDefaultInstance();
                     RealmResults<Thing> things = realm.where(Thing.class).equalTo("mPlacement", id).findAll();
 
                     List<Thing> resultThings = realm.copyFromRealm(things);
 
                     realm.close();
-                    return Observable.just(resultThings);
+
+                    return Observable.mergeDelayError(Observable.just(resultThings),
+                            Observable.error(throwable));
                 })
                 .compose(RxUtils.async());
     }
@@ -111,4 +119,47 @@ public class DefaultApiRepository implements ApiRepository {
     }
 
 
+    @Override
+    public String token() {
+        Realm realmInstance = Realm.getDefaultInstance();
+
+        AuthorizationAnswer authorizationAnswer = realmInstance.where(AuthorizationAnswer.class)
+                .findFirst();
+
+        if(authorizationAnswer == null)
+            return null;
+
+        return authorizationAnswer.getToken();
+    }
+
+    @Override
+    public void deleteToken() {
+        Realm realmInstance = Realm.getDefaultInstance();
+
+        realmInstance.executeTransaction(transaction -> {
+            transaction.delete(AuthorizationAnswer.class);
+        });
+    }
+
+    @Override
+    public void saveUrl(Url url) {
+        Realm realmInstance = Realm.getDefaultInstance();
+
+        realmInstance.executeTransaction(realm -> {
+            realm.delete(Url.class);
+            realm.insert(url);
+        });
+
+        realmInstance.close();
+    }
+
+    @NonNull
+    @Override
+    public String url() {
+        Realm realmInstance = Realm.getDefaultInstance();
+
+        Url url = realmInstance.where(Url.class).findFirst();
+
+        return url.getUrl();
+    }
 }

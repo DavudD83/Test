@@ -1,4 +1,4 @@
-package space.dotcat.assistant.screen.roomlist;
+package space.dotcat.assistant.screen.roomList;
 
 
 import android.support.annotation.NonNull;
@@ -22,19 +22,16 @@ public class RoomHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.iv_roomImage)
     ImageView mRoomPicture;
 
-
     public RoomHolder(@NonNull View itemView) {
         super(itemView);
         ButterKnife.bind(this,itemView);
     }
 
     public void bind(@NonNull Room room) {
-
         mRoomName.setText(room.GetDescription());
 
         Picasso.with(mRoomPicture.getContext())
                 .load(room.getImagePath())
-              //  .resize(200,160)
                 .noFade()
                 .fit()
                 .into(mRoomPicture);

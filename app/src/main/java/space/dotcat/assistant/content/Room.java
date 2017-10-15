@@ -27,7 +27,6 @@ public class Room extends RealmObject implements Serializable {
 
         mId = id;
 
-
         mImagePath = imagePath;
     }
 

@@ -10,9 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:visibility="invisible"
-        android:textSize="32sp"
+        android:textSize="@dimen/errorTextSize"
         tools:text="You do not have any items" />
-
-
 </FrameLayout>
 

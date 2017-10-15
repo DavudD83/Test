@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".screen.roomlist.RoomsActivity"/>
+        <activity android:name=".screen.roomList.RoomsActivity"/>
 
         <activity android:name=".screen.roomDetail.RoomDetailsActivity" />
 
@@ -25,5 +25,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

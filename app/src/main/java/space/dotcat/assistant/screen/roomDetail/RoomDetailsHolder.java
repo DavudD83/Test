@@ -21,9 +21,7 @@ public class RoomDetailsHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, itemView);
     }
 
-
     public void bind(@NonNull Thing thing) {
-
         mSwitch.setText(thing.getId());
         mSwitch.setEnabled(thing.getIsAvailable());
         mSwitch.setChecked(thing.getIsActive());

@@ -1,4 +1,4 @@
-package space.dotcat.assistant.screen.roomlist;
+package space.dotcat.assistant.screen.roomList;
 
 import android.support.annotation.NonNull;
 
@@ -13,6 +13,6 @@ public interface RoomsView extends LoadingView {
 
      void showRoomDetail(@NonNull Room room);
 
-     void showError();
+     void showError(Throwable throwable);
 
 }

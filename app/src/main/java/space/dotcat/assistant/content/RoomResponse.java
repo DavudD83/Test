@@ -11,17 +11,17 @@ import java.util.List;
 public class RoomResponse {
 
     @SerializedName("placements")
-    private List<Room> rooms = new ArrayList<>();
+    private List<Room> mRooms = new ArrayList<>();
 
     public RoomResponse(@NonNull List<Room> rooms) {
 
-        this.rooms = rooms;
+        mRooms = rooms;
     }
 
     @NonNull
-    public List<Room> getRooms() { return rooms; }
+    public List<Room> getRooms() { return mRooms; }
 
     public void setRooms(List<Room> mRooms) {
-        rooms = mRooms;
+        mRooms = mRooms;
     }
 }

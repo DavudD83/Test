@@ -1,4 +1,4 @@
-package space.dotcat.assistant.screen.roomlist;
+package space.dotcat.assistant.screen.roomList;
 
 
 import android.support.annotation.NonNull;
@@ -26,18 +26,17 @@ public class RoomsPresenter {
                 .doOnSubscribe(mRoomsView::showLoading)
                 .doOnTerminate(mRoomsView::hideLoading)
                 .compose(mLifecycleHandler.load(R.id.room_request))
-                .subscribe(mRoomsView::showRooms, throwable -> mRoomsView.showError());
+                .subscribe(mRoomsView::showRooms, mRoomsView::showError);
     }
 
     public void reloadData() {
         RepositoryProvider.provideApiRepository()
                 .rooms()
                 .compose(mLifecycleHandler.reload(R.id.room_request))
-                .subscribe(mRoomsView::showRooms, throwable -> mRoomsView.showError());
+                .subscribe(mRoomsView::showRooms, mRoomsView::showError);
     }
 
     public void onItemClick(@NonNull Room room) {
         mRoomsView.showRoomDetail(room);
     }
-
 }

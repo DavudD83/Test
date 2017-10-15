@@ -11,6 +11,11 @@ public class Authorization {
     @SerializedName("password")
     private String mPassword;
 
+    public Authorization(String username, String password){
+        mUsername = username;
+        mPassword = password;
+    }
+
     public String getUsername() {
         return mUsername;
     }
@@ -25,10 +30,5 @@ public class Authorization {
 
     public void setPassword(String password) {
        mPassword = password;
-    }
-
-    public Authorization(String username, String password){
-        mUsername = username;
-        mPassword = password;
     }
 }

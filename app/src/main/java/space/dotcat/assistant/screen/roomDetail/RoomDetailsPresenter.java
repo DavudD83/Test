@@ -29,14 +29,14 @@ public class RoomDetailsPresenter {
                 .doOnSubscribe(mRoomDetailsView::showLoading)
                 .doOnTerminate(mRoomDetailsView::hideLoading)
                 .compose(mLifecycleHandler.load(R.id.thing_request))
-                .subscribe(mRoomDetailsView::showThings, throwable -> mRoomDetailsView.showError());
+                .subscribe(mRoomDetailsView::showThings, mRoomDetailsView::showError);
     }
 
     public void reloadData(@NonNull String id) {
         RepositoryProvider.provideApiRepository()
                 .things(id)
                 .compose(mLifecycleHandler.reload(R.id.thing_request))
-                .subscribe(mRoomDetailsView::showThings, throwable -> mRoomDetailsView.showError());
+                .subscribe(mRoomDetailsView::showThings, mRoomDetailsView::showError);
     }
 
     public void onItemChange(@NonNull Thing thing) {
@@ -49,9 +49,6 @@ public class RoomDetailsPresenter {
                 .doOnSubscribe(mRoomDetailsView::showLoading)
                 .doOnTerminate(mRoomDetailsView::hideLoading)
                 .compose(mLifecycleHandler.reload(R.id.action_request))
-                .subscribe(message1 -> {},
-                        throwable -> mRoomDetailsView.showError());
+                .subscribe(message1 -> {}, mRoomDetailsView::showError);
     }
-
-
 }

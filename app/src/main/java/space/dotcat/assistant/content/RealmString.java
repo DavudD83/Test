@@ -16,5 +16,4 @@ public class RealmString extends RealmObject {
     public String getVar() { return mVar; }
 
     public void setVar(String var) { mVar = var;}
-
 }

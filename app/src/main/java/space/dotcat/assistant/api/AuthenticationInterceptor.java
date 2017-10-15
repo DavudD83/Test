@@ -1,6 +1,5 @@
 package space.dotcat.assistant.api;
 
-
 import android.text.TextUtils;
 
 import java.io.IOException;
@@ -8,23 +7,22 @@ import java.io.IOException;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
-import space.dotcat.assistant.utils.AuthorizationUtils;
+import space.dotcat.assistant.repository.RepositoryProvider;
 
-public class AuthenticationInterceptor implements Interceptor {
+class AuthenticationInterceptor implements Interceptor {
 
-    private String mToken;
+    private final String mToken;
 
     private AuthenticationInterceptor(){
-        mToken = AuthorizationUtils.getToken();
+        mToken = RepositoryProvider.provideApiRepository().token();
     }
 
-    public static Interceptor create(){
+    static Interceptor create(){
         return new AuthenticationInterceptor();
     }
 
     @Override
     public Response intercept(Chain chain) throws IOException {
-
         if(TextUtils.isEmpty(mToken)){
             return chain.proceed(chain.request());
         }
@@ -34,6 +32,5 @@ public class AuthenticationInterceptor implements Interceptor {
                 .build();
 
         return chain.proceed(request);
-
     }
 }

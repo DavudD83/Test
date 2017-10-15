@@ -22,12 +22,14 @@ import butterknife.ButterKnife;
 import ru.arturvasilov.rxloader.LifecycleHandler;
 import ru.arturvasilov.rxloader.LoaderLifecycleHandler;
 import space.dotcat.assistant.R;
+import space.dotcat.assistant.content.ApiError;
 import space.dotcat.assistant.content.Room;
 import space.dotcat.assistant.content.Thing;
+import space.dotcat.assistant.screen.general.BaseActivity;
 import space.dotcat.assistant.screen.general.LoadingDialog;
 import space.dotcat.assistant.screen.general.LoadingView;
 
-public class RoomDetailsActivity extends AppCompatActivity implements RoomDetailsView,
+public class RoomDetailsActivity extends BaseActivity implements RoomDetailsView,
         RoomDetailsAdapter.OnItemChange, SwipeRefreshLayout.OnRefreshListener {
 
     private final static String EXTRA_ROOM = "room";
@@ -45,9 +47,6 @@ public class RoomDetailsActivity extends AppCompatActivity implements RoomDetail
 
     @BindView(R.id.recyclerViewDetails)
     RecyclerView mRecyclerView;
-
-    @BindView(R.id.toolbar)
-    Toolbar mToolbar;
 
     @BindView(R.id.tv_error_message)
     TextView mErrorMessage;
@@ -71,9 +70,6 @@ public class RoomDetailsActivity extends AppCompatActivity implements RoomDetail
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_room_details);
-
-        ButterKnife.bind(this);
-        setSupportActionBar(mToolbar);
 
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_dark,
@@ -101,7 +97,6 @@ public class RoomDetailsActivity extends AppCompatActivity implements RoomDetail
 
     @Override
     public void showThings(@NonNull List<Thing> things) {
-
         if (!things.isEmpty()) {
             mRecyclerView.setVisibility(View.VISIBLE);
             mErrorMessage.setVisibility(View.INVISIBLE);
@@ -114,13 +109,8 @@ public class RoomDetailsActivity extends AppCompatActivity implements RoomDetail
     }
 
     @Override
-    public void showError() {
-
-        Snackbar snackbar = Snackbar.make(mSwipeRefreshLayout, R.string.network_problem,
-                Snackbar.LENGTH_INDEFINITE);
-
-        snackbar.setAction(getString(R.string.refresh), mSnackBarButtonListener);
-        snackbar.show();
+    public void showError(Throwable throwable) {
+        super.showBaseError(throwable, mSwipeRefreshLayout);
     }
 
     @Override
@@ -140,14 +130,12 @@ public class RoomDetailsActivity extends AppCompatActivity implements RoomDetail
 
     @Override
     public void onRefresh() {
-
         mRoomDetailsPresenter.reloadData(mRoom.GetId());
         mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         int id = item.getItemId();
 
         if(id == android.R.id.home){

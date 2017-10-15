@@ -20,14 +20,12 @@ public class Message {
 
     public Message(Body body) {
 
-        this.mType = "user_request";
+        mType = "user_request";
 
-        this.mSource = "android";
+        mSource = "android";
 
-        this.mEvent = "action_requested";
+        mEvent = "action_requested";
 
-        this.mBody = body;
+        mBody = body;
     }
-
-
 }

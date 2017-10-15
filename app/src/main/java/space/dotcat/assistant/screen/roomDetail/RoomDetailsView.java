@@ -11,5 +11,5 @@ public interface RoomDetailsView extends LoadingView {
 
     void showThings(@NonNull List<Thing> things);
 
-    void showError();
+    void showError(Throwable throwable);
 }

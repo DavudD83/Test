@@ -23,6 +23,7 @@ import io.realm.internal.IOException;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import space.dotcat.assistant.repository.RepositoryProvider;
 
 
 public final class ApiFactory {
@@ -82,15 +83,14 @@ public final class ApiFactory {
     }
 
     @NonNull
-    private static Retrofit buildRetrofit() {
+    static Retrofit buildRetrofit() {
         return new Retrofit.Builder()
-                .baseUrl(BuildConfig.Base_URL)
+                .baseUrl(RepositoryProvider.provideApiRepository().url())
                 .client(getClient())
                 .addConverterFactory(GsonConverterFactory.create(gson))
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(new RxJavaAdapterWithErrorHandling())
                 .build();
     }
-
 
     @NonNull
     private static OkHttpClient buildClient(){
@@ -98,7 +98,6 @@ public final class ApiFactory {
                 .addInterceptor(AuthenticationInterceptor.create())
                 .build();
     }
-
 
     private static OkHttpClient getClient(){
         OkHttpClient client = sClient;
@@ -115,10 +114,14 @@ public final class ApiFactory {
     }
 
     public static void recreate(){
-
         sClient = null;
 
         sClient = getClient();
         sService = buildRetrofit().create(ApiService.class);
+    }
+
+    public static void deleteInstance(){
+        sClient = null;
+        sService = null;
     }
 }
