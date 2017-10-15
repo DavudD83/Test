@@ -16,6 +16,7 @@ env:
 android:
   components:
   - tools
+  - tools
   - platform-tools
   - ${BUILD_TOOLS}
   - ${ANDROID_TARGET}
