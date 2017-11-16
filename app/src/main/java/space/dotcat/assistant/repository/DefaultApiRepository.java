@@ -30,16 +30,10 @@ public class DefaultApiRepository implements ApiRepository {
         return ApiFactory.getApiService()
                 .auth(authorizationInfo)
                 .flatMap(authorizationAnswer -> {
-                    Realm realmInstance = Realm.getDefaultInstance();
-
-                    realmInstance.executeTransaction(transaction -> {
-                        transaction.delete(AuthorizationAnswer.class);
-                        transaction.insert(authorizationAnswer);
-                    });
+                    RepositoryProvider.provideAuthRepository()
+                            .saveAuthorizationAnswer(authorizationAnswer);
 
                     ApiFactory.recreate();
-
-                    realmInstance.close();
 
                     return Observable.just(authorizationAnswer);
                 })
@@ -116,50 +110,5 @@ public class DefaultApiRepository implements ApiRepository {
         return ApiFactory.getApiService()
                 .action(message)
                 .compose(RxUtils.async());
-    }
-
-
-    @Override
-    public String token() {
-        Realm realmInstance = Realm.getDefaultInstance();
-
-        AuthorizationAnswer authorizationAnswer = realmInstance.where(AuthorizationAnswer.class)
-                .findFirst();
-
-        if(authorizationAnswer == null)
-            return null;
-
-        return authorizationAnswer.getToken();
-    }
-
-    @Override
-    public void deleteToken() {
-        Realm realmInstance = Realm.getDefaultInstance();
-
-        realmInstance.executeTransaction(transaction -> {
-            transaction.delete(AuthorizationAnswer.class);
-        });
-    }
-
-    @Override
-    public void saveUrl(Url url) {
-        Realm realmInstance = Realm.getDefaultInstance();
-
-        realmInstance.executeTransaction(realm -> {
-            realm.delete(Url.class);
-            realm.insert(url);
-        });
-
-        realmInstance.close();
-    }
-
-    @NonNull
-    @Override
-    public String url() {
-        Realm realmInstance = Realm.getDefaultInstance();
-
-        Url url = realmInstance.where(Url.class).findFirst();
-
-        return url.getUrl();
     }
 }

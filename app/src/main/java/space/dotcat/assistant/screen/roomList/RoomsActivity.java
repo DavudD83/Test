@@ -28,7 +28,7 @@ import ru.arturvasilov.rxloader.LoaderLifecycleHandler;
 public class RoomsActivity extends BaseActivity implements RoomsView, RoomsAdapter.OnItemClick,
         SwipeRefreshLayout.OnRefreshListener {
 
-    @BindView(R.id.recyclerView)
+    @BindView(R.id.recyclerViewRooms)
     RecyclerView mRecyclerView;
 
     @BindView(R.id.swipeRefresh)
@@ -82,6 +82,12 @@ public class RoomsActivity extends BaseActivity implements RoomsView, RoomsAdapt
     @Override
     public void showRooms(@NonNull List<Room> rooms) {
         if (!rooms.isEmpty()) {
+            if(getSnackBar() != null){
+                if(getSnackBar().isShown()){
+                    getSnackBar().dismiss();
+                }
+            }
+
             mRecyclerView.setVisibility(View.VISIBLE);
             mErrorMessage.setVisibility(View.INVISIBLE);
             mAdapter.ChangeDataSet(rooms);

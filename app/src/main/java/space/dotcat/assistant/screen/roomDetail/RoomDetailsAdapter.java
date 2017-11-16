@@ -13,7 +13,6 @@ import java.util.List;
 
 public class RoomDetailsAdapter extends RecyclerView.Adapter<RoomDetailsHolder> {
 
-
     private final List<Thing> mThings;
 
     private final OnItemChange mOnItemChange;
@@ -21,7 +20,6 @@ public class RoomDetailsAdapter extends RecyclerView.Adapter<RoomDetailsHolder> 
     private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-
             Thing thing = (Thing) view.getTag();
             mOnItemChange.onItemChange(thing);
         }
@@ -32,13 +30,11 @@ public class RoomDetailsAdapter extends RecyclerView.Adapter<RoomDetailsHolder> 
         mOnItemChange = onItemChange;
     }
 
-
     public void changeDataSet(@NonNull List<Thing> things) {
         mThings.clear();
         mThings.addAll(things);
         notifyDataSetChanged();
     }
-
 
     @Override
     public RoomDetailsHolder onCreateViewHolder(ViewGroup parent, int viewType) {

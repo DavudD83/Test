@@ -1,0 +1,61 @@
+{
+  "things": [
+    {
+      "commands": [
+        "activate",
+        "deactivate",
+        "toggle",
+        "on",
+        "off"
+      ],
+      "is_active": false,
+      "is_available": true,
+      "is_enabled": true,
+      "last_updated": 1509696299.9993234,
+      "state": "unknown",
+      "friendly_name": "Kitchen cooker hood",
+      "type": "switch",
+      "id": "F1",
+      "placement": "R2",
+      "description": "Kitchen cooker hood"
+    },
+    {
+      "commands": [
+        "activate",
+        "deactivate",
+        "toggle",
+        "on",
+        "off"
+      ],
+      "is_active": false,
+      "is_available": true,
+      "is_enabled": true,
+      "last_updated": 1509696300.0001154,
+      "state": "unknown",
+      "friendly_name": "",
+      "type": "switch",
+      "id": "Li2",
+      "placement": "R2",
+      "description": ""
+    },
+    {
+      "commands": [
+        "activate",
+        "deactivate",
+        "toggle",
+        "open",
+        "close"
+      ],
+      "is_active": false,
+      "is_available": true,
+      "is_enabled": true,
+      "last_updated": 1509696300.0160048,
+      "state": "unknown",
+      "friendly_name": "Kitchen sunblind",
+      "type": "slider",
+      "id": "SB1",
+      "placement": "R2",
+      "description": "Kitchen sunblind"
+    }
+  ]
+}

@@ -14,7 +14,7 @@ class AuthenticationInterceptor implements Interceptor {
     private final String mToken;
 
     private AuthenticationInterceptor(){
-        mToken = RepositoryProvider.provideApiRepository().token();
+        mToken = RepositoryProvider.provideAuthRepository().token();
     }
 
     static Interceptor create(){

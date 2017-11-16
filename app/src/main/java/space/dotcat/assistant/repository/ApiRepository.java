@@ -28,13 +28,4 @@ public interface ApiRepository {
 
     @NonNull
     Observable<Message> action(@NonNull Message message);
-
-    String token();
-
-    void deleteToken();
-
-    void saveUrl(Url url);
-
-    @NonNull
-    String url();
 }

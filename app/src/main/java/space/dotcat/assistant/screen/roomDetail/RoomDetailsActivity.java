@@ -98,6 +98,12 @@ public class RoomDetailsActivity extends BaseActivity implements RoomDetailsView
     @Override
     public void showThings(@NonNull List<Thing> things) {
         if (!things.isEmpty()) {
+            if(getSnackBar() != null){
+                if(getSnackBar().isShown()){
+                    getSnackBar().dismiss();
+                }
+            }
+
             mRecyclerView.setVisibility(View.VISIBLE);
             mErrorMessage.setVisibility(View.INVISIBLE);
             mRoomDetailsAdapter.changeDataSet(things);

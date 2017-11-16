@@ -17,9 +17,9 @@
 
     <string name="login_label">Login</string>
 
-    <string name="login_error">You must write your login here</string>
+    <string name="login_empty_error">You must write your login here</string>
 
-    <string name="password_error">You must write your password here</string>
+    <string name="password__empty_error">You must write your password here</string>
 
     <string name="url_label">Url</string>
 

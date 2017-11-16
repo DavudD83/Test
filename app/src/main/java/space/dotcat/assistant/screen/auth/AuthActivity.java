@@ -97,12 +97,12 @@ public class AuthActivity extends BaseActivity implements AuthView {
 
     @Override
     public void showLoginError() {
-        mLogin.setError(getString(R.string.login_error));
+        mLogin.setError(getString(R.string.login_empty_error));
     }
 
     @Override
     public void showPasswordError() {
-        mPassword.setError(getString(R.string.password_error));
+        mPassword.setError(getString(R.string.password__empty_error));
     }
 
     @Override

@@ -9,7 +9,7 @@
     tools:context="space.dotcat.assistant.screen.auth.AuthActivity">
 
     <include layout="@layout/toolbar"
-        android:id="@+id/includeToolbar" />
+        android:id="@+id/includeToolbar"/>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/textInputLayout_urlLayout"
@@ -28,7 +28,7 @@
             android:id="@+id/editText_url"
             android:hint="@string/url_label"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
 
     </android.support.design.widget.TextInputLayout>
 
@@ -49,7 +49,7 @@
             android:id="@+id/editText_login"
             android:hint="@string/login_label"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
 
     </android.support.design.widget.TextInputLayout>
 
@@ -71,8 +71,7 @@
             android:hint="@string/password_label"
             android:inputType="textPassword"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
+            android:layout_height="wrap_content"/>
     </android.support.design.widget.TextInputLayout>
 
     <Button
@@ -85,9 +84,5 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginTop="16dp"
         android:layout_marginLeft="32dp"
-        android:layout_marginRight="32dp" />
-
-
-
-
+        android:layout_marginRight="32dp"/>
 </android.support.constraint.ConstraintLayout>

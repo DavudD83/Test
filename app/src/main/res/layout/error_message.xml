@@ -11,6 +11,6 @@
         android:layout_gravity="center"
         android:visibility="invisible"
         android:textSize="@dimen/errorTextSize"
-        tools:text="You do not have any items" />
+        tools:text="You do not have any items"/>
 </FrameLayout>
 

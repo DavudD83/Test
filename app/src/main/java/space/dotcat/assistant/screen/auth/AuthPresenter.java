@@ -2,13 +2,14 @@ package space.dotcat.assistant.screen.auth;
 
 
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
+
 
 import ru.arturvasilov.rxloader.LifecycleHandler;
 import space.dotcat.assistant.R;
 import space.dotcat.assistant.content.Authorization;
 import space.dotcat.assistant.content.Url;
 import space.dotcat.assistant.repository.RepositoryProvider;
+import space.dotcat.assistant.utils.TextUtils;
 
 public class AuthPresenter {
 
@@ -23,7 +24,7 @@ public class AuthPresenter {
     }
 
     public void init(){
-        String token = RepositoryProvider.provideApiRepository().token();
+        String token = RepositoryProvider.provideAuthRepository().token();
 
         if(!TextUtils.isEmpty(token))
             mAuthView.showRoomList();
@@ -34,15 +35,14 @@ public class AuthPresenter {
             mAuthView.showUrlEmptyError();
         } else if(!url.startsWith("http://") && (!url.startsWith("https://"))) {
             mAuthView.showUrlNotCorrectError();
-        }
-        else if(TextUtils.isEmpty(login)){
+        } else if(TextUtils.isEmpty(login)){
             mAuthView.showLoginError();
         } else if(TextUtils.isEmpty(password)){
             mAuthView.showPasswordError();
         } else {
             Url urlForRequest = new Url(url);
 
-            RepositoryProvider.provideApiRepository().saveUrl(urlForRequest);
+            RepositoryProvider.provideAuthRepository().saveUrl(urlForRequest);
 
             Authorization auth = new Authorization(login, password);
 

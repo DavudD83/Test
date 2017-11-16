@@ -1,11 +1,7 @@
 package space.dotcat.assistant.api;
 
-
 import android.support.annotation.NonNull;
 
-import okhttp3.OkHttpClient;
-import space.dotcat.assistant.BuildConfig;
-import space.dotcat.assistant.content.RealmString;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
@@ -21,16 +17,13 @@ import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.internal.IOException;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import space.dotcat.assistant.content.RealmString;
 import space.dotcat.assistant.repository.RepositoryProvider;
-
 
 public final class ApiFactory {
 
     private static volatile ApiService sService;
-
-    private static volatile OkHttpClient sClient;
 
     private static Type token = new TypeToken<RealmList<RealmString>>(){}.getType();
     private static Gson gson =  new GsonBuilder()
@@ -85,43 +78,20 @@ public final class ApiFactory {
     @NonNull
     static Retrofit buildRetrofit() {
         return new Retrofit.Builder()
-                .baseUrl(RepositoryProvider.provideApiRepository().url())
-                .client(getClient())
+                .baseUrl(RepositoryProvider.provideAuthRepository().url())
+                .client(OkHttpProvider.provideClient())
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(new RxJavaAdapterWithErrorHandling())
                 .build();
     }
 
-    @NonNull
-    private static OkHttpClient buildClient(){
-        return new OkHttpClient.Builder()
-                .addInterceptor(AuthenticationInterceptor.create())
-                .build();
-    }
-
-    private static OkHttpClient getClient(){
-        OkHttpClient client = sClient;
-
-        if(client == null){
-            synchronized (ApiFactory.class){
-                client = sClient;
-                if(client == null)
-                    client = sClient = buildClient();
-            }
-        }
-
-        return client;
-    }
-
-    public static void recreate(){
-        sClient = null;
-
-        sClient = getClient();
+    public static void recreate() {
+        OkHttpProvider.recreate();
         sService = buildRetrofit().create(ApiService.class);
     }
 
-    public static void deleteInstance(){
-        sClient = null;
+    public static void deleteInstance() {
+        OkHttpProvider.deleteClient();
         sService = null;
     }
 }

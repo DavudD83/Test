@@ -24,7 +24,7 @@ public class BaseActivity extends AppCompatActivity {
     private Snackbar mSnackbar;
 
     private final View.OnClickListener mInvalidAccessTokenHandler = onClick -> {
-        RepositoryProvider.provideApiRepository().deleteToken();
+        RepositoryProvider.provideAuthRepository().deleteToken();
         AuthActivity.start(this);
         finish();
     };
@@ -51,18 +51,26 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void showBaseError(Throwable throwable, View view){
+        //TODO look at it function later
+
         mSnackbar = Snackbar.make(view, "Error",
                 Snackbar.LENGTH_INDEFINITE);
 
         mSnackbar.setAction("Try Again", onClick -> mSnackbar.dismiss());
 
-        ApiError error = (ApiError) throwable;
+        if(throwable instanceof  ApiError) {
+            ApiError error = (ApiError) throwable;
 
-        if(error.getErrorId() == INVALID_ACCESS_TOKEN){
-            mSnackbar.setAction("Log in again", mInvalidAccessTokenHandler);
+            if (error.getErrorId() == INVALID_ACCESS_TOKEN) {
+                mSnackbar.setAction("Log in again", mInvalidAccessTokenHandler);
+            }
+
+            mSnackbar.setText(error.getUserMessage());
+        } else {
+            Log.d(TAG, throwable.getMessage());
+
+            mSnackbar.setText("Error. Contact to developer");
         }
-
-        mSnackbar.setText(error.getUserMessage());
 
         mSnackbar.show();
     }
@@ -72,5 +80,9 @@ public class BaseActivity extends AppCompatActivity {
             return;
 
         mSnackbar.setAction(actionName, action);
+    }
+
+    public Snackbar getSnackBar(){
+        return mSnackbar;
     }
 }
