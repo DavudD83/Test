@@ -53,7 +53,7 @@ script:
   #- "./gradlew build connectedCheck"
   - "./gradlew build assembleDebug"
 
-before_deploy:
+after_script:
   - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 ${APK_BUILD_OUTPUT_DEBUG}
     creative_client_test -keystore $TRAVIS_BUILD_DIR/.keystore -storepass $storepass
     -keypass $keypass
