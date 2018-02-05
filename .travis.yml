@@ -19,8 +19,8 @@ before_install:
     -in .keystore.enc -out .keystore -d
 
 install: [
-    "apt-get --quiet update --yes"
-    , "apt-get --quiet install --yes wget tar unzip lib32stdc++6 lib32z1"
+    "sudo apt-get --quiet update --yes"
+    , "sudo apt-get --quiet install --yes wget tar unzip lib32stdc++6 lib32z1"
     , "wget --quiet --output-document=android-sdk.tgz https://dl.google.com/android/android-sdk_r${ANDROID_SDK_TOOLS}-linux.tgz"
     , "echo $pwd"
     , "ls -l"
