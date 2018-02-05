@@ -56,7 +56,7 @@ cache:
 script:
   #- "./gradlew build connectedCheck"
   - "./gradlew build assembleMockDebug"  # assemble only Mock version
-  - "./gradlew test  # run unit-tests
+  - "./gradlew test"  # run unit-tests
 
 after_success:
   - "./gradlew build assembleProdDebug"
