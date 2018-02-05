@@ -58,7 +58,7 @@ script:
   - "./gradlew build assembleDebug"  # assemble both Mock and Prod versions
   - "./gradlew build assembleProdRelease"
 
-after_script:
+before_deploy:
   - "cp ${APK_BUILD_OUTPUT_DEBUG} ${APK_PATH_DEBUG}"
   - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 ${APK_BUILD_OUTPUT_RELEASE}
     creative_client_test -keystore $TRAVIS_BUILD_DIR/.keystore -storepass $storepass
