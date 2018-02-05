@@ -39,6 +39,7 @@ install: [
     , "echo y | android-sdk-linux/tools/android --silent update sdk --no-ui --all --filter extra-google-m2repository"
     , "export ANDROID_HOME=$PWD/android-sdk-linux"
     , "export PATH=$PATH:$PWD/android-sdk-linux/platform-tools/"
+    , "export ANDROID_SDK_ROOT=$PWD/android-sdk-linux"
     , "cd $OLD_PWD"
 ]
 
