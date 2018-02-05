@@ -1,8 +1,5 @@
 language: java
 
-sudo: required
-dist: trusty
-
 env:
   global:
   - ANDROID_EMUL="android-22"
