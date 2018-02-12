@@ -57,7 +57,9 @@ public class DefaultAuthRepository implements AuthRepository {
         Realm realmInstance = Realm.getDefaultInstance();
 
         Url url = realmInstance.where(Url.class).findFirst();
-        //TODO look at it line later
+
+        if(url == null) return "";
+
         return url.getUrl();
     }
 }

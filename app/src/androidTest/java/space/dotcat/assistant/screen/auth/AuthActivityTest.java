@@ -15,6 +15,7 @@ import org.junit.runner.RunWith;
 import io.realm.Realm;
 import space.dotcat.assistant.R;
 import space.dotcat.assistant.content.AuthorizationAnswer;
+import space.dotcat.assistant.content.Url;
 import space.dotcat.assistant.repository.RepositoryProvider;
 import space.dotcat.assistant.screen.roomList.RoomsActivity;
 import space.dotcat.assistant.utils.InputLayoutErrorMatcher;
@@ -51,6 +52,10 @@ public class AuthActivityTest {
     @Before
     public void init() {
         Intents.init();
+
+        Realm.getDefaultInstance().executeTransaction(transaction -> {
+            transaction.delete(Url.class);
+        });
     }
 
     @After
@@ -102,6 +107,8 @@ public class AuthActivityTest {
         onView(withId(R.id.editText_password)).perform(typeText("password"));
 
         closeSoftKeyboard();
+
+        onView(withId(R.id.editText_url)).perform(typeText("https://url/"));
 
         onView(withId(R.id.editText_login)).check(matches(withText("login")));
 
@@ -202,4 +209,6 @@ public class AuthActivityTest {
         onView(withText("Server is not available"))
                 .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
     }
+
+
 }

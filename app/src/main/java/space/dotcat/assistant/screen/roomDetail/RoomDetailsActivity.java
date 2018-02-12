@@ -26,10 +26,11 @@ import space.dotcat.assistant.content.ApiError;
 import space.dotcat.assistant.content.Room;
 import space.dotcat.assistant.content.Thing;
 import space.dotcat.assistant.screen.general.BaseActivity;
+import space.dotcat.assistant.screen.general.BaseActivityWithSettingsMenu;
 import space.dotcat.assistant.screen.general.LoadingDialog;
 import space.dotcat.assistant.screen.general.LoadingView;
 
-public class RoomDetailsActivity extends BaseActivity implements RoomDetailsView,
+public class RoomDetailsActivity extends BaseActivityWithSettingsMenu implements RoomDetailsView,
         RoomDetailsAdapter.OnItemChange, SwipeRefreshLayout.OnRefreshListener {
 
     private final static String EXTRA_ROOM = "room";
@@ -76,10 +77,10 @@ public class RoomDetailsActivity extends BaseActivity implements RoomDetailsView
                 android.R.color.holo_red_light,
                 android.R.color.holo_green_light);
 
-        mRoom = (Room) getIntent().getSerializableExtra(EXTRA_ROOM);
+        mRoom = (Room) getIntent().getParcelableExtra(EXTRA_ROOM);
 
         if(getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(mRoom.GetDescription());
+            getSupportActionBar().setTitle(mRoom.getFriendlyName());
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
@@ -93,6 +94,13 @@ public class RoomDetailsActivity extends BaseActivity implements RoomDetailsView
         LifecycleHandler lifecycleHandler = LoaderLifecycleHandler.create(this, getSupportLoaderManager());
         mRoomDetailsPresenter = new RoomDetailsPresenter(lifecycleHandler, this);
         mRoomDetailsPresenter.init(mRoom.GetId());
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        mRoomDetailsPresenter.unsubscribe();
     }
 
     @Override

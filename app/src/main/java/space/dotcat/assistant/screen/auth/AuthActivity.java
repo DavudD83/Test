@@ -70,6 +70,13 @@ public class AuthActivity extends BaseActivity implements AuthView {
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+
+        mAuthPresenter.unsubscribe();
+    }
+
+    @Override
     public void showLoading() {
         mLoadingView.showLoading();
     }
@@ -83,6 +90,11 @@ public class AuthActivity extends BaseActivity implements AuthView {
     public void showRoomList() {
         RoomsActivity.start(this);
         finish();
+    }
+
+    @Override
+    public void showExistingUrl(@NonNull String url) {
+        mUrl.setText(url);
     }
 
     @Override
