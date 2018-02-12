@@ -14,9 +14,6 @@ public class Thing extends RealmObject{
     @SerializedName("commands")
     private RealmList<RealmString> mActions;
 
-    @SerializedName("description")
-    private String mDescription;
-
     @PrimaryKey
     @SerializedName("id")
     private String mId;
@@ -45,13 +42,11 @@ public class Thing extends RealmObject{
     public Thing() {
     }
 
-    public Thing(@NonNull RealmList<RealmString> actions, @NonNull String description, @NonNull String id,
+    public Thing(@NonNull RealmList<RealmString> actions, @NonNull String id,
                  @NonNull Boolean isActive, @NonNull Boolean isAvailable, @NonNull String placement,
                  @NonNull String state, @NonNull String type, @NonNull Boolean isEnabled,
                  @NonNull String friendlyName) {
         mActions = actions;
-
-        mDescription = description;
 
         mId = id;
 
@@ -72,9 +67,6 @@ public class Thing extends RealmObject{
 
     @NonNull
     public RealmList<RealmString> getActions() { return mActions; }
-
-    @NonNull
-    public String getDescription() { return mDescription; }
 
     @NonNull
     public String getId() { return mId; }
@@ -106,10 +98,6 @@ public class Thing extends RealmObject{
 
     public void setActions(RealmList<RealmString> actions) {
         mActions = actions;
-    }
-
-    public void setDescription(String description) {
-        mDescription = description;
     }
 
     public void setId(String id) {

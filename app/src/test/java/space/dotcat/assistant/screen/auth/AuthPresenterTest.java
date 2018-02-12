@@ -164,17 +164,36 @@ public class AuthPresenterTest {
         Mockito.verify(mAuthView).showRoomList();
     }
 
+    @Test
+    public void testExistingUrl() throws Exception {
+        String url = "https://api.ks-cube.tk/";
+
+        TestAuthRepo testAuthRepo = new TestAuthRepo(url);
+
+        RepositoryProvider.setAuthRepository(testAuthRepo);
+
+        mAuthPresenter.init();
+
+        Mockito.verify(mAuthView).showExistingUrl(url);
+    }
+
     private class TestAuthRepo extends MockAuthRepository {
 
-        private String mToken;
+        private String mValue;
 
         TestAuthRepo(String token) {
-            mToken = token;
+            mValue = token;
         }
 
         @Override
         public String token() {
-            return mToken;
+            return mValue;
+        }
+
+        @NonNull
+        @Override
+        public String url() {
+            return mValue;
         }
     }
 

@@ -13,10 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".screen.roomList.RoomsActivity"/>
-
+        <activity android:name=".screen.roomList.RoomsActivity" />
         <activity android:name=".screen.roomDetail.RoomDetailsActivity" />
-
         <activity android:name=".screen.auth.AuthActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,5 +22,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".screen.settings.SettingsActivity"
+            android:label="@string/settings_activity_label">
+        </activity>
     </application>
+
 </manifest>

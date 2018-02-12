@@ -3,23 +3,20 @@ package space.dotcat.assistant.repository;
 
 import android.support.annotation.NonNull;
 
+import java.util.List;
+
 import io.realm.Realm;
 import io.realm.RealmResults;
-
+import rx.Observable;
+import space.dotcat.assistant.api.ApiFactory;
 import space.dotcat.assistant.content.Authorization;
 import space.dotcat.assistant.content.AuthorizationAnswer;
 import space.dotcat.assistant.content.Message;
+import space.dotcat.assistant.content.Room;
 import space.dotcat.assistant.content.RoomResponse;
 import space.dotcat.assistant.content.Thing;
 import space.dotcat.assistant.content.ThingResponse;
-import space.dotcat.assistant.content.Url;
 import space.dotcat.assistant.utils.RxUtils;
-import space.dotcat.assistant.api.ApiFactory;
-import space.dotcat.assistant.content.Room;
-
-import java.util.List;
-
-import rx.Observable;
 
 
 public class DefaultApiRepository implements ApiRepository {
@@ -37,9 +34,7 @@ public class DefaultApiRepository implements ApiRepository {
 
                     return Observable.just(authorizationAnswer);
                 })
-                .doOnError(throwable -> {
-                    ApiFactory.deleteInstance();
-                })
+                .doOnError(throwable -> ApiFactory.deleteInstance())
                 .compose(RxUtils.async());
     }
 
@@ -83,9 +78,7 @@ public class DefaultApiRepository implements ApiRepository {
                 .flatMap(things -> {
                     Realm instance = Realm.getDefaultInstance();
 
-                    instance.executeTransaction(realm ->{
-                        realm.insertOrUpdate(things);
-                    });
+                    instance.executeTransaction(realm -> realm.insertOrUpdate(things));
 
                     instance.close();
                     return Observable.just(things);

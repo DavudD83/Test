@@ -34,7 +34,6 @@ public class EmptyRoomsActivityTest {
     private static final AuthorizationAnswer ERROR = new AuthorizationAnswer("ERROR",
             "ERROR_EMPTY_ROOMS");
 
-
     @Rule
     public ActivityTestRule<RoomsActivity> mTestRule =
             new ActivityTestRule<>(RoomsActivity.class, false, false);

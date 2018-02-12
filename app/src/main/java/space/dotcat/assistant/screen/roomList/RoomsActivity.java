@@ -14,6 +14,7 @@ import android.widget.TextView;
 import space.dotcat.assistant.R;
 import space.dotcat.assistant.content.Room;
 import space.dotcat.assistant.screen.general.BaseActivity;
+import space.dotcat.assistant.screen.general.BaseActivityWithSettingsMenu;
 import space.dotcat.assistant.screen.general.LoadingDialog;
 import space.dotcat.assistant.screen.general.LoadingView;
 import space.dotcat.assistant.screen.roomDetail.RoomDetailsActivity;
@@ -25,7 +26,7 @@ import butterknife.BindView;
 import ru.arturvasilov.rxloader.LifecycleHandler;
 import ru.arturvasilov.rxloader.LoaderLifecycleHandler;
 
-public class RoomsActivity extends BaseActivity implements RoomsView, RoomsAdapter.OnItemClick,
+public class RoomsActivity extends BaseActivityWithSettingsMenu implements RoomsView, RoomsAdapter.OnItemClick,
         SwipeRefreshLayout.OnRefreshListener {
 
     @BindView(R.id.recyclerViewRooms)
@@ -72,6 +73,13 @@ public class RoomsActivity extends BaseActivity implements RoomsView, RoomsAdapt
         LifecycleHandler lifecycleHandler = LoaderLifecycleHandler.create(this,getSupportLoaderManager());
         mPresenter = new RoomsPresenter(lifecycleHandler, this);
         mPresenter.init();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        mPresenter.unsubscribe();
     }
 
     @Override

@@ -40,7 +40,6 @@ class RequestMatcher {
             return createResponseFromAsset(request, "empty_response_things.json");
         }
 
-
         if(shouldIntercept(path)) {
             String mockedPath = mRequests.get(path);
 

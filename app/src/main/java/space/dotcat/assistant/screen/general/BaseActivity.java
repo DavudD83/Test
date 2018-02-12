@@ -51,7 +51,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void showBaseError(Throwable throwable, View view){
-        //TODO look at it function later
+        //TODO look at this function later
 
         mSnackbar = Snackbar.make(view, "Error",
                 Snackbar.LENGTH_INDEFINITE);

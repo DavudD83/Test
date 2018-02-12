@@ -28,7 +28,7 @@ public class RoomHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(@NonNull Room room) {
-        mRoomName.setText(room.GetDescription());
+        mRoomName.setText(room.getFriendlyName());
 
         Picasso.with(mRoomPicture.getContext())
                 .load(room.getImagePath())

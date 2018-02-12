@@ -12,10 +12,6 @@ import rx.schedulers.Schedulers;
 import rx.functions.Func1;
 import rx.plugins.RxJavaHooks;
 
-/**
- * Created by Железо on 06.11.2017.
- */
-
 public class RxJavaTestRule implements TestRule {
 
     private final Func1<Scheduler, Scheduler> mMockFunc = new Func1<Scheduler, Scheduler>() {
