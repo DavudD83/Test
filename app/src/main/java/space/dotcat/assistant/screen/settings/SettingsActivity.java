@@ -2,16 +2,15 @@ package space.dotcat.assistant.screen.settings;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import space.dotcat.assistant.R;
-import space.dotcat.assistant.screen.general.BaseActivity;
 
 public class SettingsActivity extends AppCompatActivity {
 

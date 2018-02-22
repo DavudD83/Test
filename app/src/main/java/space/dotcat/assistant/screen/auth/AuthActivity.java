@@ -5,19 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
-import ru.arturvasilov.rxloader.LifecycleHandler;
-import ru.arturvasilov.rxloader.LoaderLifecycleHandler;
 import space.dotcat.assistant.R;
-import space.dotcat.assistant.content.ApiError;
 import space.dotcat.assistant.screen.general.BaseActivity;
 import space.dotcat.assistant.screen.general.LoadingDialog;
 import space.dotcat.assistant.screen.general.LoadingView;
@@ -61,10 +54,7 @@ public class AuthActivity extends BaseActivity implements AuthView {
 
         mLoadingView = LoadingDialog.view(getSupportFragmentManager());
 
-        LifecycleHandler lifecycleHandler = LoaderLifecycleHandler.create(this,
-                getSupportLoaderManager());
-
-        mAuthPresenter = new AuthPresenter(this, lifecycleHandler);
+        mAuthPresenter = new AuthPresenter(this);
 
         mAuthPresenter.init();
     }

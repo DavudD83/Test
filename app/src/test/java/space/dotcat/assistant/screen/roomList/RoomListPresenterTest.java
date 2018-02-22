@@ -12,12 +12,10 @@ import org.mockito.Mockito;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.arturvasilov.rxloader.LifecycleHandler;
-import rx.Observable;
+import io.reactivex.Observable;
 import space.dotcat.assistant.content.Room;
 import space.dotcat.assistant.repository.RepositoryProvider;
 import space.dotcat.assistant.testMock.MockApiRepository;
-import space.dotcat.assistant.testMock.MockLifecycleHandler;
 
 import static junit.framework.Assert.assertNotNull;
 
@@ -25,8 +23,6 @@ import static junit.framework.Assert.assertNotNull;
 public class RoomListPresenterTest {
 
     private RoomsView mRoomsView;
-
-    private LifecycleHandler mLifecycleHandler;
 
     private RoomsPresenter mRoomsPresenter;
 
@@ -38,15 +34,12 @@ public class RoomListPresenterTest {
     public void init() {
         mRoomsView = Mockito.mock(RoomsView.class);
 
-        mLifecycleHandler = new MockLifecycleHandler();
-
-        mRoomsPresenter = new RoomsPresenter(mLifecycleHandler, mRoomsView);
+        mRoomsPresenter = new RoomsPresenter(mRoomsView);
     }
 
     @After
     public void clear() {
         mRoomsView = null;
-        mLifecycleHandler = null;
         mRoomsPresenter = null;
         RepositoryProvider.setApiRepository(null);
     }

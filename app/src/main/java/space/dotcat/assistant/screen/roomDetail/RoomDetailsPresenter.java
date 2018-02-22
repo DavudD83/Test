@@ -2,53 +2,45 @@ package space.dotcat.assistant.screen.roomDetail;
 
 import android.support.annotation.NonNull;
 
-import rx.Subscription;
-import rx.subscriptions.CompositeSubscription;
-import space.dotcat.assistant.R;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import space.dotcat.assistant.content.ActionParams;
 import space.dotcat.assistant.content.Body;
 import space.dotcat.assistant.content.Message;
 import space.dotcat.assistant.content.Thing;
 import space.dotcat.assistant.repository.RepositoryProvider;
-
-import ru.arturvasilov.rxloader.LifecycleHandler;
 import space.dotcat.assistant.screen.general.BasePresenter;
 
 public class RoomDetailsPresenter implements BasePresenter {
 
-    private final LifecycleHandler mLifecycleHandler;
-
     private final RoomDetailsView mRoomDetailsView;
 
-    private CompositeSubscription mCompositeSubscription;
+    private CompositeDisposable mCompositeDisposable;
 
-    RoomDetailsPresenter(@NonNull LifecycleHandler lifecycleHandler,
-                         @NonNull RoomDetailsView roomDetailsView) {
-        mLifecycleHandler = lifecycleHandler;
+    RoomDetailsPresenter(@NonNull RoomDetailsView roomDetailsView) {
         mRoomDetailsView = roomDetailsView;
-        mCompositeSubscription = new CompositeSubscription();
+
+        mCompositeDisposable = new CompositeDisposable();
     }
 
     public void init(@NonNull String id) {
-        Subscription subscription = RepositoryProvider.provideApiRepository()
+        Disposable things = RepositoryProvider.provideApiRepository()
                 .things(id)
-                .doOnSubscribe(mRoomDetailsView::showLoading)
+                .doOnSubscribe(disposable -> mRoomDetailsView.showLoading())
                 .doOnTerminate(mRoomDetailsView::hideLoading)
-                .compose(mLifecycleHandler.load(R.id.thing_request))
                 .subscribe(mRoomDetailsView::showThings, mRoomDetailsView::showError);
 
-        mCompositeSubscription.add(subscription);
+        mCompositeDisposable.add(things);
     }
 
     public void reloadData(@NonNull String id) {
-        mCompositeSubscription.clear();
+        mCompositeDisposable.clear();
 
-        Subscription subscription = RepositoryProvider.provideApiRepository()
+        Disposable things = RepositoryProvider.provideApiRepository()
                 .things(id)
-                .compose(mLifecycleHandler.reload(R.id.thing_request))
                 .subscribe(mRoomDetailsView::showThings, mRoomDetailsView::showError);
 
-        mCompositeSubscription.add(subscription);
+        mCompositeDisposable.add(things);
     }
 
     public void onItemChange(@NonNull Thing thing) {
@@ -58,20 +50,19 @@ public class RoomDetailsPresenter implements BasePresenter {
 
         Message message = new Message(body);
 
-        mCompositeSubscription.clear();
+        mCompositeDisposable.clear();
 
-        Subscription subscription = RepositoryProvider.provideApiRepository()
+        Disposable responseMessage = RepositoryProvider.provideApiRepository()
                 .action(message)
-                .doOnSubscribe(mRoomDetailsView::showLoading)
-                .doOnTerminate(mRoomDetailsView::hideLoading)
-                .compose(mLifecycleHandler.reload(R.id.action_request))
+                .doOnSubscribe(disposable -> mRoomDetailsView.showLoading())
+                .doAfterTerminate(mRoomDetailsView::hideLoading)
                 .subscribe(message1 -> {}, mRoomDetailsView::showError);
 
-        mCompositeSubscription.add(subscription);
+        mCompositeDisposable.add(responseMessage);
     }
 
     @Override
     public void unsubscribe() {
-        mCompositeSubscription.clear();
+        mCompositeDisposable.clear();
     }
 }

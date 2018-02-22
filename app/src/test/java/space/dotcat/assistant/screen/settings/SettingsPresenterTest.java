@@ -9,14 +9,11 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
-import space.dotcat.assistant.api.ApiFactory;
-import space.dotcat.assistant.api.OkHttpProvider;
 import space.dotcat.assistant.content.Url;
 import space.dotcat.assistant.repository.RepositoryProvider;
 import space.dotcat.assistant.testMock.MockAuthRepository;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 
 @RunWith(JUnit4.class)

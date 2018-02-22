@@ -4,7 +4,9 @@ import android.support.annotation.NonNull;
 
 import java.util.List;
 
-import rx.Observable;
+
+import io.reactivex.Observable;
+import io.reactivex.Single;
 import space.dotcat.assistant.content.Authorization;
 import space.dotcat.assistant.content.AuthorizationAnswer;
 import space.dotcat.assistant.content.Message;
@@ -15,8 +17,8 @@ import space.dotcat.assistant.repository.ApiRepository;
 public class MockApiRepository implements ApiRepository{
     @NonNull
     @Override
-    public Observable<AuthorizationAnswer> auth(@NonNull Authorization authorizationInfo) {
-        return Observable.empty();
+    public Single<AuthorizationAnswer> auth(@NonNull Authorization authorizationInfo) {
+        return Single.never();
     }
 
     @NonNull
@@ -33,7 +35,7 @@ public class MockApiRepository implements ApiRepository{
 
     @NonNull
     @Override
-    public Observable<Message> action(@NonNull Message message) {
-        return Observable.empty();
+    public Single<Message> action(@NonNull Message message) {
+        return Single.never();
     }
 }

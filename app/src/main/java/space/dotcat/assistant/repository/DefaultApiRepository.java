@@ -5,9 +5,16 @@ import android.support.annotation.NonNull;
 
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.ObservableTransformer;
+import io.reactivex.Single;
+import io.reactivex.SingleSource;
+import io.reactivex.SingleTransformer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 import io.realm.RealmResults;
-import rx.Observable;
 import space.dotcat.assistant.api.ApiFactory;
 import space.dotcat.assistant.content.Authorization;
 import space.dotcat.assistant.content.AuthorizationAnswer;
@@ -23,7 +30,7 @@ public class DefaultApiRepository implements ApiRepository {
 
     @NonNull
     @Override
-    public Observable<AuthorizationAnswer> auth(@NonNull Authorization authorizationInfo) {
+    public Single<AuthorizationAnswer> auth(@NonNull Authorization authorizationInfo) {
         return ApiFactory.getApiService()
                 .auth(authorizationInfo)
                 .flatMap(authorizationAnswer -> {
@@ -32,10 +39,10 @@ public class DefaultApiRepository implements ApiRepository {
 
                     ApiFactory.recreate();
 
-                    return Observable.just(authorizationAnswer);
+                    return Single.just(authorizationAnswer);
                 })
                 .doOnError(throwable -> ApiFactory.deleteInstance())
-                .compose(RxUtils.async());
+                .compose(RxUtils.makeSingleAsyncWithUiCallback());
     }
 
     @NonNull
@@ -43,6 +50,7 @@ public class DefaultApiRepository implements ApiRepository {
     public Observable<List<Room>> rooms() {
         return ApiFactory.getApiService()
                 .rooms()
+                .toObservable()
                 .map(RoomResponse::getRooms)
                 .flatMap(rooms -> {
                     Realm instance = Realm.getDefaultInstance();
@@ -66,7 +74,7 @@ public class DefaultApiRepository implements ApiRepository {
                     return Observable.mergeDelayError(Observable.just(resultRooms),
                             Observable.error(throwable));
                 })
-                .compose(RxUtils.async());
+                .compose(RxUtils.makeObservableAsyncWithUiCallback());
     }
 
     @NonNull
@@ -74,6 +82,7 @@ public class DefaultApiRepository implements ApiRepository {
     public Observable<List<Thing>> things(String id) {
         return ApiFactory.getApiService()
                 .things(id)
+                .toObservable()
                 .map(ThingResponse::getThings)
                 .flatMap(things -> {
                     Realm instance = Realm.getDefaultInstance();
@@ -94,14 +103,14 @@ public class DefaultApiRepository implements ApiRepository {
                     return Observable.mergeDelayError(Observable.just(resultThings),
                             Observable.error(throwable));
                 })
-                .compose(RxUtils.async());
+                .compose(RxUtils.makeObservableAsyncWithUiCallback());
     }
 
     @NonNull
     @Override
-    public Observable<Message> action(@NonNull Message message) {
+    public Single<Message> action(@NonNull Message message) {
         return ApiFactory.getApiService()
                 .action(message)
-                .compose(RxUtils.async());
+                .compose(RxUtils.makeSingleAsyncWithUiCallback());
     }
 }

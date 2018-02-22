@@ -1,6 +1,7 @@
 package space.dotcat.assistant.screen.settings;
 
 
+import android.content.BroadcastReceiver;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;

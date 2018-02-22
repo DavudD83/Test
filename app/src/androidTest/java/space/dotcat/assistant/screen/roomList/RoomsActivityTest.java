@@ -64,7 +64,6 @@ public class RoomsActivityTest {
         onView(withId(R.id.recyclerViewRooms)).perform(actionOnItemAtPosition(0, click()));
 
         Intents.intended(hasComponent(RoomDetailsActivity.class.getName()));
-        //TODO
     }
 
     @Test

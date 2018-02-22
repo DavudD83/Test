@@ -11,20 +11,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import space.dotcat.assistant.R;
-import space.dotcat.assistant.content.Room;
-import space.dotcat.assistant.screen.general.BaseActivity;
-import space.dotcat.assistant.screen.general.BaseActivityWithSettingsMenu;
-import space.dotcat.assistant.screen.general.LoadingDialog;
-import space.dotcat.assistant.screen.general.LoadingView;
-import space.dotcat.assistant.screen.roomDetail.RoomDetailsActivity;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import ru.arturvasilov.rxloader.LifecycleHandler;
-import ru.arturvasilov.rxloader.LoaderLifecycleHandler;
+import space.dotcat.assistant.R;
+import space.dotcat.assistant.content.Room;
+import space.dotcat.assistant.screen.general.BaseActivityWithSettingsMenu;
+import space.dotcat.assistant.screen.general.LoadingDialog;
+import space.dotcat.assistant.screen.general.LoadingView;
+import space.dotcat.assistant.screen.roomDetail.RoomDetailsActivity;
 
 public class RoomsActivity extends BaseActivityWithSettingsMenu implements RoomsView, RoomsAdapter.OnItemClick,
         SwipeRefreshLayout.OnRefreshListener {
@@ -70,8 +66,7 @@ public class RoomsActivity extends BaseActivityWithSettingsMenu implements Rooms
 
         mRecyclerView.setAdapter(mAdapter);
 
-        LifecycleHandler lifecycleHandler = LoaderLifecycleHandler.create(this,getSupportLoaderManager());
-        mPresenter = new RoomsPresenter(lifecycleHandler, this);
+        mPresenter = new RoomsPresenter(this);
         mPresenter.init();
     }
 

@@ -3,11 +3,10 @@ package space.dotcat.assistant.screen.auth;
 
 import android.support.annotation.NonNull;
 
-
-import ru.arturvasilov.rxloader.LifecycleHandler;
-import rx.Subscription;
-import rx.subscriptions.CompositeSubscription;
-import space.dotcat.assistant.R;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
 import space.dotcat.assistant.content.Authorization;
 import space.dotcat.assistant.content.Url;
 import space.dotcat.assistant.repository.RepositoryProvider;
@@ -19,15 +18,12 @@ public class AuthPresenter implements BasePresenter {
 
     private final AuthView mAuthView;
 
-    private final LifecycleHandler mLifecycleHandler;
+    private CompositeDisposable mCompositeDisposable;
 
-    private CompositeSubscription mCompositeSubscription;
-
-    public AuthPresenter(@NonNull AuthView authView,
-                         @NonNull LifecycleHandler lifecycleHandler) {
+    public AuthPresenter(@NonNull AuthView authView) {
         mAuthView = authView;
-        mLifecycleHandler = lifecycleHandler;
-        mCompositeSubscription = new CompositeSubscription();
+
+        mCompositeDisposable = new CompositeDisposable();
     }
 
     public void init(){
@@ -43,7 +39,7 @@ public class AuthPresenter implements BasePresenter {
         }
     }
 
-    public void tryLogin(String url, String login, String password){
+    public void tryLogin(@NonNull String url,@NonNull String login,@NonNull String password){
         if(TextUtils.isEmpty(url)){
             mAuthView.showUrlEmptyError();
         } else if(!UrlUtils.isValidURL(url)) {
@@ -59,20 +55,19 @@ public class AuthPresenter implements BasePresenter {
 
             Authorization auth = new Authorization(login, password);
 
-            Subscription subscription = RepositoryProvider.provideApiRepository()
+            Disposable authorizationAnswer = RepositoryProvider.provideApiRepository()
                     .auth(auth)
-                    .doOnSubscribe(mAuthView::showLoading)
-                    .doOnTerminate(mAuthView::hideLoading)
-                    .compose(mLifecycleHandler.reload(R.id.auth_request))
-                    .subscribe(authorizationAnswer ->  mAuthView.showRoomList(),
+                    .doOnSubscribe(disposable1 -> mAuthView.showLoading())
+                    .doAfterTerminate(mAuthView::hideLoading)
+                    .subscribe(answer ->  mAuthView.showRoomList(),
                             mAuthView::showAuthError);
 
-            mCompositeSubscription.add(subscription);
+            mCompositeDisposable.add(authorizationAnswer);
         }
     }
 
     @Override
     public void unsubscribe() {
-        mCompositeSubscription.clear();
+        mCompositeDisposable.clear();
     }
 }

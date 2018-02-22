@@ -8,9 +8,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import io.reactivex.Observable;
 import io.realm.Realm;
-import rx.Observable;
-import rx.observers.TestSubscriber;
 import space.dotcat.assistant.api.OkHttpProvider;
 import space.dotcat.assistant.content.ActionParams;
 import space.dotcat.assistant.content.ApiError;
@@ -75,7 +74,7 @@ public class ApiRepositoryTest {
     @Test
     public void testSuccessAuth() throws Exception {
         AuthorizationAnswer answer = mApiRepository
-                .auth(new Authorization("login", "pass")).toBlocking().first();
+                .auth(new Authorization("login", "pass")).blockingGet();
 
         assertEquals(TOKEN, answer.getToken());
 
@@ -86,24 +85,20 @@ public class ApiRepositoryTest {
     public void testErrorAuth() throws Exception {
         RepositoryProvider.provideAuthRepository().saveAuthorizationAnswer(ERROR);
 
-        TestSubscriber<AuthorizationAnswer> testSubscriber = new TestSubscriber<>();
-
         mApiRepository.auth(new Authorization("login", "pass"))
-                .subscribe(testSubscriber);
-
-        testSubscriber.assertError(ApiError.class);
+                .test()
+                .assertError(ApiError.class);
 
         assertTrue(OkHttpProvider.isClientDeleted());
     }
 
     @Test
     public void testLoadRooms() throws Exception {
-        TestSubscriber<Room> testSubscriber = new TestSubscriber<>();
-
-        mApiRepository.rooms().flatMap(Observable::from).subscribe(testSubscriber);
-
-        testSubscriber.assertValueCount(6);
-        testSubscriber.assertNoErrors();
+        mApiRepository.rooms()
+                .flatMap(Observable::fromIterable)
+                .test()
+                .assertValueCount(6)
+                .assertNoErrors();
     }
 
     @Test
@@ -124,22 +119,20 @@ public class ApiRepositoryTest {
 
         RepositoryProvider.provideAuthRepository().saveAuthorizationAnswer(ERROR);
 
-        TestSubscriber<Room> testSubscriber = new TestSubscriber<>();
-
-        mApiRepository.rooms().flatMap(Observable::from).subscribe(testSubscriber);
-
-        testSubscriber.assertValueCount(6);
-        testSubscriber.assertError(ApiError.class);
+        mApiRepository.rooms()
+                .flatMap(Observable::fromIterable)
+                .test()
+                .assertValueCount(6)
+                .assertError(ApiError.class);
     }
 
     @Test
     public void testLoadThings() throws Exception {
-        TestSubscriber<Thing> testSubscriber = new TestSubscriber<>();
-
-        mApiRepository.things(ROOM_ID).flatMap(Observable::from).subscribe(testSubscriber);
-
-        testSubscriber.assertValueCount(3);
-        testSubscriber.assertNoErrors();
+        mApiRepository.things(ROOM_ID)
+                .flatMap(Observable::fromIterable)
+                .test()
+                .assertValueCount(3)
+                .assertNoErrors();
     }
 
     @Test
@@ -161,31 +154,24 @@ public class ApiRepositoryTest {
 
         RepositoryProvider.provideAuthRepository().saveAuthorizationAnswer(ERROR);
 
-        TestSubscriber<Thing> testSubscriber = new TestSubscriber<>();
-
-        mApiRepository.things(ROOM_ID).flatMap(Observable::from).subscribe(testSubscriber);
-
-        testSubscriber.assertError(ApiError.class);
-        testSubscriber.assertValueCount(3);
+        mApiRepository.things(ROOM_ID)
+                .flatMap(Observable::fromIterable)
+                .test()
+                .assertError(ApiError.class)
+                .assertValueCount(3);
     }
 
     @Test
     public void testDoAction() throws Exception {
-        TestSubscriber<Message> testSubscriber = new TestSubscriber<>();
-
-        mApiRepository.action(MESSAGE).subscribe(testSubscriber);
-
-        testSubscriber.assertNoErrors();
+        mApiRepository.action(MESSAGE).test().assertNoErrors();
     }
 
     @Test
     public void testActionWithError() throws Exception {
         RepositoryProvider.provideAuthRepository().saveAuthorizationAnswer(ERROR);
 
-        TestSubscriber<Message> testSubscriber = new TestSubscriber<>();
-
-        mApiRepository.action(MESSAGE).subscribe(testSubscriber);
-
-        testSubscriber.assertError(ApiError.class);
+        mApiRepository.action(MESSAGE)
+                    .test()
+                    .assertError(ApiError.class);
     }
 }

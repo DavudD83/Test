@@ -4,12 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -18,14 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
-import ru.arturvasilov.rxloader.LifecycleHandler;
-import ru.arturvasilov.rxloader.LoaderLifecycleHandler;
 import space.dotcat.assistant.R;
-import space.dotcat.assistant.content.ApiError;
 import space.dotcat.assistant.content.Room;
 import space.dotcat.assistant.content.Thing;
-import space.dotcat.assistant.screen.general.BaseActivity;
 import space.dotcat.assistant.screen.general.BaseActivityWithSettingsMenu;
 import space.dotcat.assistant.screen.general.LoadingDialog;
 import space.dotcat.assistant.screen.general.LoadingView;
@@ -91,8 +83,7 @@ public class RoomDetailsActivity extends BaseActivityWithSettingsMenu implements
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(mRoomDetailsAdapter);
 
-        LifecycleHandler lifecycleHandler = LoaderLifecycleHandler.create(this, getSupportLoaderManager());
-        mRoomDetailsPresenter = new RoomDetailsPresenter(lifecycleHandler, this);
+        mRoomDetailsPresenter = new RoomDetailsPresenter( this);
         mRoomDetailsPresenter.init(mRoom.GetId());
     }
 

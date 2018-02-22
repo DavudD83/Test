@@ -3,50 +3,42 @@ package space.dotcat.assistant.screen.roomList;
 
 import android.support.annotation.NonNull;
 
-import rx.Subscription;
-import rx.subscriptions.CompositeSubscription;
-import space.dotcat.assistant.R;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import space.dotcat.assistant.content.Room;
 import space.dotcat.assistant.repository.RepositoryProvider;
-
-import ru.arturvasilov.rxloader.LifecycleHandler;
 import space.dotcat.assistant.screen.general.BasePresenter;
 
 public class RoomsPresenter implements BasePresenter {
 
-    private final LifecycleHandler mLifecycleHandler;
-
     private final RoomsView mRoomsView;
 
-    private CompositeSubscription mCompositeSubscription;
+    private CompositeDisposable mCompositeDisposable;
 
-    public RoomsPresenter(@NonNull LifecycleHandler lifecycleHandler,
-                          @NonNull RoomsView roomsView) {
-        mLifecycleHandler = lifecycleHandler;
+    public RoomsPresenter(@NonNull RoomsView roomsView) {
         mRoomsView = roomsView;
-        mCompositeSubscription = new CompositeSubscription();
+
+        mCompositeDisposable = new CompositeDisposable();
     }
 
     public void init() {
-        Subscription subscription = RepositoryProvider.provideApiRepository()
+        Disposable rooms = RepositoryProvider.provideApiRepository()
                 .rooms()
-                .doOnSubscribe(mRoomsView::showLoading)
+                .doOnSubscribe(disposable -> mRoomsView.showLoading())
                 .doOnTerminate(mRoomsView::hideLoading)
-                .compose(mLifecycleHandler.load(R.id.room_request))
                 .subscribe(mRoomsView::showRooms, mRoomsView::showError);
 
-        mCompositeSubscription.add(subscription);
+        mCompositeDisposable.add(rooms);
     }
 
     public void reloadData() {
-        mCompositeSubscription.clear();
+        mCompositeDisposable.clear();
 
-        Subscription subscription = RepositoryProvider.provideApiRepository()
+        Disposable subscription = RepositoryProvider.provideApiRepository()
                 .rooms()
-                .compose(mLifecycleHandler.reload(R.id.room_request))
                 .subscribe(mRoomsView::showRooms, mRoomsView::showError);
 
-        mCompositeSubscription.add(subscription);
+        mCompositeDisposable.add(subscription);
     }
 
     public void onItemClick(@NonNull Room room) {
@@ -55,6 +47,6 @@ public class RoomsPresenter implements BasePresenter {
 
     @Override
     public void unsubscribe() {
-        mCompositeSubscription.clear();
+        mCompositeDisposable.clear();
     }
 }

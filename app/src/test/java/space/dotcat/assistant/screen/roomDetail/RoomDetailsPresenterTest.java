@@ -12,8 +12,8 @@ import org.mockito.Mockito;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.arturvasilov.rxloader.LifecycleHandler;
-import rx.Observable;
+import io.reactivex.Observable;
+import io.reactivex.Single;
 import space.dotcat.assistant.content.ActionParams;
 import space.dotcat.assistant.content.Body;
 import space.dotcat.assistant.content.Message;
@@ -21,7 +21,6 @@ import space.dotcat.assistant.content.Thing;
 import space.dotcat.assistant.repository.ApiRepository;
 import space.dotcat.assistant.repository.RepositoryProvider;
 import space.dotcat.assistant.testMock.MockApiRepository;
-import space.dotcat.assistant.testMock.MockLifecycleHandler;
 
 import static junit.framework.Assert.assertNotNull;
 
@@ -29,8 +28,6 @@ import static junit.framework.Assert.assertNotNull;
 public class RoomDetailsPresenterTest {
 
     private RoomDetailsView mRoomDetailsView;
-
-    private LifecycleHandler mLifecycleHandler;
 
     private RoomDetailsPresenter mRoomDetailsPresenter;
 
@@ -44,16 +41,13 @@ public class RoomDetailsPresenterTest {
     public void init() {
         mRoomDetailsView = Mockito.mock(RoomDetailsView.class);
 
-        mLifecycleHandler = new MockLifecycleHandler();
-
-        mRoomDetailsPresenter = new RoomDetailsPresenter(mLifecycleHandler, mRoomDetailsView);
+        mRoomDetailsPresenter = new RoomDetailsPresenter(mRoomDetailsView);
     }
 
     @After
     public void clear() {
         mRoomDetailsPresenter = null;
         mRoomDetailsView = null;
-        mLifecycleHandler = null;
         RepositoryProvider.setApiRepository(null);
     }
 
@@ -221,21 +215,21 @@ public class RoomDetailsPresenterTest {
 
         @NonNull
         @Override
-        public Observable<Message> action(@NonNull Message message) {
+        public Single<Message> action(@NonNull Message message) {
 
             if(!mIsError) {
                 if (message.getType().equals(mType) && message.getEvent().equals(mEvent) &&
                         message.getSource().equals(mSource) &&
                         message.getBody().getAction().equals(mAction) &&
                         message.getBody().getId().equals(ROOM_ID)) {
-                    return Observable.just(new Message(new Body(mAction, ROOM_ID,
+                    return Single.just(new Message(new Body(mAction, ROOM_ID,
                             new ActionParams())));
                 }
 
-                return Observable.error(API_ERROR);
+                return Single.error(API_ERROR);
             }
 
-            return Observable.error(API_ERROR);
+            return Single.error(API_ERROR);
         }
     }
 }

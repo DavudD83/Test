@@ -9,15 +9,14 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
-import ru.arturvasilov.rxloader.LifecycleHandler;
-import rx.Observable;
+import io.reactivex.Observable;
+import io.reactivex.Single;
 import space.dotcat.assistant.content.Authorization;
 import space.dotcat.assistant.content.AuthorizationAnswer;
 import space.dotcat.assistant.repository.AuthRepository;
 import space.dotcat.assistant.repository.RepositoryProvider;
 import space.dotcat.assistant.testMock.MockApiRepository;
 import space.dotcat.assistant.testMock.MockAuthRepository;
-import space.dotcat.assistant.testMock.MockLifecycleHandler;
 
 import static junit.framework.Assert.assertNotNull;
 
@@ -25,8 +24,6 @@ import static junit.framework.Assert.assertNotNull;
 public class AuthPresenterTest {
 
     private AuthView mAuthView;
-
-    private LifecycleHandler mLifecycleHandler;
 
     private AuthPresenter mAuthPresenter;
 
@@ -38,14 +35,11 @@ public class AuthPresenterTest {
     public void init() {
         mAuthView = Mockito.mock(AuthView.class);
 
-        mLifecycleHandler = new MockLifecycleHandler();
-
-        mAuthPresenter = new AuthPresenter(mAuthView, mLifecycleHandler);
+        mAuthPresenter = new AuthPresenter(mAuthView);
     }
 
     @After
     public void clear() {
-        mLifecycleHandler = null;
         mAuthView = null;
         mAuthPresenter = null;
 
@@ -201,13 +195,13 @@ public class AuthPresenterTest {
 
         @NonNull
         @Override
-        public Observable<AuthorizationAnswer> auth(@NonNull Authorization authorizationInfo) {
+        public Single<AuthorizationAnswer> auth(@NonNull Authorization authorizationInfo) {
             if(authorizationInfo.getUsername().equals("login") &&
                     authorizationInfo.getPassword().equals("password")){
-                return Observable.just(new AuthorizationAnswer("success", "token"));
+                return Single.just(new AuthorizationAnswer("success", "token"));
             }
 
-            return Observable.error(API_ERROR);
+            return Single.error(API_ERROR);
         }
     }
 }
