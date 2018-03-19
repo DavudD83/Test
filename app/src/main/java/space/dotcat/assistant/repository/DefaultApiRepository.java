@@ -62,6 +62,7 @@ public class DefaultApiRepository implements ApiRepository {
                     });
 
                     instance.close();
+
                     return Observable.just(rooms);
                 })
                 .onErrorResumeNext(throwable -> {

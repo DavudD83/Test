@@ -17,6 +17,7 @@ import io.reactivex.Single;
 import space.dotcat.assistant.content.ActionParams;
 import space.dotcat.assistant.content.Body;
 import space.dotcat.assistant.content.Message;
+import space.dotcat.assistant.content.ResponseActionMessage;
 import space.dotcat.assistant.content.Thing;
 import space.dotcat.assistant.repository.ApiRepository;
 import space.dotcat.assistant.repository.RepositoryProvider;
@@ -201,13 +202,7 @@ public class RoomDetailsPresenterTest {
 
         private boolean mIsError;
 
-        private final String mType = "user_request";
-
-        private final String mEvent = "action_requested";
-
-        private final String mSource = "android";
-
-        private final String mAction = "toggle";
+        private final String mCommand = "toggle";
 
         TestApiRepoAction(boolean isError) {
             mIsError = isError;
@@ -215,15 +210,10 @@ public class RoomDetailsPresenterTest {
 
         @NonNull
         @Override
-        public Single<Message> action(@NonNull Message message) {
-
+        public Single<ResponseActionMessage> action(@NonNull String id, @NonNull Message message) {
             if(!mIsError) {
-                if (message.getType().equals(mType) && message.getEvent().equals(mEvent) &&
-                        message.getSource().equals(mSource) &&
-                        message.getBody().getAction().equals(mAction) &&
-                        message.getBody().getId().equals(ROOM_ID)) {
-                    return Single.just(new Message(new Body(mAction, ROOM_ID,
-                            new ActionParams())));
+                if (message.getCommand().equals(mCommand) && message.getCommandArgs() != null) {
+                    return Single.just(new ResponseActionMessage("accepted"));
                 }
 
                 return Single.error(API_ERROR);

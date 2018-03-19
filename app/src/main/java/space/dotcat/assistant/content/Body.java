@@ -2,6 +2,7 @@ package space.dotcat.assistant.content;
 
 import com.google.gson.annotations.SerializedName;
 
+@Deprecated
 public class Body {
 
     @SerializedName("action")
