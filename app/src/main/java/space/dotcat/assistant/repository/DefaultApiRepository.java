@@ -19,6 +19,7 @@ import space.dotcat.assistant.api.ApiFactory;
 import space.dotcat.assistant.content.Authorization;
 import space.dotcat.assistant.content.AuthorizationAnswer;
 import space.dotcat.assistant.content.Message;
+import space.dotcat.assistant.content.ResponseActionMessage;
 import space.dotcat.assistant.content.Room;
 import space.dotcat.assistant.content.RoomResponse;
 import space.dotcat.assistant.content.Thing;
@@ -108,9 +109,9 @@ public class DefaultApiRepository implements ApiRepository {
 
     @NonNull
     @Override
-    public Single<Message> action(@NonNull Message message) {
+    public Single<ResponseActionMessage> action(@NonNull String id, @NonNull Message message) {
         return ApiFactory.getApiService()
-                .action(message)
+                .action(id, message)
                 .compose(RxUtils.makeSingleAsyncWithUiCallback());
     }
 }

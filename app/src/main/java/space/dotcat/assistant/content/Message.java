@@ -5,57 +5,30 @@ import com.google.gson.annotations.SerializedName;
 
 public class Message {
 
-    @SerializedName("type")
-    private String mType;
+    @SerializedName("command")
+    private String mCommand;
 
-    @SerializedName("source")
-    private String mSource;
+    @SerializedName("command_args")
+    private CommandArgs mCommandArgs;
 
-    @SerializedName("event")
-    private String mEvent;
-
-    @SerializedName("body")
-    private Body mBody;
-
-    public Message(Body body) {
-        mType = "user_request";
-
-        mSource = "android";
-
-        mEvent = "action_requested";
-
-        mBody = body;
+    public Message(String command, CommandArgs commandArgs) {
+        mCommand = command;
+        mCommandArgs = commandArgs;
     }
 
-    public String getType() {
-        return mType;
+    public String getCommand() {
+        return mCommand;
     }
 
-    public void setType(String type) {
-        mType = type;
+    public void setCommand(String command) {
+        mCommand = command;
     }
 
-    public String getSource() {
-        return mSource;
+    public CommandArgs getCommandArgs() {
+        return mCommandArgs;
     }
 
-    public void setSource(String source) {
-        mSource = source;
-    }
-
-    public String getEvent() {
-        return mEvent;
-    }
-
-    public void setEvent(String event) {
-        mEvent = event;
-    }
-
-    public Body getBody() {
-        return mBody;
-    }
-
-    public void setBody(Body body) {
-        mBody = body;
+    public void setCommandArgs(CommandArgs commandArgs) {
+        mCommandArgs = commandArgs;
     }
 }

@@ -13,11 +13,11 @@ class AuthenticationInterceptor implements Interceptor {
 
     private final String mToken;
 
-    private AuthenticationInterceptor(){
+    private AuthenticationInterceptor() {
         mToken = RepositoryProvider.provideAuthRepository().token();
     }
 
-    static Interceptor create(){
+    static Interceptor create() {
         return new AuthenticationInterceptor();
     }
 

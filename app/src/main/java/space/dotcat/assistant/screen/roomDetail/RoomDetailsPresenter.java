@@ -6,6 +6,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import space.dotcat.assistant.content.ActionParams;
 import space.dotcat.assistant.content.Body;
+import space.dotcat.assistant.content.CommandArgs;
 import space.dotcat.assistant.content.Message;
 import space.dotcat.assistant.content.Thing;
 import space.dotcat.assistant.repository.RepositoryProvider;
@@ -44,19 +45,19 @@ public class RoomDetailsPresenter implements BasePresenter {
     }
 
     public void onItemChange(@NonNull Thing thing) {
-        ActionParams actionParams = new ActionParams();
+        CommandArgs commandArgs = new CommandArgs();
 
-        Body body = new Body("toggle", thing.getId(), actionParams);
+        Message message = new Message("toggle", commandArgs);
 
-        Message message = new Message(body);
+        String thingId = thing.getId();
 
         mCompositeDisposable.clear();
 
         Disposable responseMessage = RepositoryProvider.provideApiRepository()
-                .action(message)
+                .action(thingId, message)
                 .doOnSubscribe(disposable -> mRoomDetailsView.showLoading())
                 .doAfterTerminate(mRoomDetailsView::hideLoading)
-                .subscribe(message1 -> {}, mRoomDetailsView::showError);
+                .subscribe(responseActionMessage -> {}, mRoomDetailsView::showError);
 
         mCompositeDisposable.add(responseMessage);
     }
