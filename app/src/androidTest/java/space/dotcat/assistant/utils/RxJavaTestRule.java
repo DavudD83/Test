@@ -4,16 +4,12 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-import io.reactivex.Scheduler;
 import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.schedulers.TestScheduler;
 
 
 public class RxJavaTestRule implements TestRule {
-
-    private final TestScheduler mTestScheduler = new TestScheduler();
 
     @Override
     public Statement apply(Statement base, Description description) {

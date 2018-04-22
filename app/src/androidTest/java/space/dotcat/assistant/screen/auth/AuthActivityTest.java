@@ -12,7 +12,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import io.realm.Realm;
 import space.dotcat.assistant.R;
 import space.dotcat.assistant.content.AuthorizationAnswer;
 import space.dotcat.assistant.content.Url;
@@ -53,9 +52,9 @@ public class AuthActivityTest {
     public void init() {
         Intents.init();
 
-        Realm.getDefaultInstance().executeTransaction(transaction -> {
+     /*   Realm.getDefaultInstance().executeTransaction(transaction -> {
             transaction.delete(Url.class);
-        });
+        });*/
     }
 
     @After

@@ -1,44 +1,142 @@
 {
   "things": [
     {
-      "commands": [
-        "activate",
-        "deactivate",
-        "toggle",
-        "on",
-        "off"
+      "is_powered_on": false,
+      "capabilities": [
+        "actuator",
+        "has_state",
+        "is_active",
+        "on_off"
       ],
-      "is_active": false,
-      "is_available": true,
-      "is_enabled": true,
-      "last_updated": 1509696299.9993234,
+      "last_updated": 1522054610.662846,
       "state": "unknown",
-      "friendly_name": "Kitchen cooker hood",
+      "placement": "R1",
       "type": "switch",
-      "id": "F1",
-      "placement": "R2",
-      "description": "Kitchen cooker hood"
-    },
-    {
-      "commands": [
-        "activate",
-        "deactivate",
-        "toggle",
-        "on",
-        "off"
-      ],
-      "is_active": false,
-      "is_available": true,
-      "is_enabled": true,
-      "last_updated": 1509696300.0001154,
-      "state": "unknown",
       "friendly_name": "",
-      "type": "switch",
-      "id": "Li2",
-      "placement": "R2",
-      "description": ""
+      "commands": [
+        "activate",
+        "deactivate",
+        "toggle",
+        "on",
+        "off"
+      ],
+      "is_enabled": true,
+      "is_active": false,
+      "id": "Li1",
+      "is_available": true
     },
     {
+      "is_powered_on": false,
+      "capabilities": [
+        "actuator",
+        "has_state",
+        "is_active",
+        "on_off"
+      ],
+      "last_updated": 1522054610.6635206,
+      "state": "unknown",
+      "placement": "R4",
+      "type": "switch",
+      "friendly_name": "",
+      "commands": [
+        "activate",
+        "deactivate",
+        "toggle",
+        "on",
+        "off"
+      ],
+      "is_enabled": true,
+      "is_active": false,
+      "id": "Li5",
+      "is_available": true
+    },
+    {
+      "is_powered_on": false,
+      "capabilities": [
+        "actuator",
+        "has_state",
+        "is_active",
+        "on_off"
+      ],
+      "last_updated": 1522054610.6630073,
+      "state": "unknown",
+      "placement": "R2",
+      "type": "switch",
+      "friendly_name": "",
+      "commands": [
+        "activate",
+        "deactivate",
+        "toggle",
+        "on",
+        "off"
+      ],
+      "is_enabled": true,
+      "is_active": false,
+      "id": "Li2",
+      "is_available": true
+    },
+    {
+      "is_powered_on": false,
+      "capabilities": [
+        "actuator",
+        "has_state",
+        "is_active",
+        "on_off"
+      ],
+      "last_updated": 1522054610.6633325,
+      "state": "unknown",
+      "placement": "R4",
+      "type": "switch",
+      "friendly_name": "",
+      "commands": [
+        "activate",
+        "deactivate",
+        "toggle",
+        "on",
+        "off"
+      ],
+      "is_enabled": true,
+      "is_active": false,
+      "id": "Li4",
+      "is_available": true
+    },
+    {
+      "is_powered_on": false,
+      "capabilities": [
+        "actuator",
+        "has_state",
+        "is_active",
+        "on_off"
+      ],
+      "last_updated": 1522054610.6626637,
+      "state": "unknown",
+      "placement": "R2",
+      "type": "switch",
+      "friendly_name": "Kitchen cooker hood",
+      "commands": [
+        "activate",
+        "deactivate",
+        "toggle",
+        "on",
+        "off"
+      ],
+      "is_enabled": true,
+      "is_active": false,
+      "id": "F1",
+      "is_available": true
+    },
+    {
+      "capabilities": [
+        "actuator",
+        "open_closed",
+        "has_state",
+        "is_active"
+      ],
+      "last_updated": 1522054610.662404,
+      "state": "unknown",
+      "placement": "R5",
+      "type": "slider",
+      "friendly_name": "Office door",
       "commands": [
         "activate",
         "deactivate",
@@ -46,16 +144,228 @@
         "open",
         "close"
       ],
-      "is_active": false,
-      "is_available": true,
       "is_enabled": true,
-      "last_updated": 1509696300.0160048,
+      "is_active": false,
+      "id": "D3",
+      "is_available": true
+    },
+    {
+      "capabilities": [
+        "actuator",
+        "has_state",
+        "is_active"
+      ],
+      "last_updated": 1522054610.6638727,
       "state": "unknown",
-      "friendly_name": "Kitchen sunblind",
+      "placement": "R6",
+      "type": "player",
+      "friendly_name": "Living room default player",
+      "commands": [
+        "activate",
+        "deactivate",
+        "toggle",
+        "stop",
+        "play",
+        "pause"
+      ],
+      "is_enabled": true,
+      "is_active": false,
+      "id": "PLAY1",
+      "is_available": true
+    },
+    {
+      "capabilities": [
+        "actuator",
+        "open_closed",
+        "has_state",
+        "is_active"
+      ],
+      "last_updated": 1522054610.664395,
+      "state": "unknown",
+      "placement": "R5",
       "type": "slider",
-      "id": "SB1",
+      "friendly_name": "Office sunblind",
+      "commands": [
+        "activate",
+        "deactivate",
+        "toggle",
+        "open",
+        "close"
+      ],
+      "is_enabled": true,
+      "is_active": false,
+      "id": "SB3",
+      "is_available": true
+    },
+    {
+      "capabilities": [
+        "actuator",
+        "open_closed",
+        "has_state",
+        "is_active"
+      ],
+      "last_updated": 1522054610.6620302,
+      "state": "unknown",
+      "placement": "R1",
+      "type": "slider",
+      "friendly_name": "Entrance door",
+      "commands": [
+        "activate",
+        "deactivate",
+        "toggle",
+        "open",
+        "close"
+      ],
+      "is_enabled": true,
+      "is_active": false,
+      "id": "D1",
+      "is_available": true
+    },
+    {
+      "is_powered_on": false,
+      "capabilities": [
+        "actuator",
+        "has_state",
+        "is_active",
+        "on_off"
+      ],
+      "last_updated": 1522054610.6631696,
+      "state": "unknown",
+      "placement": "R3",
+      "type": "switch",
+      "friendly_name": "",
+      "commands": [
+        "activate",
+        "deactivate",
+        "toggle",
+        "on",
+        "off"
+      ],
+      "is_enabled": true,
+      "is_active": false,
+      "id": "Li3",
+      "is_available": true
+    },
+    {
+      "capabilities": [
+        "actuator",
+        "open_closed",
+        "has_state",
+        "is_active"
+      ],
+      "last_updated": 1522054610.6622407,
+      "state": "unknown",
+      "placement": "R4",
+      "type": "slider",
+      "friendly_name": "Bedroom door",
+      "commands": [
+        "activate",
+        "deactivate",
+        "toggle",
+        "open",
+        "close"
+      ],
+      "is_enabled": true,
+      "is_active": false,
+      "id": "D2",
+      "is_available": true
+    },
+    {
+      "capabilities": [
+        "actuator",
+        "open_closed",
+        "has_state",
+        "is_active"
+      ],
+      "last_updated": 1522054610.6642349,
+      "state": "unknown",
+      "placement": "R4",
+      "type": "slider",
+      "friendly_name": "Bedroom sunblind",
+      "commands": [
+        "activate",
+        "deactivate",
+        "toggle",
+        "open",
+        "close"
+      ],
+      "is_enabled": true,
+      "is_active": false,
+      "id": "SB2",
+      "is_available": true
+    },
+    {
+      "is_powered_on": false,
+      "capabilities": [
+        "actuator",
+        "has_state",
+        "is_active",
+        "on_off"
+      ],
+      "last_updated": 1522054610.6636877,
+      "state": "unknown",
+      "placement": "R6",
+      "type": "switch",
+      "friendly_name": "",
+      "commands": [
+        "activate",
+        "deactivate",
+        "toggle",
+        "on",
+        "off"
+      ],
+      "is_enabled": true,
+      "is_active": false,
+      "id": "Li6",
+      "is_available": true
+    },
+    {
+      "capabilities": [
+        "actuator",
+        "open_closed",
+        "has_state",
+        "is_active"
+      ],
+      "last_updated": 1522054610.6645896,
+      "state": "unknown",
+      "placement": "R6",
+      "type": "slider",
+      "friendly_name": "Living Room sunblind",
+      "commands": [
+        "activate",
+        "deactivate",
+        "toggle",
+        "open",
+        "close"
+      ],
+      "is_enabled": true,
+      "is_active": false,
+      "id": "SB4",
+      "is_available": true
+    },
+    {
+      "capabilities": [
+        "actuator",
+        "open_closed",
+        "has_state",
+        "is_active"
+      ],
+      "last_updated": 1522054610.6640687,
+      "state": "unknown",
       "placement": "R2",
-      "description": "Kitchen sunblind"
+      "type": "slider",
+      "friendly_name": "Kitchen sunblind",
+      "commands": [
+        "activate",
+        "deactivate",
+        "toggle",
+        "open",
+        "close"
+      ],
+      "is_enabled": true,
+      "is_active": false,
+      "id": "SB1",
+      "is_available": true
     }
   ]
 }

@@ -1,0 +1,56 @@
+{
+  "things" : [
+    {
+      "capabilities": [
+        "actuator",
+        "open_closed",
+        "has_state",
+        "is_active"
+      ],
+      "last_updated": 1522054610.6620302,
+      "state": "unknown",
+      "placement": "R1",
+      "type": "slider",
+      "friendly_name": "Entrance door",
+      "commands": [
+        "activate",
+        "deactivate",
+        "toggle",
+        "open",
+        "close"
+      ],
+      "is_enabled": true,
+      "is_active": false,
+      "id": "D1",
+      "is_available": true
+    },
+    {
+      "is_powered_on": false,
+      "capabilities": [
+        "actuator",
+        "has_state",
+        "is_active",
+        "on_off"
+      ],
+      "last_updated": 1522054610.662846,
+      "state": "unknown",
+      "placement": "R1",
+      "type": "switch",
+      "friendly_name": "",
+      "commands": [
+        "activate",
+        "deactivate",
+        "toggle",
+        "on",
+        "off"
+      ],
+      "is_enabled": true,
+      "is_active": false,
+      "id": "Li1",
+      "is_available": true
+    }
+  ]
+}
+
+
+

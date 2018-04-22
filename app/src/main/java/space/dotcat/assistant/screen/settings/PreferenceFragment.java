@@ -1,7 +1,6 @@
 package space.dotcat.assistant.screen.settings;
 
 
-import android.content.BroadcastReceiver;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,20 +11,26 @@ import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.PreferenceScreen;
 import android.widget.Toast;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import javax.inject.Inject;
+
+import space.dotcat.assistant.AppDelegate;
 import space.dotcat.assistant.R;
+import space.dotcat.assistant.di.activitiesComponents.preferenceFragment.PreferenceModule;
 
 public class PreferenceFragment extends PreferenceFragmentCompat
-        implements SharedPreferences.OnSharedPreferenceChangeListener, SettingsView {
+        implements SharedPreferences.OnSharedPreferenceChangeListener, SettingsViewContract {
 
-    private SettingsPresenter mSettingsPresenter;
+    @Inject
+    SettingsPresenter mSettingsPresenter;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.fragment_settings);
 
-        mSettingsPresenter = new SettingsPresenter(this);
+        AppDelegate.getInstance()
+                .plusDataLayerComponent()
+                .plusPreferencesComponent(new PreferenceModule(this))
+                .inject(this);
 
         EditTextPreference editTextPreference = (EditTextPreference) getPreferenceScreen().
                 findPreference(getResources().getString(R.string.url_key));
@@ -55,7 +60,7 @@ public class PreferenceFragment extends PreferenceFragmentCompat
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if(key.equals(getResources().getString(R.string.url_key))) {
-            String string_url = mSettingsPresenter.getPreferenceSummary(sharedPreferences, key,
+            String string_url = mSettingsPresenter.getPreferenceSummary(key,
                     getResources().getString(R.string.default_url));
 
             mSettingsPresenter.saveNewUrl(string_url);
@@ -73,11 +78,10 @@ public class PreferenceFragment extends PreferenceFragmentCompat
         for(int i = 0; i < preferenceScreen.getPreferenceCount(); i++){
             Preference preference = preferenceScreen.getPreference(i);
 
-            String value = mSettingsPresenter.getPreferenceSummary(preference.getSharedPreferences(),
-                    preference.getKey(), "");
+            String value = mSettingsPresenter.getPreferenceSummary(preference.getKey(), "");
 
             if(preference instanceof EditTextPreference){
-                ((EditTextPreference) preference).setSummary(value);
+                preference.setSummary(value);
             }
         }
     }

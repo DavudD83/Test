@@ -1,35 +1,36 @@
 package space.dotcat.assistant.screen.settings;
 
 
-import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
-import space.dotcat.assistant.api.ApiFactory;
-import space.dotcat.assistant.content.Url;
-import space.dotcat.assistant.repository.RepositoryProvider;
+import javax.inject.Inject;
+
+import space.dotcat.assistant.repository.authRepository.AuthRepository;
 import space.dotcat.assistant.utils.UrlUtils;
 
 public class SettingsPresenter {
 
-    private final SettingsView mView;
+    private final SettingsViewContract mViewContract;
 
-    public SettingsPresenter(SettingsView view) {
-        mView = view;
+    private final AuthRepository mAuthRepository;
+
+    public SettingsPresenter(SettingsViewContract viewContract, AuthRepository authRepository) {
+        mViewContract = viewContract;
+
+        mAuthRepository = authRepository;
     }
 
     public void init() {
-        mView.showSummary();
+        mViewContract.showSummary();
     }
 
     public void saveNewUrl(@NonNull String saved_url){
-        Url new_url = new Url(saved_url);
-
-        RepositoryProvider.provideAuthRepository().saveUrl(new_url);
+        mAuthRepository.saveUrl(saved_url);
     }
 
     public boolean validateUrl(@NonNull String url) {
         if(!UrlUtils.isValidURL(url)) {
-            mView.showUrlError();
+            mViewContract.showUrlError();
 
             return false;
         } else {
@@ -38,15 +39,14 @@ public class SettingsPresenter {
     }
 
     public void recreateApi(){
-        ApiFactory.recreate();
+        mAuthRepository.destroyApiService();
     }
 
     public void updateParticularPreferenceSummary(String key, String summary) {
-        mView.updateParticularSummary(key, summary);
+        mViewContract.updateParticularSummary(key, summary);
     }
 
-    public String getPreferenceSummary(@NonNull SharedPreferences sharedPreferences,
-                                       @NonNull String key, @NonNull String default_value) {
-        return sharedPreferences.getString(key, default_value);
+    public String getPreferenceSummary(@NonNull String key, @NonNull String default_value) {
+        return mAuthRepository.getSummaryByKey(key, default_value);
     }
 }

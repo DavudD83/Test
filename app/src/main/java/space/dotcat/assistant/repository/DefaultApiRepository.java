@@ -6,15 +6,7 @@ import android.support.annotation.NonNull;
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.ObservableTransformer;
 import io.reactivex.Single;
-import io.reactivex.SingleSource;
-import io.reactivex.SingleTransformer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
-import io.realm.Realm;
-import io.realm.RealmResults;
 import space.dotcat.assistant.api.ApiFactory;
 import space.dotcat.assistant.content.Authorization;
 import space.dotcat.assistant.content.AuthorizationAnswer;
@@ -32,7 +24,7 @@ public class DefaultApiRepository implements ApiRepository {
     @NonNull
     @Override
     public Single<AuthorizationAnswer> auth(@NonNull Authorization authorizationInfo) {
-        return ApiFactory.getApiService()
+        /*return ApiFactory.getApiService()
                 .auth(authorizationInfo)
                 .flatMap(authorizationAnswer -> {
                     RepositoryProvider.provideAuthRepository()
@@ -43,13 +35,14 @@ public class DefaultApiRepository implements ApiRepository {
                     return Single.just(authorizationAnswer);
                 })
                 .doOnError(throwable -> ApiFactory.deleteInstance())
-                .compose(RxUtils.makeSingleAsyncWithUiCallback());
+                .compose(RxUtils.makeSingleAsyncWithUiCallback());*/
+        return null;
     }
 
     @NonNull
     @Override
     public Observable<List<Room>> rooms() {
-        return ApiFactory.getApiService()
+        /*return ApiFactory.getApiService()
                 .rooms()
                 .toObservable()
                 .map(RoomResponse::getRooms)
@@ -76,13 +69,15 @@ public class DefaultApiRepository implements ApiRepository {
                     return Observable.mergeDelayError(Observable.just(resultRooms),
                             Observable.error(throwable));
                 })
-                .compose(RxUtils.makeObservableAsyncWithUiCallback());
+                .compose(RxUtils.makeObservableAsyncWithUiCallback());*/
+
+        return null;
     }
 
     @NonNull
     @Override
     public Observable<List<Thing>> things(String id) {
-        return ApiFactory.getApiService()
+        /*return ApiFactory.getApiService()
                 .things(id)
                 .toObservable()
                 .map(ThingResponse::getThings)
@@ -105,14 +100,18 @@ public class DefaultApiRepository implements ApiRepository {
                     return Observable.mergeDelayError(Observable.just(resultThings),
                             Observable.error(throwable));
                 })
-                .compose(RxUtils.makeObservableAsyncWithUiCallback());
+                .compose(RxUtils.makeObservableAsyncWithUiCallback());*/
+
+        return null;
     }
 
     @NonNull
     @Override
     public Single<ResponseActionMessage> action(@NonNull String id, @NonNull Message message) {
-        return ApiFactory.getApiService()
+        /*return ApiFactory.getApiService()
                 .action(id, message)
-                .compose(RxUtils.makeSingleAsyncWithUiCallback());
+                .compose(RxUtils.makeSingleAsyncWithUiCallback());*/
+
+        return null;
     }
 }

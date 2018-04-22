@@ -18,6 +18,7 @@ public class RoomDetailsHolder extends RecyclerView.ViewHolder {
 
     public RoomDetailsHolder(View itemView) {
         super(itemView);
+
         ButterKnife.bind(this, itemView);
     }
 

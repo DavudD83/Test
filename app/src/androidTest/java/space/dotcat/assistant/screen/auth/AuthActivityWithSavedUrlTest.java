@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import io.realm.Realm;
+
 import space.dotcat.assistant.content.Url;
 import space.dotcat.assistant.repository.RepositoryProvider;
 import space.dotcat.assistant.R;
@@ -42,9 +42,9 @@ public class AuthActivityWithSavedUrlTest {
 
     @After
     public void clear() {
-        Realm.getDefaultInstance().executeTransaction(transaction -> {
+      /*  Realm.getDefaultInstance().executeTransaction(transaction -> {
             transaction.delete(Url.class);
-        });
+        });*/
     }
 
     @Test

@@ -8,7 +8,7 @@ import android.view.MenuItem;
 import space.dotcat.assistant.R;
 import space.dotcat.assistant.screen.settings.SettingsActivity;
 
-public class BaseActivityWithSettingsMenu extends BaseActivity {
+public abstract class BaseActivityWithSettingsMenu extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

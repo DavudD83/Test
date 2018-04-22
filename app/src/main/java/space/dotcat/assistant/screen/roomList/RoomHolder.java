@@ -24,6 +24,7 @@ public class RoomHolder extends RecyclerView.ViewHolder {
 
     public RoomHolder(@NonNull View itemView) {
         super(itemView);
+
         ButterKnife.bind(this,itemView);
     }
 

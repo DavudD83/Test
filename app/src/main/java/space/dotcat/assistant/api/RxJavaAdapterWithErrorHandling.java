@@ -6,6 +6,8 @@ import java.lang.reflect.Type;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
+import javax.inject.Inject;
+
 import io.reactivex.Single;
 import retrofit2.Call;
 import retrofit2.CallAdapter;
@@ -14,12 +16,16 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import space.dotcat.assistant.content.ApiError;
 
-class RxJavaAdapterWithErrorHandling extends CallAdapter.Factory {
+public class RxJavaAdapterWithErrorHandling extends CallAdapter.Factory {
 
     private final RxJava2CallAdapterFactory mFactory;
 
-    RxJavaAdapterWithErrorHandling() {
+    private final ErrorParser mErrorParser;
+
+    public RxJavaAdapterWithErrorHandling(ErrorParser errorParser) {
         mFactory = RxJava2CallAdapterFactory.create();
+
+        mErrorParser = errorParser;
     }
 
     @Override
@@ -54,7 +60,7 @@ class RxJavaAdapterWithErrorHandling extends CallAdapter.Factory {
                    if(throwable instanceof HttpException){
                     HttpException exception = (HttpException) t;
 
-                    apiError = ErrorParser.parseError(exception.response());
+                    apiError = mErrorParser.parseError(mRetrofit, exception.response());
 
                     if(apiError == null) {
                         apiError = new ApiError();

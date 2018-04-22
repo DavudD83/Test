@@ -3,9 +3,8 @@ package space.dotcat.assistant.content;
 
 import com.google.gson.annotations.SerializedName;
 
-import io.realm.RealmObject;
 
-public class AuthorizationAnswer extends RealmObject {
+public class AuthorizationAnswer {
 
     @SerializedName("message")
     private String mMessage;

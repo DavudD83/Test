@@ -5,7 +5,7 @@
 
     <string name="error_empty_rooms">You do not have any rooms</string>
 
-    <string name="error_empty_actions">You do not have any actions</string>
+    <string name="error_empty_things">You do not have any things</string>
 
     <string name="network_problem">Connection problem</string>
 
@@ -26,9 +26,15 @@
     <string name="url_empty_error">You must write your url here</string>
 
     <string name="url_is_not_correct_error">Url must start with http:// or https://</string>
-    <string name="default_url">https://192.168.1.102/</string>
+
+    <string name="default_url">https://api.ks-cube.tk/</string>
+
     <string name="url_key">URL_KEY</string>
+
     <string name="settings_activity_label">Settings</string>
+
     <string name="invalid_url">Invalid url. Make sure that you are writing correct url.</string>
 
+    <string name="preferences_name">space.dotcat.assistant.shared_preferences</string>
+    <string name="rooms_activity_title">Rooms</string>
 </resources>

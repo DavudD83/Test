@@ -55,7 +55,7 @@ public class EmptyRoomDetailActivityTest {
         onView(withId(R.id.recyclerViewDetails))
                 .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.INVISIBLE)));
 
-        onView(withId(R.id.tv_error_message)).check(matches(withText(R.string.error_empty_actions)));
+        onView(withId(R.id.tv_error_message)).check(matches(withText(R.string.error_empty_things)));
     }
 
     private void launchActivity() {

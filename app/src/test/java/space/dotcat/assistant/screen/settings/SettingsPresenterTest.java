@@ -1,45 +1,56 @@
 package space.dotcat.assistant.screen.settings;
 
-import android.support.annotation.NonNull;
-
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
-import space.dotcat.assistant.content.Url;
-import space.dotcat.assistant.repository.RepositoryProvider;
-import space.dotcat.assistant.testMock.MockAuthRepository;
+import space.dotcat.assistant.repository.authRepository.AuthRepository;
+import space.dotcat.assistant.utils.RxJavaTestRule;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 @RunWith(JUnit4.class)
 public class SettingsPresenterTest {
 
-    private SettingsPresenter mSettingsPresenter;
+    @Rule
+    public RxJavaTestRule mRxJavaTestRule = new RxJavaTestRule();
 
-    private SettingsView mSettingsView;
+    @Mock
+    private SettingsViewContract mSettingsViewContract;
+
+    @Mock
+    private AuthRepository mAuthRepository;
+
+    private SettingsPresenter mSettingsPresenter;
 
     private final static String VALID_URL = "https://109.23.32.32/";
 
     private final static String INVALID_URL = "url/";
 
     private final static String KEY = "KEY";
+
     private final static String SUMMARY = "SUMMARY";
 
     @Before
     public void init() {
-        mSettingsView = Mockito.mock(SettingsView.class);
+        MockitoAnnotations.initMocks(this);
 
-        mSettingsPresenter = new SettingsPresenter(mSettingsView);
+        mSettingsPresenter = new SettingsPresenter(mSettingsViewContract, mAuthRepository);
     }
 
     @After
     public void clear() {
-        mSettingsView = null;
+        mSettingsViewContract = null;
+        mAuthRepository = null;
         mSettingsPresenter = null;
     }
 
@@ -49,69 +60,81 @@ public class SettingsPresenterTest {
     }
 
     @Test
-    public void testPresenterInit() throws Exception {
+    public void testPresenterInit() {
         mSettingsPresenter.init();
 
-        Mockito.verify(mSettingsView).showSummary();
+        Mockito.verify(mSettingsViewContract).showSummary();
     }
 
     @Test
-    public void testUrlSuccessfullySaved() throws Exception {
-        TestAuthRepo testAuthRepo = new TestAuthRepo();
-
-        RepositoryProvider.setAuthRepository(testAuthRepo);
-
+    public void testUrlSuccessfullySaved() {
         mSettingsPresenter.saveNewUrl(VALID_URL);
 
-        final String SAVED_URL = RepositoryProvider.provideAuthRepository().url();
-
-        assertEquals(VALID_URL, SAVED_URL);
+        Mockito.verify(mAuthRepository).saveUrl(VALID_URL);
     }
 
     @Test
-    public void testUpdateParticularPreferenceSummary() throws Exception {
-
-
+    public void testUpdateParticularPreferenceSummary() {
         mSettingsPresenter.updateParticularPreferenceSummary(KEY, SUMMARY);
 
-        Mockito.verify(mSettingsView).updateParticularSummary(KEY, SUMMARY);
+        Mockito.verify(mSettingsViewContract).updateParticularSummary(KEY, SUMMARY);
     }
 
     @Test
-    public void testCheckInvalidUrl() throws Exception {
+    public void testCheckInvalidUrl() {
         mSettingsPresenter.validateUrl(INVALID_URL);
 
-        Mockito.verify(mSettingsView).showUrlError();
+        Mockito.verify(mSettingsViewContract).showUrlError();
     }
 
     @Test
-    public void testScenario() throws Exception {
+    public void testCheckValidUrl() {
+        Boolean value = mSettingsPresenter.validateUrl(VALID_URL);
+
+        assertTrue(value);
+
+        Mockito.verifyNoMoreInteractions(mAuthRepository);
+    }
+
+    @Test
+    public void testRecreateApi() {
+        mSettingsPresenter.recreateApi();
+
+        Mockito.verify(mAuthRepository).destroyApiService();
+    }
+
+    @Test
+    public void testGetPreferenceSummary() {
+        String def_value = "DEF_VALUE";
+        String result = "RESULT";
+
+        when(mAuthRepository.getSummaryByKey(KEY, def_value)).thenReturn(result);
+
+        String value = mSettingsPresenter.getPreferenceSummary(KEY, def_value);
+
+        assertEquals(value, result);
+
+        Mockito.verify(mAuthRepository).getSummaryByKey(KEY, def_value);
+    }
+
+    @Test
+    public void testScenario() {
         mSettingsPresenter.init();
-        Mockito.verify(mSettingsView).showSummary();
+        Mockito.verify(mSettingsViewContract).showSummary();
 
         mSettingsPresenter.validateUrl(INVALID_URL);
-        Mockito.verify(mSettingsView).showUrlError();
+        Mockito.verify(mSettingsViewContract).showUrlError();
 
         mSettingsPresenter.validateUrl(VALID_URL);
-        Mockito.verifyZeroInteractions(mSettingsView);
+        Mockito.verifyZeroInteractions(mSettingsViewContract);
+
+        mSettingsPresenter.saveNewUrl(VALID_URL);
+        Mockito.verify(mAuthRepository).saveUrl(VALID_URL);
+
+        mSettingsPresenter.recreateApi();
+        Mockito.verify(mAuthRepository).destroyApiService();
 
         mSettingsPresenter.updateParticularPreferenceSummary(KEY, SUMMARY);
-        Mockito.verify(mSettingsView).updateParticularSummary(KEY, SUMMARY);
-    }
-
-    private class TestAuthRepo extends MockAuthRepository {
-
-        private String mUrl;
-
-        @NonNull
-        @Override
-        public String url() {
-            return mUrl;
-        }
-
-        @Override
-        public void saveUrl(Url url) {
-            mUrl = url.getUrl();
-        }
+        Mockito.verify(mSettingsViewContract).updateParticularSummary(KEY, SUMMARY);
     }
 }

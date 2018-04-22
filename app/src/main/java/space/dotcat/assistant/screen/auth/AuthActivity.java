@@ -6,21 +6,28 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TextInputEditText;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
+import butterknife.OnClick;
+import space.dotcat.assistant.AppDelegate;
 import space.dotcat.assistant.R;
+import space.dotcat.assistant.di.activitiesComponents.authActivity.AuthActivityModule;
 import space.dotcat.assistant.screen.general.BaseActivity;
-import space.dotcat.assistant.screen.general.LoadingDialog;
 import space.dotcat.assistant.screen.general.LoadingView;
 import space.dotcat.assistant.screen.roomList.RoomsActivity;
 
-public class AuthActivity extends BaseActivity implements AuthView {
+public class AuthActivity extends BaseActivity implements AuthViewContract {
 
-    private LoadingView mLoadingView;
+    @Inject
+    LoadingView mLoadingView;
 
-    private AuthPresenter mAuthPresenter;
+    @Inject
+    AuthPresenter mAuthPresenter;
 
     @BindView(R.id.bt_logIn)
     Button mButton;
@@ -39,6 +46,7 @@ public class AuthActivity extends BaseActivity implements AuthView {
 
     public static void start(@NonNull Activity activity){
         Intent intent = new Intent(activity, AuthActivity.class);
+
         activity.startActivity(intent);
     }
 
@@ -46,15 +54,11 @@ public class AuthActivity extends BaseActivity implements AuthView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
+    }
 
-        if(getSupportActionBar() != null)
-            getSupportActionBar().setTitle(getString(R.string.app_name));
-
-        mButton.setOnClickListener(this::tryLogIn);
-
-        mLoadingView = LoadingDialog.view(getSupportFragmentManager());
-
-        mAuthPresenter = new AuthPresenter(this);
+    @Override
+    protected void onStart() {
+        super.onStart();
 
         mAuthPresenter.init();
     }
@@ -64,6 +68,25 @@ public class AuthActivity extends BaseActivity implements AuthView {
         super.onStop();
 
         mAuthPresenter.unsubscribe();
+    }
+
+    @Override
+    protected void initDependencyGraph() {
+        AppDelegate.getInstance()
+                .plusDataLayerComponent()
+                .plusAuthComponent(new AuthActivityModule(this, getSupportFragmentManager()))
+                .inject(this);
+    }
+
+    @Override
+    protected void setupToolbar() {
+        Toolbar toolbar = getToolbar();
+
+        toolbar.setTitle(getString(R.string.app_name));
+
+        setNewToolbar(toolbar);
+
+        super.setupToolbar();
     }
 
     @Override
@@ -112,7 +135,8 @@ public class AuthActivity extends BaseActivity implements AuthView {
         super.showBaseError(t, mContainer);
     }
 
-    public void tryLogIn(View view){
+    @OnClick(R.id.bt_logIn)
+    public void tryLogIn(View view) {
         mAuthPresenter.tryLogin(mUrl.getText().toString(), mLogin.getText().toString(),
                 mPassword.getText().toString());
     }

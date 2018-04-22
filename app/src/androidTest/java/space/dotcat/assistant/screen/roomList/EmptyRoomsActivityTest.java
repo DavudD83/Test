@@ -13,7 +13,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import io.realm.Realm;
 import space.dotcat.assistant.R;
 import space.dotcat.assistant.content.AuthorizationAnswer;
 import space.dotcat.assistant.content.Room;
@@ -41,7 +40,7 @@ public class EmptyRoomsActivityTest {
     @Before
     public void init() {
         RepositoryProvider.provideAuthRepository().saveUrl(new Url("https://api.ks-cube.tk/"));
-        Realm.getDefaultInstance().executeTransaction(transaction -> transaction.delete(Room.class));
+       /* Realm.getDefaultInstance().executeTransaction(transaction -> transaction.delete(Room.class));*/
     }
 
     @After

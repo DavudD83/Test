@@ -3,9 +3,7 @@ package space.dotcat.assistant.content;
 
 import android.support.annotation.NonNull;
 
-import io.realm.RealmObject;
-
-public class Url extends RealmObject {
+public class Url {
 
     private String mUrl;
 

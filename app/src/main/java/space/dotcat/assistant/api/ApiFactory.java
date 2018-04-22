@@ -1,98 +1,78 @@
 package space.dotcat.assistant.api;
 
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.TypeAdapter;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 
-import java.lang.reflect.Type;
+import javax.inject.Inject;
 
-import io.realm.RealmList;
-import io.realm.RealmObject;
-import io.realm.internal.IOException;
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import space.dotcat.assistant.content.RealmString;
-import space.dotcat.assistant.repository.RepositoryProvider;
+import space.dotcat.assistant.BuildConfig;
 
 public final class ApiFactory {
 
-    private static volatile ApiService sService;
+    private volatile ApiService mService;
 
-    private static Type token = new TypeToken<RealmList<RealmString>>(){}.getType();
+    private SharedPreferences mSharedPreferences;
 
-    private static Gson gson =  new GsonBuilder()
-            .setExclusionStrategies(new ExclusionStrategy() {
-                @Override
-                public boolean shouldSkipField(FieldAttributes f) {
-                    return f.getDeclaringClass().equals(RealmObject.class);
-                }
+    private OkHttpFactory mOkHttpFactory;
 
-                @Override
-                public boolean shouldSkipClass(Class<?> clazz) {
-                    return false;
-                }
-            })
-            .registerTypeAdapter(token, new TypeAdapter<RealmList<RealmString>>() {
+    private ErrorParser mErrorParser;
 
-                @Override
-                public void write(JsonWriter out, RealmList<RealmString> value) throws IOException {
-                    // Ignore
-                }
+    public ApiFactory(SharedPreferences sharedPreferences, OkHttpFactory okHttpFactory,
+                      ErrorParser errorParser) {
+        mSharedPreferences = sharedPreferences;
 
-                @Override
-                public RealmList<RealmString> read(JsonReader in) throws IOException, java.io.IOException {
-                    RealmList<RealmString> list = new RealmList<>();
-                    in.beginArray();
-                    while (in.hasNext()) {
-                        list.add(new RealmString(in.nextString()));
-                    }
-                    in.endArray();
-                    return list;
-                }
-            })
-            .create();
+        mOkHttpFactory = okHttpFactory;
 
-    private ApiFactory() {
+        mErrorParser = errorParser;
     }
 
     @NonNull
-    public static ApiService getApiService() {
-        ApiService service = sService;
+    public ApiService getApiService() {
+        ApiService service = mService;
+
         if(service == null) {
             synchronized (ApiFactory.class) {
-                service = sService;
+                service = mService;
+
                 if(service == null) {
-                    service = sService = buildRetrofit().create(ApiService.class);
+                    service = mService = buildRetrofit().create(ApiService.class);
                 }
             }
         }
+
         return service;
     }
 
     @NonNull
-    static Retrofit buildRetrofit() {
+    private Retrofit buildRetrofit() {
+        String base_url = mSharedPreferences.getString(BuildConfig.URL_KEY,
+                BuildConfig.URL_DEFAULT_VALUE);
+
+        OkHttpClient okHttpClient = mOkHttpFactory.provideClient();
+
         return new Retrofit.Builder()
-                .baseUrl(RepositoryProvider.provideAuthRepository().url())
-                .client(OkHttpProvider.provideClient())
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .addCallAdapterFactory(new RxJavaAdapterWithErrorHandling())
+                .baseUrl(base_url)
+                .client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(new RxJavaAdapterWithErrorHandling(mErrorParser))
                 .build();
     }
 
-    public static void recreate() {
-        OkHttpProvider.recreate();
-        sService = buildRetrofit().create(ApiService.class);
+    public void recreate() {
+        mOkHttpFactory.recreate();
+        mService = buildRetrofit().create(ApiService.class);
     }
 
-    public static void deleteInstance() {
-        OkHttpProvider.deleteClient();
-        sService = null;
+    public boolean isServiceDeleted() {
+        return mService == null;
+    }
+
+    public void deleteInstance() {
+        mOkHttpFactory.deleteClient();
+        mService = null;
     }
 }

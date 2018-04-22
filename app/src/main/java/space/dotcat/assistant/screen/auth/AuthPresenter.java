@@ -3,64 +3,74 @@ package space.dotcat.assistant.screen.auth;
 
 import android.support.annotation.NonNull;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
-import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+import space.dotcat.assistant.AppDelegate;
 import space.dotcat.assistant.content.Authorization;
 import space.dotcat.assistant.content.Url;
 import space.dotcat.assistant.repository.RepositoryProvider;
+import space.dotcat.assistant.repository.authRepository.AuthRepository;
 import space.dotcat.assistant.screen.general.BasePresenter;
 import space.dotcat.assistant.utils.TextUtils;
 import space.dotcat.assistant.utils.UrlUtils;
 
 public class AuthPresenter implements BasePresenter {
 
-    private final AuthView mAuthView;
+    private final AuthViewContract mAuthViewContract;
+
+    private AuthRepository mAuthRepository;
 
     private CompositeDisposable mCompositeDisposable;
 
-    public AuthPresenter(@NonNull AuthView authView) {
-        mAuthView = authView;
+    public AuthPresenter(@NonNull AuthViewContract authView, @NonNull AuthRepository authRepository) {
+        mAuthViewContract = authView;
+
+        mAuthRepository = authRepository;
 
         mCompositeDisposable = new CompositeDisposable();
     }
 
-    public void init(){
-        String token = RepositoryProvider.provideAuthRepository().token();
+    public void init() {
+        String token = mAuthRepository.getToken();
 
         if(!TextUtils.isEmpty(token))
-            mAuthView.showRoomList();
+            mAuthViewContract.showRoomList();
 
-        String url = RepositoryProvider.provideAuthRepository().url();
+        String url = mAuthRepository.getUrl();
 
-        if(!TextUtils.isEmpty(url)){
-            mAuthView.showExistingUrl(url);
+        if(!TextUtils.isEmpty(url)) {
+            mAuthViewContract.showExistingUrl(url);
         }
     }
 
-    public void tryLogin(@NonNull String url,@NonNull String login,@NonNull String password){
+    public void tryLogin(@NonNull String url, @NonNull String login, @NonNull String password) {
         if(TextUtils.isEmpty(url)){
-            mAuthView.showUrlEmptyError();
+            mAuthViewContract.showUrlEmptyError();
         } else if(!UrlUtils.isValidURL(url)) {
-            mAuthView.showUrlNotCorrectError();
+            mAuthViewContract.showUrlNotCorrectError();
         } else if(TextUtils.isEmpty(login)){
-            mAuthView.showLoginError();
+            mAuthViewContract.showLoginError();
         } else if(TextUtils.isEmpty(password)){
-            mAuthView.showPasswordError();
+            mAuthViewContract.showPasswordError();
         } else {
-            Url urlForRequest = new Url(url);
+            mAuthRepository.saveUrl(url);
 
-            RepositoryProvider.provideAuthRepository().saveUrl(urlForRequest);
+            mAuthRepository.destroyApiService();
 
             Authorization auth = new Authorization(login, password);
 
-            Disposable authorizationAnswer = RepositoryProvider.provideApiRepository()
-                    .auth(auth)
-                    .doOnSubscribe(disposable1 -> mAuthView.showLoading())
-                    .doAfterTerminate(mAuthView::hideLoading)
-                    .subscribe(answer ->  mAuthView.showRoomList(),
-                            mAuthView::showAuthError);
+            Disposable authorizationAnswer = mAuthRepository
+                    .authUser(auth)
+                    .doOnSubscribe(disposable1 -> mAuthViewContract.showLoading())
+                    .doAfterTerminate(mAuthViewContract::hideLoading)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            answer ->  mAuthViewContract.showRoomList(),
+
+                            mAuthViewContract::showAuthError);
 
             mCompositeDisposable.add(authorizationAnswer);
         }

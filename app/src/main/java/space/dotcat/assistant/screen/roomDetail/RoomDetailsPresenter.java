@@ -2,44 +2,69 @@ package space.dotcat.assistant.screen.roomDetail;
 
 import android.support.annotation.NonNull;
 
+import javax.inject.Inject;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import space.dotcat.assistant.content.ActionParams;
-import space.dotcat.assistant.content.Body;
+import io.reactivex.schedulers.Schedulers;
 import space.dotcat.assistant.content.CommandArgs;
 import space.dotcat.assistant.content.Message;
 import space.dotcat.assistant.content.Thing;
-import space.dotcat.assistant.repository.RepositoryProvider;
+import space.dotcat.assistant.repository.thingsRepository.ThingRepository;
 import space.dotcat.assistant.screen.general.BasePresenter;
 
 public class RoomDetailsPresenter implements BasePresenter {
 
-    private final RoomDetailsView mRoomDetailsView;
+    private final RoomDetailsViewContract mRoomDetailsViewContract;
+
+    private final ThingRepository mThingRepository;
 
     private CompositeDisposable mCompositeDisposable;
 
-    RoomDetailsPresenter(@NonNull RoomDetailsView roomDetailsView) {
-        mRoomDetailsView = roomDetailsView;
+    public RoomDetailsPresenter(@NonNull RoomDetailsViewContract roomDetailsViewContract,
+                         @NonNull ThingRepository thingRepository) {
+        mRoomDetailsViewContract = roomDetailsViewContract;
+
+        mThingRepository = thingRepository;
 
         mCompositeDisposable = new CompositeDisposable();
     }
 
     public void init(@NonNull String id) {
-        Disposable things = RepositoryProvider.provideApiRepository()
-                .things(id)
-                .doOnSubscribe(disposable -> mRoomDetailsView.showLoading())
-                .doOnTerminate(mRoomDetailsView::hideLoading)
-                .subscribe(mRoomDetailsView::showThings, mRoomDetailsView::showError);
+        Disposable things = mThingRepository
+                .getThingsById(id)
+                .doOnSubscribe(disposable -> mRoomDetailsViewContract.showLoading())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        thingList -> {
+                            mRoomDetailsViewContract.hideLoading();
+
+                            if (thingList.isEmpty())
+                                mRoomDetailsViewContract.showEmptyThingsError();
+                            else
+                                mRoomDetailsViewContract.showThings(thingList);
+                        },
+
+                        throwable -> {
+                            mRoomDetailsViewContract.hideLoading();
+
+                            mRoomDetailsViewContract.showError(throwable);
+                        });
 
         mCompositeDisposable.add(things);
     }
 
-    public void reloadData(@NonNull String id) {
-        mCompositeDisposable.clear();
+    public void reloadThings(@NonNull String id) {
+        Disposable things = mThingRepository
+                .refreshThings(id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        listOfThings -> {},
 
-        Disposable things = RepositoryProvider.provideApiRepository()
-                .things(id)
-                .subscribe(mRoomDetailsView::showThings, mRoomDetailsView::showError);
+                        mRoomDetailsViewContract::showError);
 
         mCompositeDisposable.add(things);
     }
@@ -51,15 +76,37 @@ public class RoomDetailsPresenter implements BasePresenter {
 
         String thingId = thing.getId();
 
-        mCompositeDisposable.clear();
+        Disposable responseMessage = mThingRepository
+                .doAction(thingId, message)
+                .doOnSubscribe(disposable -> mRoomDetailsViewContract.showLoading())
+                .doAfterTerminate(mRoomDetailsViewContract::hideLoading)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        responseActionMessage -> {
+                            if(thing.getIsActive())
+                                thing.setActive(false);
+                            else
+                                thing.setActive(true);
 
-        Disposable responseMessage = RepositoryProvider.provideApiRepository()
-                .action(thingId, message)
-                .doOnSubscribe(disposable -> mRoomDetailsView.showLoading())
-                .doAfterTerminate(mRoomDetailsView::hideLoading)
-                .subscribe(responseActionMessage -> {}, mRoomDetailsView::showError);
+                            updateThing(thing);
+                },
+                        throwable -> {
+                            updateThing(thing);
+
+                            mRoomDetailsViewContract.showError(throwable);
+                        });
 
         mCompositeDisposable.add(responseMessage);
+    }
+
+    private void updateThing(Thing thing) {
+        Disposable disposable = mThingRepository.updateThing(thing)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+
+        mCompositeDisposable.add(disposable);
     }
 
     @Override
