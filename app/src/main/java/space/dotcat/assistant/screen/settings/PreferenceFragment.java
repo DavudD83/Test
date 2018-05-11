@@ -59,7 +59,7 @@ public class PreferenceFragment extends PreferenceFragmentCompat
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if(key.equals(getResources().getString(R.string.url_key))) {
+        if (key.equals(getResources().getString(R.string.url_key))) {
             String string_url = mSettingsPresenter.getPreferenceSummary(key,
                     getResources().getString(R.string.default_url));
 
@@ -75,12 +75,12 @@ public class PreferenceFragment extends PreferenceFragmentCompat
     public void showSummary() {
         PreferenceScreen preferenceScreen = getPreferenceScreen();
 
-        for(int i = 0; i < preferenceScreen.getPreferenceCount(); i++){
+        for (int i = 0; i < preferenceScreen.getPreferenceCount(); i++) {
             Preference preference = preferenceScreen.getPreference(i);
 
             String value = mSettingsPresenter.getPreferenceSummary(preference.getKey(), "");
 
-            if(preference instanceof EditTextPreference){
+            if (preference instanceof EditTextPreference) {
                 preference.setSummary(value);
             }
         }

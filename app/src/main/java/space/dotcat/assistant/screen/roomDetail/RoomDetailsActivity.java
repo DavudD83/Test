@@ -68,7 +68,7 @@ public class RoomDetailsActivity extends BaseActivityWithSettingsMenu implements
 
         mRoom = getIntent().getParcelableExtra(EXTRA_ROOM);
 
-        if(getSupportActionBar() != null) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(mRoom.getFriendlyName());
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -154,7 +154,7 @@ public class RoomDetailsActivity extends BaseActivityWithSettingsMenu implements
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if(id == android.R.id.home){
+        if (id == android.R.id.home) {
             onBackPressed();
             return true;
         }

@@ -3,8 +3,6 @@ package space.dotcat.assistant.screen.roomList;
 
 import android.support.annotation.NonNull;
 
-import javax.inject.Inject;
-
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -12,6 +10,7 @@ import io.reactivex.schedulers.Schedulers;
 import space.dotcat.assistant.content.Room;
 import space.dotcat.assistant.repository.roomsRepository.RoomRepository;
 import space.dotcat.assistant.screen.general.BasePresenter;
+import space.dotcat.assistant.service.ServiceHandler;
 
 public class RoomsPresenter implements BasePresenter {
 
@@ -19,12 +18,16 @@ public class RoomsPresenter implements BasePresenter {
 
     private final RoomRepository mRoomRepository;
 
+    private final ServiceHandler mMessageServiceHandler;
+
     private CompositeDisposable mCompositeDisposable;
 
-    public RoomsPresenter(@NonNull RoomsViewContract roomsViewContract, @NonNull RoomRepository roomRepository) {
+    public RoomsPresenter(@NonNull RoomsViewContract roomsViewContract, @NonNull RoomRepository roomRepository, ServiceHandler messageServiceHandler) {
         mRoomsViewContract = roomsViewContract;
 
         mRoomRepository = roomRepository;
+
+        mMessageServiceHandler = messageServiceHandler;
 
         mCompositeDisposable = new CompositeDisposable();
     }
@@ -34,7 +37,7 @@ public class RoomsPresenter implements BasePresenter {
                 .getRooms()
                 .doOnSubscribe(disposable -> mRoomsViewContract.showLoading())
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread(), true)
                 .subscribe(
                         roomList -> {
                             mRoomsViewContract.hideLoading();
@@ -53,6 +56,8 @@ public class RoomsPresenter implements BasePresenter {
                         });
 
         mCompositeDisposable.add(rooms);
+
+        startSyncService();
     }
 
     public void reloadRooms() {
@@ -66,6 +71,10 @@ public class RoomsPresenter implements BasePresenter {
                         mRoomsViewContract::showError);
 
         mCompositeDisposable.add(subscription);
+    }
+
+    private void startSyncService() {
+        mMessageServiceHandler.startService();
     }
 
     public void onItemClick(@NonNull Room room) {

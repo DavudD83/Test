@@ -23,7 +23,7 @@ public class RoomDetailsPresenter implements BasePresenter {
     private CompositeDisposable mCompositeDisposable;
 
     public RoomDetailsPresenter(@NonNull RoomDetailsViewContract roomDetailsViewContract,
-                         @NonNull ThingRepository thingRepository) {
+                                @NonNull ThingRepository thingRepository) {
         mRoomDetailsViewContract = roomDetailsViewContract;
 
         mThingRepository = thingRepository;
@@ -36,7 +36,7 @@ public class RoomDetailsPresenter implements BasePresenter {
                 .getThingsById(id)
                 .doOnSubscribe(disposable -> mRoomDetailsViewContract.showLoading())
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread(), true)
                 .subscribe(
                         thingList -> {
                             mRoomDetailsViewContract.hideLoading();
@@ -62,7 +62,8 @@ public class RoomDetailsPresenter implements BasePresenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        listOfThings -> {},
+                        listOfThings -> {
+                        },
 
                         mRoomDetailsViewContract::showError);
 
@@ -84,13 +85,13 @@ public class RoomDetailsPresenter implements BasePresenter {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         responseActionMessage -> {
-                            if(thing.getIsActive())
+                            if (thing.getIsActive())
                                 thing.setActive(false);
                             else
                                 thing.setActive(true);
 
                             updateThing(thing);
-                },
+                        },
                         throwable -> {
                             updateThing(thing);
 

@@ -11,15 +11,64 @@ import space.dotcat.assistant.content.AuthorizationAnswer;
 public interface AuthRepository {
 
     /**
+     * Save setup state into a phone's disk memory
+     *
+     * @param isCompleted state of setup process
+     */
+
+    void saveSetupState(boolean isCompleted);
+
+
+    /**
+     * Get state of setup process
+     *
+     * @return boolean that indicates state of setup process
+     */
+
+    boolean isSetupCompleted();
+
+
+    /**
+     * Save host value
+     *
+     * @param host string that represents host value of address
+     */
+
+    void saveHostValue(String host);
+
+    /**
+     * Get host value
+     *
+     * @return string that represents host
+     */
+    String getHostValue();
+
+
+    /**
+     * Save port value
+     *
+     * @param port string that represents port of address
+     */
+    void savePortValue(String port);
+
+    /**
+     * Get port value
+     *
+     * @return string that represents port
+     */
+
+    String getPortValue();
+
+    /**
      * Save particular ulr into a phone's disk memory
      *
-     * @param url - address of server which you want to connect with
+     * @param url address of server api which you want to connect with
      */
 
     void saveUrl(@NonNull String url);
 
     /**
-     * Get url value from the disk. Returns default value if url was not been saved
+     * Get api url value from the disk. Returns default value if url was not been saved
      *
      * @return address of server which you are now connected with
      */
@@ -27,9 +76,25 @@ public interface AuthRepository {
     String getUrl();
 
     /**
+     * Save particular streaming url into a phone's disk memory
+     *
+     * @param ws_url address of streaming api you want to connect with
+     */
+
+    void saveStreamingUrl(String ws_url);
+
+    /**
+     *  Get streaming url from disk memory
+     *
+     * @return string that represents url streaming address
+     */
+
+    String getStreamingUrl();
+
+    /**
      * Save particular token into a phone's disk memory
      *
-     * @param token - user token
+     * @param token user token
      */
 
     void saveToken(@NonNull String token);
@@ -52,9 +117,9 @@ public interface AuthRepository {
     /**
      * Get preference summary by given key, return default value as well if summary was not saved
      *
-     * @param key - preference key
-     * @param defaultValue - default value for summary
-     * @return - summary for preference
+     * @param key preference key
+     * @param defaultValue default value for summary
+     * @return summary for preference
      */
 
     String getSummaryByKey(@NonNull String key, @NonNull String defaultValue);
@@ -62,8 +127,8 @@ public interface AuthRepository {
     /**
      * Try to authorize as a user
      *
-     * @param authorizationInfo - object that contains login and password
-     * @return - single with auth answer from the server
+     * @param authorizationInfo object that contains login and password
+     * @return single with auth answer from the server
      */
 
     Single<AuthorizationAnswer> authUser(@NonNull Authorization authorizationInfo);
@@ -74,4 +139,22 @@ public interface AuthRepository {
      */
 
     void destroyApiService();
+
+
+    /**
+     * Get an information about message service service state
+     * 
+     * @return boolean that represents state of service
+     */
+
+    boolean isMessageServiceStarted();
+
+    /**
+     * Save message service state
+     *
+     * @param state state of message service
+     */
+
+    void saveMessageServiceState(boolean state);
+
 }

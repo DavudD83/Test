@@ -24,12 +24,12 @@ public class SettingsPresenter {
         mViewContract.showSummary();
     }
 
-    public void saveNewUrl(@NonNull String saved_url){
+    public void saveNewUrl(@NonNull String saved_url) {
         mAuthRepository.saveUrl(saved_url);
     }
 
     public boolean validateUrl(@NonNull String url) {
-        if(!UrlUtils.isValidURL(url)) {
+        if (!UrlUtils.isValidURL(url)) {
             mViewContract.showUrlError();
 
             return false;
@@ -38,7 +38,7 @@ public class SettingsPresenter {
         }
     }
 
-    public void recreateApi(){
+    public void recreateApi() {
         mAuthRepository.destroyApiService();
     }
 

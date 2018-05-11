@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import space.dotcat.assistant.R;
 import space.dotcat.assistant.content.Room;
+
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
@@ -25,7 +26,7 @@ public class RoomHolder extends RecyclerView.ViewHolder {
     public RoomHolder(@NonNull View itemView) {
         super(itemView);
 
-        ButterKnife.bind(this,itemView);
+        ButterKnife.bind(this, itemView);
     }
 
     public void bind(@NonNull Room room) {

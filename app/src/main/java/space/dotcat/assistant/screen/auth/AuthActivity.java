@@ -44,7 +44,7 @@ public class AuthActivity extends BaseActivity implements AuthViewContract {
     @BindView(R.id.editText_password)
     TextInputEditText mPassword;
 
-    public static void start(@NonNull Activity activity){
+    public static void start(@NonNull Activity activity) {
         Intent intent = new Intent(activity, AuthActivity.class);
 
         activity.startActivity(intent);

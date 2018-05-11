@@ -2,8 +2,13 @@ package space.dotcat.assistant.di.dataLayerComponent;
 
 import android.content.SharedPreferences;
 
+import com.google.gson.Gson;
+
+import java.util.concurrent.TimeUnit;
+
 import dagger.Module;
 import dagger.Provides;
+import okhttp3.OkHttpClient;
 import space.dotcat.assistant.api.ApiFactory;
 import space.dotcat.assistant.api.BasicErrorParser;
 import space.dotcat.assistant.api.ErrorParser;
@@ -16,6 +21,21 @@ public class NetworkModule {
     @DataScope
     ErrorParser provideErrorParser() {
         return new BasicErrorParser();
+    }
+
+    @Provides
+    @DataScope
+    OkHttpClient provideCleanOkHttpClient() {
+        return new OkHttpClient.Builder()
+                .retryOnConnectionFailure(true)
+                .readTimeout(3, TimeUnit.SECONDS)
+                .build();
+    }
+
+    @Provides
+    @DataScope
+    Gson provideGson() {
+        return new Gson();
     }
 
     @Provides

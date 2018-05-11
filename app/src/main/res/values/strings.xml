@@ -35,6 +35,18 @@
 
     <string name="invalid_url">Invalid url. Make sure that you are writing correct url.</string>
 
-    <string name="preferences_name">space.dotcat.assistant.shared_preferences</string>
+    <string name="preferences_name">space.dotcat.assistant_preferences</string>
+
     <string name="rooms_activity_title">Rooms</string>
+
+    <string name="setup_activity_label">Setup</string>
+
+    <string name="host_label">Host</string>
+
+    <string name="port_label">Port</string>
+
+    <string name="complete_setup">Complete setup</string>
+    <string name="secure_connection_check_box_label">Secure connection</string>
+    <string name="host_empty_error">You have to write host here</string>
+    <string name="port_empty_error">You have to write port here</string>
 </resources>

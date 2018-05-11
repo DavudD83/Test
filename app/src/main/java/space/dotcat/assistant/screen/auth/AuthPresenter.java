@@ -35,24 +35,25 @@ public class AuthPresenter implements BasePresenter {
     public void init() {
         String token = mAuthRepository.getToken();
 
-        if(!TextUtils.isEmpty(token))
+        if (!TextUtils.isEmpty(token)) {
             mAuthViewContract.showRoomList();
+        }
 
         String url = mAuthRepository.getUrl();
 
-        if(!TextUtils.isEmpty(url)) {
+        if (!TextUtils.isEmpty(url)) {
             mAuthViewContract.showExistingUrl(url);
         }
     }
 
     public void tryLogin(@NonNull String url, @NonNull String login, @NonNull String password) {
-        if(TextUtils.isEmpty(url)){
+        if (TextUtils.isEmpty(url)) {
             mAuthViewContract.showUrlEmptyError();
-        } else if(!UrlUtils.isValidURL(url)) {
+        } else if (!UrlUtils.isValidURL(url)) {
             mAuthViewContract.showUrlNotCorrectError();
-        } else if(TextUtils.isEmpty(login)){
+        } else if (TextUtils.isEmpty(login)) {
             mAuthViewContract.showLoginError();
-        } else if(TextUtils.isEmpty(password)){
+        } else if (TextUtils.isEmpty(password)) {
             mAuthViewContract.showPasswordError();
         } else {
             mAuthRepository.saveUrl(url);
@@ -68,7 +69,7 @@ public class AuthPresenter implements BasePresenter {
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
-                            answer ->  mAuthViewContract.showRoomList(),
+                            answer -> mAuthViewContract.showRoomList(),
 
                             mAuthViewContract::showAuthError);
 

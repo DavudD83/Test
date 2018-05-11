@@ -3,6 +3,7 @@ package space.dotcat.assistant.repository.thingsRepository;
 
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;

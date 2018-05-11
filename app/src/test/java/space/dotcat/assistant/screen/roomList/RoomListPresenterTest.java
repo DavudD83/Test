@@ -47,7 +47,7 @@ public class RoomListPresenterTest {
     public void init() {
         MockitoAnnotations.initMocks(this);
 
-        mRoomsPresenter = new RoomsPresenter(mRoomsViewContract, mRoomRepository);
+        mRoomsPresenter = new RoomsPresenter(mRoomsViewContract, mRoomRepository, messageServiceHandler);
     }
 
     @After

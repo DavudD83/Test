@@ -11,7 +11,7 @@ import space.dotcat.assistant.content.Room;
 
 import java.util.List;
 
-public class RoomsAdapter extends RecyclerView.Adapter<RoomHolder>{
+public class RoomsAdapter extends RecyclerView.Adapter<RoomHolder> {
 
     private final List<Room> mRooms;
 

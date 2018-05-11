@@ -22,6 +22,36 @@ public class AuthRepositoryImpl implements AuthRepository {
     }
 
     @Override
+    public void saveSetupState(boolean isCompleted) {
+        mLocalAuthSource.saveSetupState(isCompleted);
+    }
+
+    @Override
+    public boolean isSetupCompleted() {
+        return mLocalAuthSource.isStateCompleted();
+    }
+
+    @Override
+    public void saveHostValue(String host) {
+        mLocalAuthSource.saveHostValue(host);
+    }
+
+    @Override
+    public String getHostValue() {
+        return mLocalAuthSource.getHost();
+    }
+
+    @Override
+    public void savePortValue(String port) {
+        mLocalAuthSource.savePortValue(port);
+    }
+
+    @Override
+    public String getPortValue() {
+        return mLocalAuthSource.getPort();
+    }
+
+    @Override
     public void saveUrl(@NonNull String url) {
         mLocalAuthSource.saveUrl(url);
     }
@@ -29,6 +59,16 @@ public class AuthRepositoryImpl implements AuthRepository {
     @Override
     public String getUrl() {
         return mLocalAuthSource.getUrl();
+    }
+
+    @Override
+    public void saveStreamingUrl(String ws_url) {
+        mLocalAuthSource.saveStreamingUrl(ws_url);
+    }
+
+    @Override
+    public String getStreamingUrl() {
+        return mLocalAuthSource.getStreamingUrl();
     }
 
     @Override
@@ -68,5 +108,15 @@ public class AuthRepositoryImpl implements AuthRepository {
     @Override
     public void destroyApiService() {
         mRemoteAuthSource.destroyApiService();
+    }
+
+    @Override
+    public boolean isMessageServiceStarted() {
+        return mLocalAuthSource.isMessageServiceStarted();
+    }
+
+    @Override
+    public void saveMessageServiceState(boolean state) {
+        mLocalAuthSource.saveMessageServiceState(state);
     }
 }

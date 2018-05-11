@@ -56,7 +56,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     abstract protected void initDependencyGraph();
 
     protected void setupToolbar() {
-        if(mToolbar == null) {
+        if (mToolbar == null) {
             Log.d(TAG, "Toolbar is not found");
         }
 
@@ -64,7 +64,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void setNewToolbar(Toolbar toolbar) {
-        if(toolbar == null) {
+        if (toolbar == null) {
             Log.d(TAG, "Can not set nullable toolbar");
             return;
         }
@@ -72,7 +72,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         mToolbar = toolbar;
     }
 
-    protected Snackbar getSnackBar(){
+    protected Snackbar getSnackBar() {
         return mSnackbar;
     }
 
@@ -80,13 +80,13 @@ public abstract class BaseActivity extends AppCompatActivity {
         return mToolbar;
     }
 
-    public void showBaseError(Throwable throwable, View view){
+    public void showBaseError(Throwable throwable, View view) {
         mSnackbar = Snackbar.make(view, "Error",
                 Snackbar.LENGTH_INDEFINITE);
 
         mSnackbar.setAction("Try Again", onClick -> mSnackbar.dismiss());
 
-        if(throwable instanceof  ApiError) {
+        if (throwable instanceof ApiError) {
             ApiError error = (ApiError) throwable;
 
             if (error.getErrorId() == INVALID_ACCESS_TOKEN) {
@@ -103,8 +103,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         mSnackbar.show();
     }
 
-    public void setErrorHandler(String actionName, View.OnClickListener action){
-        if(mSnackbar == null)
+    public void setErrorHandler(String actionName, View.OnClickListener action) {
+        if (mSnackbar == null)
             return;
 
         mSnackbar.setAction(actionName, action);
