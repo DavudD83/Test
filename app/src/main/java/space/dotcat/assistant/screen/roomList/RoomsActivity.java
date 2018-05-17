@@ -25,7 +25,7 @@ import space.dotcat.assistant.screen.general.BaseActivityWithSettingsMenu;
 import space.dotcat.assistant.screen.general.LoadingView;
 import space.dotcat.assistant.screen.roomDetail.RoomDetailsActivity;
 
-public class RoomsActivity extends BaseActivityWithSettingsMenu implements RoomsViewContract, RoomsAdapter.OnItemClick,
+public class RoomsActivity extends BaseActivityWithSettingsMenu implements RoomsViewContract, RoomsAdapter.OnItemClickListener<Room>,
         SwipeRefreshLayout.OnRefreshListener {
 
     @Inject
@@ -94,9 +94,12 @@ public class RoomsActivity extends BaseActivityWithSettingsMenu implements Rooms
         Toolbar toolbar = getToolbar();
         toolbar.setTitle(getString(R.string.rooms_activity_title));
 
-        setNewToolbar(toolbar);
-
         super.setupToolbar();
+    }
+
+    @Override
+    protected View getViewForErrorSnackbar() {
+        return mSwipeRefreshLayout;
     }
 
     @Override
@@ -116,7 +119,7 @@ public class RoomsActivity extends BaseActivityWithSettingsMenu implements Rooms
 
         mErrorMessage.setVisibility(View.INVISIBLE);
 
-        mAdapter.changeDataSet(rooms);
+        mAdapter.updateData(rooms);
     }
 
     @Override
@@ -126,7 +129,7 @@ public class RoomsActivity extends BaseActivityWithSettingsMenu implements Rooms
 
     @Override
     public void showError(Throwable throwable) {
-        super.showBaseError(throwable, mSwipeRefreshLayout);
+        super.showBaseError(throwable);
     }
 
     @Override

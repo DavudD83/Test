@@ -27,4 +27,12 @@ public interface RoomRepository {
      */
 
     Flowable<List<Room>> refreshRooms();
+
+    /**
+     * Update existing room in db
+     *
+     * @param room object that you want to update
+     * @return completable wrapper for doing work on particular scheduler
+     */
+    Completable updateRoom(Room room);
 }

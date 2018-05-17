@@ -17,6 +17,9 @@ public class WebSocketMessage {
     @SerializedName("body")
     protected JsonElement mBody;
 
+    @SerializedName("message_id")
+    protected Integer mMessageId;
+
     public WebSocketMessage() {
     }
 
@@ -57,4 +60,13 @@ public class WebSocketMessage {
     public void setBody(JsonElement body) {
         mBody = body;
     }
+
+    public Integer getMessageId() {
+        return mMessageId;
+    }
+
+    public void setMessageId(Integer messageId) {
+        mMessageId = messageId;
+    }
+
 }

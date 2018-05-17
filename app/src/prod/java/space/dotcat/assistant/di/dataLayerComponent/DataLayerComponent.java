@@ -12,10 +12,12 @@ import space.dotcat.assistant.di.activitiesComponents.roomsActivity.RoomsModule;
 import space.dotcat.assistant.di.activitiesComponents.setupActivity.SetupActivityComponent;
 import space.dotcat.assistant.di.activitiesComponents.setupActivity.SetupActivityModule;
 import space.dotcat.assistant.di.serviceComponent.MessageReceiverComponent;
+import space.dotcat.assistant.di.serviceComponent.MessageReceiverPresenterModule;
 import space.dotcat.assistant.di.serviceComponent.WebSocketServiceModule;
 import space.dotcat.assistant.di.serviceComponent.WiFiListenerModule;
+import space.dotcat.assistant.service.MessageReceiverPresenter;
 
-@Subcomponent(modules = {NetworkModule.class, RepoModule.class})
+@Subcomponent(modules = {NetworkModule.class, RepoModule.class, ServiceHandlerModule.class})
 @DataScope
 public interface DataLayerComponent {
 
@@ -30,5 +32,6 @@ public interface DataLayerComponent {
     PreferenceFragmentComponent plusPreferencesComponent(PreferenceModule preferenceModule);
 
     MessageReceiverComponent plusMessageReceiverComponent(WiFiListenerModule wiFiListenerModule,
-                                                          WebSocketServiceModule webSocketServiceModule);
+                                                          WebSocketServiceModule webSocketServiceModule,
+                                                          MessageReceiverPresenterModule messageReceiverPresenterModule);
 }

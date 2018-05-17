@@ -30,4 +30,12 @@ public interface LocalRoomsSource {
      */
 
     void deleteRoomsSync();
+
+    /**
+     * Update particular room
+     *
+     * @param room object that you want to update
+     */
+
+    void updateRoom(Room room);
 }

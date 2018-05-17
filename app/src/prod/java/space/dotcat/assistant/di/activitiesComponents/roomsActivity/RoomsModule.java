@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import dagger.Module;
 import dagger.Provides;
+import space.dotcat.assistant.content.Room;
 import space.dotcat.assistant.di.activitiesComponents.ActivityScope;
 import space.dotcat.assistant.repository.authRepository.AuthRepository;
 import space.dotcat.assistant.repository.roomsRepository.RoomRepository;
@@ -23,23 +24,17 @@ public class RoomsModule {
 
     private RoomsViewContract mRoomsViewContract;
 
-    private RoomsAdapter.OnItemClick mOnItemClick;
+    private RoomsAdapter.OnItemClickListener<Room> mOnItemClick;
 
     private FragmentManager mFragmentManager;
 
-    public RoomsModule(RoomsViewContract roomsViewContract, RoomsAdapter.OnItemClick onItemClick,
+    public RoomsModule(RoomsViewContract roomsViewContract, RoomsAdapter.OnItemClickListener<Room> onItemClick,
                        FragmentManager fragmentManager) {
         mRoomsViewContract = roomsViewContract;
 
         mOnItemClick = onItemClick;
 
         mFragmentManager = fragmentManager;
-    }
-
-    @Provides
-    @ActivityScope
-    ServiceHandler provideMessageServiceHandler(Context context, AuthRepository authRepository) {
-        return new MessageServiceHandler(context, authRepository);
     }
 
     @Provides

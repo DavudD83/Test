@@ -1,6 +1,7 @@
 package space.dotcat.assistant.screen.roomDetail;
 
 import android.support.annotation.NonNull;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,35 +9,22 @@ import android.view.ViewGroup;
 
 import space.dotcat.assistant.R;
 import space.dotcat.assistant.content.Thing;
+import space.dotcat.assistant.screen.general.BaseRecyclerViewAdapter;
 
 import java.util.List;
 
-public class RoomDetailsAdapter extends RecyclerView.Adapter<RoomDetailsHolder> {
+public class RoomDetailsAdapter extends BaseRecyclerViewAdapter<Thing, RoomDetailsHolder> {
 
-    private final List<Thing> mThings;
+    private final View.OnClickListener mOnClickListener = view -> {
+        int position = (int) view.getTag();
 
-    private final OnItemChange mOnItemChange;
+        Thing thing = mItems.get(position);
 
-    private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            Thing thing = (Thing) view.getTag();
-
-            mOnItemChange.onItemChange(thing);
-        }
+        mOnItemClickListener.onItemClick(thing);
     };
 
-    public RoomDetailsAdapter(@NonNull List<Thing> things, @NonNull OnItemChange onItemChange) {
-        mThings = things;
-
-        mOnItemChange = onItemChange;
-    }
-
-    public void changeDataSet(@NonNull List<Thing> things) {
-        mThings.clear();
-        mThings.addAll(things);
-
-        notifyDataSetChanged();
+    public RoomDetailsAdapter(List<Thing> items, OnItemClickListener<Thing> OnItemClickListener) {
+        super(items, OnItemClickListener);
     }
 
     @NonNull
@@ -46,24 +34,23 @@ public class RoomDetailsAdapter extends RecyclerView.Adapter<RoomDetailsHolder> 
 
         View item = layoutInflater.inflate(R.layout.item_room_detail, parent, false);
 
-        return new RoomDetailsHolder(item);
+        final RoomDetailsHolder roomDetailsHolder = new RoomDetailsHolder(item);
+
+        roomDetailsHolder.mSwitch.setOnClickListener(mOnClickListener);
+
+        return roomDetailsHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RoomDetailsHolder holder, int position) {
-        Thing thing = mThings.get(position);
+    public void updateData(List<Thing> newItems) {
+        mItems.clear();
+        mItems.addAll(newItems);
 
-        holder.bind(thing);
-        holder.mSwitch.setTag(thing);
-        holder.mSwitch.setOnClickListener(mOnClickListener);
+        notifyDataSetChanged();
     }
 
     @Override
-    public int getItemCount() {
-        return mThings.size();
-    }
-
-    public interface OnItemChange {
-        void onItemChange(@NonNull Thing thing);
+    protected DiffUtil.Callback createDiffUtilCallback(List<Thing> oldList, List<Thing> newList) {
+        return new ThingsDiffUtilCallback(oldList, newList);
     }
 }

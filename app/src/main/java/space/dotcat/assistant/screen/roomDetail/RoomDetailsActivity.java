@@ -25,7 +25,7 @@ import space.dotcat.assistant.screen.general.BaseActivityWithSettingsMenu;
 import space.dotcat.assistant.screen.general.LoadingView;
 
 public class RoomDetailsActivity extends BaseActivityWithSettingsMenu implements RoomDetailsViewContract,
-        RoomDetailsAdapter.OnItemChange, SwipeRefreshLayout.OnRefreshListener {
+        RoomDetailsAdapter.OnItemClickListener<Thing>, SwipeRefreshLayout.OnRefreshListener {
 
     @Inject
     LoadingView mLoadingView;
@@ -101,6 +101,11 @@ public class RoomDetailsActivity extends BaseActivityWithSettingsMenu implements
     }
 
     @Override
+    protected View getViewForErrorSnackbar() {
+        return mSwipeRefreshLayout;
+    }
+
+    @Override
     public void showThings(@NonNull List<Thing> things) {
 //        if (getSnackBar() != null) {
 //            if (getSnackBar().isShown()) {
@@ -112,12 +117,12 @@ public class RoomDetailsActivity extends BaseActivityWithSettingsMenu implements
 
         mErrorMessage.setVisibility(View.INVISIBLE);
 
-        mRoomDetailsAdapter.changeDataSet(things);
+        mRoomDetailsAdapter.updateData(things);
     }
 
     @Override
     public void showError(Throwable throwable) {
-        super.showBaseError(throwable, mSwipeRefreshLayout);
+        super.showBaseError(throwable);
     }
 
     @Override
@@ -139,11 +144,6 @@ public class RoomDetailsActivity extends BaseActivityWithSettingsMenu implements
     }
 
     @Override
-    public void onItemChange(@NonNull Thing thing) {
-        mRoomDetailsPresenter.onItemChange(thing);
-    }
-
-    @Override
     public void onRefresh() {
         mRoomDetailsPresenter.reloadThings(mRoom.getId());
 
@@ -160,5 +160,10 @@ public class RoomDetailsActivity extends BaseActivityWithSettingsMenu implements
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onItemClick(Thing item) {
+        mRoomDetailsPresenter.onItemChange(item);
     }
 }

@@ -2,6 +2,7 @@ package space.dotcat.assistant.di.appComponent;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import javax.inject.Singleton;
 
@@ -17,6 +18,6 @@ public class SharedPreferencesModule {
     @Provides
     @Singleton
     SharedPreferences provideSharedPreferences(Context context) {
-        return context.getSharedPreferences(PREF_NAME_TEST, Context.MODE_PRIVATE);
+        return PreferenceManager.getDefaultSharedPreferences(context);
     }
 }

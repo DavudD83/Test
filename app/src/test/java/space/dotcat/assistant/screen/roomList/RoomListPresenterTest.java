@@ -16,6 +16,7 @@ import java.util.List;
 import io.reactivex.Flowable;
 import space.dotcat.assistant.content.Room;
 import space.dotcat.assistant.repository.roomsRepository.RoomRepository;
+import space.dotcat.assistant.service.ServiceHandler;
 import space.dotcat.assistant.utils.RxJavaTestRule;
 
 import static junit.framework.Assert.assertNotNull;
@@ -32,6 +33,9 @@ public class RoomListPresenterTest {
 
     @Mock
     private RoomRepository mRoomRepository;
+
+    @Mock
+    private ServiceHandler messageServiceHandler;
 
     private RoomsPresenter mRoomsPresenter;
 

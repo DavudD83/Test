@@ -49,6 +49,13 @@ public class RoomRepositoryImpl implements RoomRepository {
         return loadRoomsRemotelyAndSaveToDb();
     }
 
+    @Override
+    public Completable updateRoom(Room room) {
+        return Completable.fromAction(()-> {
+            mLocalRoomsSource.updateRoom(room);
+        });
+    }
+
     /**
      * Trying to load rooms from remote server. If successfully loaded then it add sync all rooms from response
      * to database.

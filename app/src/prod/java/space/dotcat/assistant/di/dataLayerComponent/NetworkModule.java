@@ -13,6 +13,7 @@ import space.dotcat.assistant.api.ApiFactory;
 import space.dotcat.assistant.api.BasicErrorParser;
 import space.dotcat.assistant.api.ErrorParser;
 import space.dotcat.assistant.api.OkHttpFactory;
+import space.dotcat.assistant.webSocket.WebSocketService;
 
 @Module
 public class NetworkModule {
@@ -27,8 +28,9 @@ public class NetworkModule {
     @DataScope
     OkHttpClient provideCleanOkHttpClient() {
         return new OkHttpClient.Builder()
+                .pingInterval(1, TimeUnit.MINUTES)
                 .retryOnConnectionFailure(true)
-                .readTimeout(3, TimeUnit.SECONDS)
+                .connectTimeout(30, TimeUnit.SECONDS)
                 .build();
     }
 

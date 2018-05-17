@@ -13,23 +13,20 @@ import space.dotcat.assistant.content.Url;
 import space.dotcat.assistant.repository.RepositoryProvider;
 import space.dotcat.assistant.repository.authRepository.AuthRepository;
 import space.dotcat.assistant.screen.general.BasePresenter;
+import space.dotcat.assistant.screen.general.BaseRxPresenter;
 import space.dotcat.assistant.utils.TextUtils;
 import space.dotcat.assistant.utils.UrlUtils;
 
-public class AuthPresenter implements BasePresenter {
+public class AuthPresenter extends BaseRxPresenter {
 
     private final AuthViewContract mAuthViewContract;
 
     private AuthRepository mAuthRepository;
 
-    private CompositeDisposable mCompositeDisposable;
-
     public AuthPresenter(@NonNull AuthViewContract authView, @NonNull AuthRepository authRepository) {
         mAuthViewContract = authView;
 
         mAuthRepository = authRepository;
-
-        mCompositeDisposable = new CompositeDisposable();
     }
 
     public void init() {
@@ -75,10 +72,5 @@ public class AuthPresenter implements BasePresenter {
 
             mCompositeDisposable.add(authorizationAnswer);
         }
-    }
-
-    @Override
-    public void unsubscribe() {
-        mCompositeDisposable.clear();
     }
 }

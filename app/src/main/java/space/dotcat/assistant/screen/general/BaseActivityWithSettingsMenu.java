@@ -23,8 +23,13 @@ public abstract class BaseActivityWithSettingsMenu extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.item_settings) {
+        if (id == R.id.mi_settings) {
             SettingsActivity.start(this);
+            return true;
+        }
+
+        if (id == R.id.mi_log_out) {
+            logOut();
             return true;
         }
 

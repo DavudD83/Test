@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import dagger.Module;
 import dagger.Provides;
+import space.dotcat.assistant.content.Thing;
 import space.dotcat.assistant.di.activitiesComponents.ActivityScope;
 import space.dotcat.assistant.repository.thingsRepository.ThingRepository;
 import space.dotcat.assistant.screen.general.LoadingDialog;
@@ -20,12 +21,12 @@ public class RoomDetailsModule {
 
     private RoomDetailsViewContract mRoomDetailsViewContract;
 
-    private RoomDetailsAdapter.OnItemChange mOnItemChange;
+    private RoomDetailsAdapter.OnItemClickListener<Thing> mOnItemChange;
 
     private FragmentManager mFragmentManager;
 
     public RoomDetailsModule(RoomDetailsViewContract roomDetailsViewContract,
-                             RoomDetailsAdapter.OnItemChange onItemChange,
+                             RoomDetailsAdapter.OnItemClickListener<Thing> onItemChange,
                              FragmentManager fragmentManager) {
         mRoomDetailsViewContract = roomDetailsViewContract;
 

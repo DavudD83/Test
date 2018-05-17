@@ -19,7 +19,7 @@ public interface ApiService {
     /**
      *  Try to auth and get valid token for further operations.
      *
-     * @param authorizationInfo - info that you need to try authorize. E.g login, password
+     * @param authorizationInfo info that you need to try authorize(e.g login, password)
      * @return single with authorization answer, which contains answer from server
      */
 
@@ -38,7 +38,7 @@ public interface ApiService {
     /**
      * Load things inside the placement.
      *
-     * @param id - placement id, where you want to load things
+     * @param id placement id, where you want to load things
      * @return single with thing response object, which is simple wrapper of thing list
      */
 
@@ -49,9 +49,9 @@ public interface ApiService {
      *  Do action with thing. Basically, you can do toggle with every thing, but pay attention that
      *  you have diversity of operations for things.
      *
-     * @param id - thing id, that you want to execute
-     * @param message - info where you specify parameters how to execute thing
-     * @return - single with response action message, which contains info how execution was done
+     * @param id thing id, that you want to execute
+     * @param message info where you specify parameters how to execute thing
+     * @return single with response action message, which contains info how execution was done
      */
 
     @POST("things/{id}/execute")

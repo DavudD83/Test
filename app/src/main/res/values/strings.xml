@@ -49,4 +49,5 @@
     <string name="secure_connection_check_box_label">Secure connection</string>
     <string name="host_empty_error">You have to write host here</string>
     <string name="port_empty_error">You have to write port here</string>
+    <string name="log_out">log out</string>
 </resources>

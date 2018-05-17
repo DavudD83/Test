@@ -13,22 +13,19 @@ import space.dotcat.assistant.content.Message;
 import space.dotcat.assistant.content.Thing;
 import space.dotcat.assistant.repository.thingsRepository.ThingRepository;
 import space.dotcat.assistant.screen.general.BasePresenter;
+import space.dotcat.assistant.screen.general.BaseRxPresenter;
 
-public class RoomDetailsPresenter implements BasePresenter {
+public class RoomDetailsPresenter extends BaseRxPresenter {
 
     private final RoomDetailsViewContract mRoomDetailsViewContract;
 
     private final ThingRepository mThingRepository;
-
-    private CompositeDisposable mCompositeDisposable;
 
     public RoomDetailsPresenter(@NonNull RoomDetailsViewContract roomDetailsViewContract,
                                 @NonNull ThingRepository thingRepository) {
         mRoomDetailsViewContract = roomDetailsViewContract;
 
         mThingRepository = thingRepository;
-
-        mCompositeDisposable = new CompositeDisposable();
     }
 
     public void init(@NonNull String id) {
@@ -62,8 +59,7 @@ public class RoomDetailsPresenter implements BasePresenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        listOfThings -> {
-                        },
+                        listOfThings -> { },
 
                         mRoomDetailsViewContract::showError);
 
@@ -108,10 +104,5 @@ public class RoomDetailsPresenter implements BasePresenter {
                 .subscribe();
 
         mCompositeDisposable.add(disposable);
-    }
-
-    @Override
-    public void unsubscribe() {
-        mCompositeDisposable.clear();
     }
 }

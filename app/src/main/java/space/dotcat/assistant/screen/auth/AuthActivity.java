@@ -81,12 +81,14 @@ public class AuthActivity extends BaseActivity implements AuthViewContract {
     @Override
     protected void setupToolbar() {
         Toolbar toolbar = getToolbar();
-
         toolbar.setTitle(getString(R.string.app_name));
 
-        setNewToolbar(toolbar);
-
         super.setupToolbar();
+    }
+
+    @Override
+    protected View getViewForErrorSnackbar() {
+        return mContainer;
     }
 
     @Override
@@ -132,7 +134,7 @@ public class AuthActivity extends BaseActivity implements AuthViewContract {
 
     @Override
     public void showAuthError(Throwable t) {
-        super.showBaseError(t, mContainer);
+        super.showBaseError(t);
     }
 
     @OnClick(R.id.bt_logIn)

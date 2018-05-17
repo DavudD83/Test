@@ -33,7 +33,7 @@ public class RxJavaAdapterWithErrorHandling extends CallAdapter.Factory {
         return new RxAdapterWrapper<>(retrofit, mFactory.get(returnType, annotations, retrofit));
     }
 
-    public class RxAdapterWrapper<R> implements CallAdapter<R, Single<?>>{
+    public class RxAdapterWrapper<R> implements CallAdapter<R, Single<?>> {
 
         private final Retrofit mRetrofit;
 
@@ -57,23 +57,23 @@ public class RxJavaAdapterWithErrorHandling extends CallAdapter.Factory {
 
                 ApiError apiError = new ApiError();
 
-                   if(throwable instanceof HttpException){
+                if (throwable instanceof HttpException) {
                     HttpException exception = (HttpException) t;
 
                     apiError = mErrorParser.parseError(mRetrofit, exception.response());
 
-                    if(apiError == null) {
+                    if (apiError == null) {
                         apiError = new ApiError();
 
                         apiError.setUserMessage("Server is not available");
                     }
                 }
 
-                if(throwable instanceof UnknownHostException){
+                if (throwable instanceof UnknownHostException) {
                     apiError.setUserMessage("Unknown url");
                 }
 
-                if(throwable instanceof SocketTimeoutException){
+                if (throwable instanceof SocketTimeoutException) {
                     apiError.setUserMessage("Connection failed");
                 }
 

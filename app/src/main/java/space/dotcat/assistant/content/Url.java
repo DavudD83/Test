@@ -3,6 +3,7 @@ package space.dotcat.assistant.content;
 
 import android.support.annotation.NonNull;
 
+@Deprecated
 public class Url {
 
     private String mUrl;

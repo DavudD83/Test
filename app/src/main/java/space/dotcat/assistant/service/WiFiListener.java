@@ -1,4 +1,4 @@
-package space.dotcat.assistant.utils;
+package space.dotcat.assistant.service;
 
 import android.arch.lifecycle.LiveData;
 import android.content.BroadcastReceiver;
@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.util.Log;
 
 public class WiFiListener extends LiveData<Boolean> {
 
@@ -24,11 +25,15 @@ public class WiFiListener extends LiveData<Boolean> {
     @Override
     protected void onActive() {
         subscribeReceiver();
+
+        Log.d(this.getClass().getName(), "Subscribed receiver, state - Active");
     }
 
     @Override
     protected void onInactive() {
         unsubscribeReceiver();
+
+        Log.d(this.getClass().getName(), "Unsubscribed receiver, state - Inactive");
     }
 
     private void subscribeReceiver() {
@@ -51,6 +56,10 @@ public class WiFiListener extends LiveData<Boolean> {
     }
 
     private void unsubscribeReceiver() {
-        if (mStateReceiver != null) mContext.unregisterReceiver(mStateReceiver);
+        if (mStateReceiver != null)  {
+            mContext.unregisterReceiver(mStateReceiver);
+
+            mStateReceiver = null;
+        }
     }
 }

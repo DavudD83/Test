@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 public class AuthBody {
 
     @SerializedName("access_token")
-    public String mAccessToken;
+    private String mAccessToken;
 
     public AuthBody(String accessToken) {
         mAccessToken = accessToken;

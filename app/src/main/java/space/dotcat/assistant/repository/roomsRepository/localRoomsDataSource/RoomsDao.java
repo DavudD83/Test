@@ -37,4 +37,14 @@ public interface RoomsDao {
 
     @Query("Delete from Rooms")
     void deleteRoomsSync();
+
+
+    /**
+     * Update room in db, if it does not exist,it will be inserted into db
+     *
+     * @param room - object that you want to update
+     */
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void updateRoom(Room room);
 }

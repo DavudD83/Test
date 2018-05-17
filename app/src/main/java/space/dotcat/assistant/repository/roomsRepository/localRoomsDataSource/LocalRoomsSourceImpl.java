@@ -32,4 +32,9 @@ public class LocalRoomsSourceImpl implements LocalRoomsSource {
     public void deleteRoomsSync() {
         mRoomsDao.deleteRoomsSync();
     }
+
+    @Override
+    public void updateRoom(Room room) {
+        mRoomsDao.updateRoom(room);
+    }
 }

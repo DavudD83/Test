@@ -10,9 +10,10 @@ import io.reactivex.schedulers.Schedulers;
 import space.dotcat.assistant.content.Room;
 import space.dotcat.assistant.repository.roomsRepository.RoomRepository;
 import space.dotcat.assistant.screen.general.BasePresenter;
+import space.dotcat.assistant.screen.general.BaseRxPresenter;
 import space.dotcat.assistant.service.ServiceHandler;
 
-public class RoomsPresenter implements BasePresenter {
+public class RoomsPresenter extends BaseRxPresenter {
 
     private final RoomsViewContract mRoomsViewContract;
 
@@ -20,16 +21,13 @@ public class RoomsPresenter implements BasePresenter {
 
     private final ServiceHandler mMessageServiceHandler;
 
-    private CompositeDisposable mCompositeDisposable;
-
-    public RoomsPresenter(@NonNull RoomsViewContract roomsViewContract, @NonNull RoomRepository roomRepository, ServiceHandler messageServiceHandler) {
+    public RoomsPresenter(@NonNull RoomsViewContract roomsViewContract, @NonNull RoomRepository roomRepository,
+                          ServiceHandler messageServiceHandler) {
         mRoomsViewContract = roomsViewContract;
 
         mRoomRepository = roomRepository;
 
         mMessageServiceHandler = messageServiceHandler;
-
-        mCompositeDisposable = new CompositeDisposable();
     }
 
     public void init() {
@@ -79,10 +77,5 @@ public class RoomsPresenter implements BasePresenter {
 
     public void onItemClick(@NonNull Room room) {
         mRoomsViewContract.showRoomDetail(room);
-    }
-
-    @Override
-    public void unsubscribe() {
-        mCompositeDisposable.clear();
     }
 }

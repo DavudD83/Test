@@ -1,25 +1,20 @@
 package space.dotcat.assistant.webSocket;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
-import space.dotcat.assistant.content.AuthBody;
-import space.dotcat.assistant.content.Room;
-import space.dotcat.assistant.content.SubscribeBody;
-import space.dotcat.assistant.content.Thing;
-import space.dotcat.assistant.content.WebSocketAuthMessage;
 import space.dotcat.assistant.content.WebSocketMessage;
-import space.dotcat.assistant.content.WebSocketSubscribeMessage;
 import space.dotcat.assistant.repository.authRepository.AuthRepository;
 
 public class WebSocketServiceImpl implements WebSocketService {
 
     private static final int NORMAL_CLOSE_CODE = 1000;
+
+    private static final String CLOSE_REASON = "normal close reason";
 
     private AuthRepository mAuthRepository;
 
@@ -50,6 +45,10 @@ public class WebSocketServiceImpl implements WebSocketService {
 
     @Override
     public void connect() {
+        if (mWebSocket != null) {
+            return;
+        }
+
         String streaming_url = mAuthRepository.getStreamingUrl();
 
         Request request = new Request.Builder()
@@ -57,48 +56,24 @@ public class WebSocketServiceImpl implements WebSocketService {
                 .build();
 
         mWebSocket = mOkHttpClient.newWebSocket(request, new SimpleWebSocketListener());
-
-        sendAuthMessage();
-
-        subscribeOnTopics();
-    }
-
-    private void subscribeOnTopics() {
-        SubscribeBody subscribeBody = new SubscribeBody("things/#", false);
-
-        JsonElement jsonBody = mGsonConverter.toJsonTree(subscribeBody);
-
-        WebSocketMessage webSocketMessage = new WebSocketSubscribeMessage(jsonBody);
-
-        String json = mGsonConverter.toJson(webSocketMessage);
-
-        sendMessage(json);
     }
 
     @Override
     public void disconnect() {
-        mWebSocket.close(NORMAL_CLOSE_CODE, "reason");
+        if(mWebSocket != null) {
+            mWebSocket.close(NORMAL_CLOSE_CODE, CLOSE_REASON);
+        }
 
         mWebSocket = null;
     }
 
     @Override
     public void sendMessage(String message) {
+        if(mWebSocket == null) {
+            return;
+        }
+
         mWebSocket.send(message);
-    }
-
-    private void sendAuthMessage() {
-        String token = mAuthRepository.getToken();
-
-        AuthBody authBody = new AuthBody(token);
-
-        JsonElement jsonBody = mGsonConverter.toJsonTree(authBody);
-
-        WebSocketAuthMessage webSocketAuthInfo = new WebSocketAuthMessage(jsonBody);
-
-        String json = mGsonConverter.toJson(webSocketAuthInfo, WebSocketAuthMessage.class);
-
-        mWebSocket.send(json);
     }
 
     private class SimpleWebSocketListener extends WebSocketListener {
@@ -117,14 +92,22 @@ public class WebSocketServiceImpl implements WebSocketService {
 
         @Override
         public void onClosed(WebSocket webSocket, int code, String reason) {
-            super.onClosed(webSocket, code, reason);
+            mWebSocket = null;
         }
 
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-            mServerListener.onError(t);
-
             disconnect();
+
+//            try {
+//                Thread.sleep(5000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//
+//            connect();
+
+            mServerListener.onError(t);
         }
     }
 

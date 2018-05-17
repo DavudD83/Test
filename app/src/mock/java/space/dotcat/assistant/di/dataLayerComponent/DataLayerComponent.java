@@ -9,6 +9,11 @@ import space.dotcat.assistant.di.activitiesComponents.roomDetails.RoomDetailsAct
 import space.dotcat.assistant.di.activitiesComponents.roomDetails.RoomDetailsModule;
 import space.dotcat.assistant.di.activitiesComponents.roomsActivity.RoomListActivityComponent;
 import space.dotcat.assistant.di.activitiesComponents.roomsActivity.RoomsModule;
+import space.dotcat.assistant.di.activitiesComponents.setupActivity.SetupActivityComponent;
+import space.dotcat.assistant.di.activitiesComponents.setupActivity.SetupActivityModule;
+import space.dotcat.assistant.di.serviceComponent.MessageReceiverComponent;
+import space.dotcat.assistant.di.serviceComponent.WebSocketServiceModule;
+import space.dotcat.assistant.di.serviceComponent.WiFiListenerModule;
 import space.dotcat.assistant.repository.authRepository.localAuthDataSource.LocalAuthSource;
 import space.dotcat.assistant.repository.authRepository.remoteDataSource.RemoteAuthSource;
 import space.dotcat.assistant.repository.roomsRepository.localRoomsDataSource.LocalRoomsSource;
@@ -39,4 +44,8 @@ public interface DataLayerComponent {
     LocalThingsSource getFakeLocalThingsSource();
 
     RemoteThingsSource getFakeRemoteThingsSource();
+
+    SetupActivityComponent plusSetupComponent(SetupActivityModule setupActivityModule);
+
+    MessageReceiverComponent plusMessageReceiverComponent(WiFiListenerModule wiFiListenerModule, WebSocketServiceModule webSocketServiceModule);
 }

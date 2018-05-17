@@ -1,5 +1,10 @@
 package space.dotcat.assistant.screen.general;
 
+import android.arch.lifecycle.LiveData;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.annotation.CallSuper;
 import android.support.annotation.LayoutRes;
 import android.support.design.widget.Snackbar;
@@ -16,30 +21,31 @@ import space.dotcat.assistant.R;
 import space.dotcat.assistant.content.ApiError;
 import space.dotcat.assistant.repository.authRepository.AuthRepository;
 import space.dotcat.assistant.screen.auth.AuthActivity;
+import space.dotcat.assistant.service.MessageReceiverService;
+import space.dotcat.assistant.service.ServiceHandler;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
     @Inject
     public AuthRepository mAuthRepository;
 
+    @Inject
+    public ServiceHandler mMessageReceiverServiceHandler;
+
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
     private Snackbar mSnackbar;
 
+    private BroadcastReceiver mErrorMessageReceiver;
+
+    private final IntentFilter INTENT_FILTER = new IntentFilter(MessageReceiverService.INTENT_ERROR_ACTION);
+
     private static final String TAG = "BaseActivity";
 
     private static final int INVALID_ACCESS_TOKEN = 2101;
 
-    private final View.OnClickListener mInvalidAccessTokenHandler = onClick -> {
-        mAuthRepository.deleteToken();
-
-        mAuthRepository.destroyApiService();
-
-        AuthActivity.start(this);
-
-        finish();
-    };
+    private final View.OnClickListener mInvalidAccessTokenHandler = view -> logOut();
 
     @CallSuper
     @Override
@@ -51,6 +57,22 @@ public abstract class BaseActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         setupToolbar();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        mErrorMessageReceiver = new ErrorMessageReceiver();
+
+        registerReceiver(mErrorMessageReceiver, INTENT_FILTER);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        unregisterReceiver(mErrorMessageReceiver);
     }
 
     abstract protected void initDependencyGraph();
@@ -80,8 +102,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         return mToolbar;
     }
 
-    public void showBaseError(Throwable throwable, View view) {
-        mSnackbar = Snackbar.make(view, "Error",
+    public void showBaseError(Throwable throwable) {
+        mSnackbar = Snackbar.make(getViewForErrorSnackbar(), "Error",
                 Snackbar.LENGTH_INDEFINITE);
 
         mSnackbar.setAction("Try Again", onClick -> mSnackbar.dismiss());
@@ -108,5 +130,29 @@ public abstract class BaseActivity extends AppCompatActivity {
             return;
 
         mSnackbar.setAction(actionName, action);
+    }
+
+    protected void logOut() {
+        mAuthRepository.deleteToken();
+
+        mAuthRepository.destroyApiService();
+
+        mMessageReceiverServiceHandler.stopService();
+
+        AuthActivity.start(this);
+
+        finish();
+    }
+
+    protected abstract View getViewForErrorSnackbar();
+
+    private class ErrorMessageReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ApiError apiError = (ApiError) intent.getSerializableExtra(MessageReceiverService.ERROR_KEY);
+
+            showBaseError(apiError);
+        }
     }
 }

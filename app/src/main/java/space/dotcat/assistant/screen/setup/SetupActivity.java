@@ -2,6 +2,7 @@ package space.dotcat.assistant.screen.setup;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -35,6 +36,9 @@ public class SetupActivity extends BaseActivity implements SetupViewContract {
     @BindView(R.id.bt_completeSetup)
     Button mCompleteSetup;
 
+    @BindView(R.id.cl_container)
+    ConstraintLayout mContainer;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,10 +58,14 @@ public class SetupActivity extends BaseActivity implements SetupViewContract {
     @Override
     protected void setupToolbar() {
         Toolbar toolbar = getToolbar();
-
         toolbar.setTitle(getResources().getString(R.string.setup_activity_label));
 
         super.setupToolbar();
+    }
+
+    @Override
+    protected View getViewForErrorSnackbar() {
+        return mContainer;
     }
 
     @OnClick(R.id.bt_completeSetup)

@@ -8,22 +8,21 @@ import space.dotcat.assistant.repository.authRepository.AuthRepository;
 /**
  * Class for managing {@link MessageReceiverService} lifecycle
  */
+
 public class MessageServiceHandler implements ServiceHandler {
 
     private Context mContext;
 
-    private AuthRepository mAuthRepository;
-
-    public MessageServiceHandler(Context context, AuthRepository authRepository) {
+    public MessageServiceHandler(Context context) {
         mContext = context;
-
-        mAuthRepository = authRepository;
     }
 
     @Override
     public void startService() {
-        if(mAuthRepository.isMessageServiceStarted()) {
-            return;
+        if(MessageReceiverService.sIsWorking != null) {
+            if(MessageReceiverService.sIsWorking) {
+                return;
+            }
         }
 
         Intent startIntent = MessageReceiverService.getIntent(mContext);
