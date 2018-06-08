@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cv_player_card"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+
+    android:layout_margin="16dp">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/cl_player_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_player_friendly_name"
+
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+
+            tools:text="Player"
+            style="@style/ThingTextViewCardLabel"
+            />
+
+        <ImageView
+            android:id="@+id/iv_player_icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+
+            android:layout_margin="16dp"
+            android:background="@drawable/ic_player_icon"
+
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <Button
+            android:id="@+id/bt_play"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+
+            android:layout_margin="16dp"
+            android:background="@drawable/ic_play"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.413"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_player_friendly_name"
+            app:layout_constraintVertical_bias="0.781" />
+
+        <Button
+            android:id="@+id/bt_stop"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+
+            android:background="@drawable/ic_stop"
+
+            app:layout_constraintHorizontal_bias="0.147"
+            app:layout_constraintLeft_toRightOf="@+id/bt_play"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/bt_play" />
+
+    </android.support.constraint.ConstraintLayout>
+
+
+
+</android.support.v7.widget.CardView>
+
+

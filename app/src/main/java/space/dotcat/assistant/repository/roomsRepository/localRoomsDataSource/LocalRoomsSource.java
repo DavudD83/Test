@@ -4,6 +4,8 @@ package space.dotcat.assistant.repository.roomsRepository.localRoomsDataSource;
 import java.util.List;
 
 import io.reactivex.Flowable;
+import io.reactivex.Maybe;
+import io.reactivex.Single;
 import space.dotcat.assistant.content.Room;
 import space.dotcat.assistant.repository.roomsRepository.RoomRepository;
 
@@ -38,4 +40,14 @@ public interface LocalRoomsSource {
      */
 
     void updateRoom(Room room);
+
+    /**
+     * Get room from database by room's id. Take care that if there is no room with this id in the database then onComplete
+     * will be triggered on this stream. This happens due to Room's RxJava support.
+     *
+     * @param id room's id
+     * @return Maybe wrapper of Room.
+     */
+
+    Maybe<Room> getRoomById(String id);
 }

@@ -1,5 +1,7 @@
 package space.dotcat.assistant.repository.thingsRepository;
 
+import com.google.gson.JsonObject;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,7 +47,7 @@ public class ThingsRepositoryTest {
 
     public final String THING_ID = "Li1";
 
-    private Message MESSAGE = new Message("toggle", new CommandArgs());
+    private Message MESSAGE = new Message("toggle", new JsonObject());
 
     private final List<Thing> EMPTY_THINGS = new ArrayList<>();
 
@@ -100,8 +102,7 @@ public class ThingsRepositoryTest {
 
         verify(mRemoteThingsSource).loadThingsByPlacementId(ROOM_ID);
 
-        verify(mLocalThingsSource).deleteAllThings();
-        verify(mLocalThingsSource).addThingsSync(THINGS);
+        verify(mLocalThingsSource).deleteAndUpdateThings(THINGS);
     }
 
     @Test

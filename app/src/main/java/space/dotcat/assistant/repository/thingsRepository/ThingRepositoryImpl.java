@@ -27,6 +27,7 @@ public class ThingRepositoryImpl implements ThingRepository {
     @Inject
     public ThingRepositoryImpl(LocalThingsSource localThingsSource, RemoteThingsSource remoteThingsSource) {
         mLocalThingsSource = localThingsSource;
+
         mRemoteThingsSource = remoteThingsSource;
     }
 
@@ -68,9 +69,7 @@ public class ThingRepositoryImpl implements ThingRepository {
                         return;
                     }
 
-                    mLocalThingsSource.deleteAllThings();
-
-                    mLocalThingsSource.addThingsSync(things);
+                    mLocalThingsSource.deleteAndUpdateThings(things);
                 });
     }
 }

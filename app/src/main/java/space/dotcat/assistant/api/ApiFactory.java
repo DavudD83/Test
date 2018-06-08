@@ -4,11 +4,10 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
 
-import javax.inject.Inject;
-
 import okhttp3.OkHttpClient;
+import retrofit2.CallAdapter;
+import retrofit2.Converter;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 import space.dotcat.assistant.BuildConfig;
 
 public final class ApiFactory {
@@ -19,15 +18,19 @@ public final class ApiFactory {
 
     private OkHttpFactory mOkHttpFactory;
 
-    private ErrorParser mErrorParser;
+    private Converter.Factory mConverterFactory;
 
-    public ApiFactory(SharedPreferences sharedPreferences, OkHttpFactory okHttpFactory,
-                      ErrorParser errorParser) {
+    private CallAdapter.Factory mCallAdapterFactory;
+
+    public ApiFactory(SharedPreferences sharedPreferences, OkHttpFactory okHttpFactory, Converter.Factory converterFactory,
+                      CallAdapter.Factory callAdapterFactory) {
         mSharedPreferences = sharedPreferences;
 
         mOkHttpFactory = okHttpFactory;
 
-        mErrorParser = errorParser;
+        mConverterFactory = converterFactory;
+
+        mCallAdapterFactory = callAdapterFactory;
     }
 
     @NonNull
@@ -57,8 +60,8 @@ public final class ApiFactory {
         return new Retrofit.Builder()
                 .baseUrl(base_url)
                 .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(new RxJavaAdapterWithErrorHandling(mErrorParser))
+                .addConverterFactory(mConverterFactory)
+                .addCallAdapterFactory(mCallAdapterFactory)
                 .build();
     }
 

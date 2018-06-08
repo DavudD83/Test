@@ -7,6 +7,8 @@ import javax.inject.Inject;
 
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
+import io.reactivex.Maybe;
+import io.reactivex.Single;
 import space.dotcat.assistant.content.Room;
 import space.dotcat.assistant.content.RoomResponse;
 import space.dotcat.assistant.repository.roomsRepository.localRoomsDataSource.LocalRoomsSource;
@@ -54,6 +56,11 @@ public class RoomRepositoryImpl implements RoomRepository {
         return Completable.fromAction(()-> {
             mLocalRoomsSource.updateRoom(room);
         });
+    }
+
+    @Override
+    public Maybe<Room> getRoomById(String id) {
+        return mLocalRoomsSource.getRoomById(id);
     }
 
     /**

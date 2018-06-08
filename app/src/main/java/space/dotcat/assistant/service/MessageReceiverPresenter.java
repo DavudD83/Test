@@ -5,25 +5,21 @@ import android.arch.lifecycle.LiveData;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import space.dotcat.assistant.content.AcknowledgeBody;
-import space.dotcat.assistant.content.AuthBody;
+import space.dotcat.assistant.content.webSocketModel.AcknowledgeBody;
+import space.dotcat.assistant.content.webSocketModel.AuthBody;
 import space.dotcat.assistant.content.Room;
-import space.dotcat.assistant.content.SubscribeBody;
+import space.dotcat.assistant.content.webSocketModel.SubscribeBody;
 import space.dotcat.assistant.content.Thing;
-import space.dotcat.assistant.content.WebSocketAcknowledgeMessage;
-import space.dotcat.assistant.content.WebSocketAuthMessage;
-import space.dotcat.assistant.content.WebSocketMessage;
-import space.dotcat.assistant.content.WebSocketSubscribeMessage;
+import space.dotcat.assistant.content.webSocketModel.WebSocketAcknowledgeMessage;
+import space.dotcat.assistant.content.webSocketModel.WebSocketAuthMessage;
+import space.dotcat.assistant.content.webSocketModel.WebSocketMessage;
+import space.dotcat.assistant.content.webSocketModel.WebSocketSubscribeMessage;
 import space.dotcat.assistant.repository.authRepository.AuthRepository;
 import space.dotcat.assistant.repository.roomsRepository.RoomRepository;
 import space.dotcat.assistant.repository.thingsRepository.ThingRepository;
-import space.dotcat.assistant.screen.general.BasePresenter;
 import space.dotcat.assistant.screen.general.BaseRxPresenter;
 import space.dotcat.assistant.webSocket.WebSocketService;
 
@@ -131,5 +127,12 @@ public class MessageReceiverPresenter extends BaseRxPresenter {
         String message = mGson.toJson(acknowledgeMessage);
 
         mWebSocketService.sendMessage(message);
+    }
+
+    public Room findPlacementById(String id) {
+        return mRoomRepository.getRoomById(id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .blockingGet();
     }
 }

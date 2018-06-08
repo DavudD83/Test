@@ -7,7 +7,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
-import space.dotcat.assistant.content.WebSocketMessage;
+import space.dotcat.assistant.content.webSocketModel.WebSocketMessage;
 import space.dotcat.assistant.repository.authRepository.AuthRepository;
 
 public class WebSocketServiceImpl implements WebSocketService {
@@ -49,13 +49,15 @@ public class WebSocketServiceImpl implements WebSocketService {
             return;
         }
 
-        String streaming_url = mAuthRepository.getStreamingUrl();
+        synchronized(WebSocketServiceImpl.class) {
+            String streaming_url = mAuthRepository.getStreamingUrl();
 
-        Request request = new Request.Builder()
-                .url(streaming_url)
-                .build();
+            Request request = new Request.Builder()
+                    .url(streaming_url)
+                    .build();
 
-        mWebSocket = mOkHttpClient.newWebSocket(request, new SimpleWebSocketListener());
+            mWebSocket = mOkHttpClient.newWebSocket(request, new SimpleWebSocketListener());
+        }
     }
 
     @Override
@@ -98,14 +100,6 @@ public class WebSocketServiceImpl implements WebSocketService {
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
             disconnect();
-
-//            try {
-//                Thread.sleep(5000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//
-//            connect();
 
             mServerListener.onError(t);
         }

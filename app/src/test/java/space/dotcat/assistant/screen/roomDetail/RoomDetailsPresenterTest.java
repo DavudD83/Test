@@ -145,7 +145,7 @@ public class RoomDetailsPresenterTest {
         Mockito.verify(mRoomDetailsViewContract).hideLoading();
         Mockito.verify(mRoomDetailsViewContract, Mockito.times(0)).showError(API_ERROR);
 
-        thing.setActive(true);
+//        thing.setActive(true);
 
         Mockito.verify(mThingRepository).updateThing(thing);
     }
@@ -196,7 +196,7 @@ public class RoomDetailsPresenterTest {
 
         when(mThingRepository.doAction(eq(ROOM_ID), any(Message.class))).thenReturn(SINGLE_SUCCESSFULL_RESPONSE);
 
-        thing.setActive(false);
+//        thing.setActive(false);
 
         mRoomDetailsPresenter.onItemChange(thing);
 
@@ -214,9 +214,9 @@ public class RoomDetailsPresenterTest {
             t.setId(ROOM_ID);
         }
 
-        list.get(0).setActive(false);
-        list.get(1).setActive(false);
-        list.get(2).setActive(true);
+//        list.get(0).setActive(false);
+//        list.get(1).setActive(false);
+//        list.get(2).setActive(true);
 
         return list;
     }

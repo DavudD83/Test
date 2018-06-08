@@ -1,6 +1,7 @@
 package space.dotcat.assistant.content;
 
 
+import com.google.gson.JsonElement;
 import com.google.gson.annotations.SerializedName;
 
 public class Message {
@@ -9,10 +10,14 @@ public class Message {
     private String mCommand;
 
     @SerializedName("command_args")
-    private CommandArgs mCommandArgs;
+    private JsonElement mCommandArgs;
 
-    public Message(String command, CommandArgs commandArgs) {
+    public Message() {
+    }
+
+    public Message(String command, JsonElement commandArgs) {
         mCommand = command;
+
         mCommandArgs = commandArgs;
     }
 
@@ -24,11 +29,11 @@ public class Message {
         mCommand = command;
     }
 
-    public CommandArgs getCommandArgs() {
+    public JsonElement getCommandArgs() {
         return mCommandArgs;
     }
 
-    public void setCommandArgs(CommandArgs commandArgs) {
+    public void setCommandArgs(JsonElement commandArgs) {
         mCommandArgs = commandArgs;
     }
 }

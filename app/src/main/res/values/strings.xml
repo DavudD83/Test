@@ -50,4 +50,14 @@
     <string name="host_empty_error">You have to write host here</string>
     <string name="port_empty_error">You have to write port here</string>
     <string name="log_out">log out</string>
+    <string name="light_label">Light</string>
+    <string name="light_state">State</string>
+    <string name="light_brightness_label">Brightness</string>
+    <string name="light_color_temperature_label">Color Temperature</string>
+    <string name="pick_color_label">Pick color</string>
+    <string name="color_label">Color</string>
+    <string name="set_color_button_label">Set color</string>
+    <string name="player_track_info">Now playing</string>
+    <string name="unknown_string_text">Unknown type of thing. Contact developer if you want to add this type to the system.</string>
+    <string name="unknown_string_label">Unknown thing</string>
 </resources>

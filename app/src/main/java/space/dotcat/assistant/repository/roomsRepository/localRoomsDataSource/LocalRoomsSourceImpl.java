@@ -8,6 +8,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.Flowable;
+import io.reactivex.Maybe;
+import io.reactivex.Single;
 import space.dotcat.assistant.content.Room;
 
 public class LocalRoomsSourceImpl implements LocalRoomsSource {
@@ -36,5 +38,10 @@ public class LocalRoomsSourceImpl implements LocalRoomsSource {
     @Override
     public void updateRoom(Room room) {
         mRoomsDao.updateRoom(room);
+    }
+
+    @Override
+    public Maybe<Room> getRoomById(String id) {
+        return mRoomsDao.getRoomById(id);
     }
 }

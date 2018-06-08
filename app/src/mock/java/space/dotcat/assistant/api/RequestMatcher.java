@@ -16,6 +16,7 @@ import space.dotcat.assistant.AppDelegate;
 import space.dotcat.assistant.BuildConfig;
 import space.dotcat.assistant.repository.authRepository.AuthRepository;
 import space.dotcat.assistant.repository.RepositoryProvider;
+import space.dotcat.assistant.utils.AddressUtils;
 
 public class RequestMatcher {
 
@@ -31,18 +32,20 @@ public class RequestMatcher {
 
     public final static String ERROR_EMPTY_THINGS = "ERROR_EMPTY_THINGS";
 
+    private final static String rest_address = AddressUtils.API_PATH + AddressUtils.API_VERSION;
+
     @Inject
     public RequestMatcher(Context context, SharedPreferences sharedPreferences) {
         mContext = context;
 
         mSharedPreferences = sharedPreferences;
 
-        mRequests.put("/auth", "auth.json");
-        mRequests.put("/placements/", "placements.json");
-        mRequests.put("/things/", "things.json");
-        mRequests.put("/things/?placement=R1", "things_R1.json");
-        mRequests.put("/things/D1/execute", "message.json");
-        mRequests.put("/things/Li1/execute", "message.json");
+        mRequests.put(rest_address +"auth", "auth.json");
+        mRequests.put(rest_address + "placements/", "placements.json");
+        mRequests.put(rest_address + "things/", "things.json");
+        mRequests.put(rest_address + "things/?placement=R1", "things_R1.json");
+        mRequests.put(rest_address + "things/D1/execute", "message.json");
+        mRequests.put(rest_address + "things/Li1/execute", "message.json");
     }
 
     public boolean shouldIntercept(String url) {

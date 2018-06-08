@@ -12,6 +12,7 @@ import space.dotcat.assistant.di.activitiesComponents.roomsActivity.RoomsModule;
 import space.dotcat.assistant.di.activitiesComponents.setupActivity.SetupActivityComponent;
 import space.dotcat.assistant.di.activitiesComponents.setupActivity.SetupActivityModule;
 import space.dotcat.assistant.di.serviceComponent.MessageReceiverComponent;
+import space.dotcat.assistant.di.serviceComponent.MessageReceiverPresenterModule;
 import space.dotcat.assistant.di.serviceComponent.WebSocketServiceModule;
 import space.dotcat.assistant.di.serviceComponent.WiFiListenerModule;
 import space.dotcat.assistant.repository.authRepository.localAuthDataSource.LocalAuthSource;
@@ -21,7 +22,7 @@ import space.dotcat.assistant.repository.roomsRepository.remoteRoomsDataSource.R
 import space.dotcat.assistant.repository.thingsRepository.localThingsDataSource.LocalThingsSource;
 import space.dotcat.assistant.repository.thingsRepository.remoteThingsDataSource.RemoteThingsSource;
 
-@Subcomponent(modules = {NetworkModule.class, RepoModule.class})
+@Subcomponent(modules = {NetworkModule.class, RepoModule.class, ServiceHandlerModule.class})
 @DataScope
 public interface DataLayerComponent {
 
@@ -32,6 +33,12 @@ public interface DataLayerComponent {
     RoomDetailsActivityComponent plusRoomDetailsComponent(RoomDetailsModule roomDetailsModule);
 
     PreferenceFragmentComponent plusPreferencesComponent(PreferenceModule preferenceModule);
+
+    SetupActivityComponent plusSetupComponent(SetupActivityModule setupActivityModule);
+
+    MessageReceiverComponent plusMessageReceiverComponent(WiFiListenerModule wiFiListenerModule,
+                                                          WebSocketServiceModule webSocketServiceModule,
+                                                          MessageReceiverPresenterModule receiverPresenterModule);
 
     LocalAuthSource getFakeLocalAuthSource();
 
@@ -44,8 +51,4 @@ public interface DataLayerComponent {
     LocalThingsSource getFakeLocalThingsSource();
 
     RemoteThingsSource getFakeRemoteThingsSource();
-
-    SetupActivityComponent plusSetupComponent(SetupActivityModule setupActivityModule);
-
-    MessageReceiverComponent plusMessageReceiverComponent(WiFiListenerModule wiFiListenerModule, WebSocketServiceModule webSocketServiceModule);
 }

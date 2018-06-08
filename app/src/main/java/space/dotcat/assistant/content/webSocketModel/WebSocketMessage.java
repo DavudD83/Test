@@ -1,4 +1,4 @@
-package space.dotcat.assistant.content;
+package space.dotcat.assistant.content.webSocketModel;
 
 import com.google.gson.JsonElement;
 import com.google.gson.annotations.SerializedName;

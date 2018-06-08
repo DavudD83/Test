@@ -1,6 +1,9 @@
 package space.dotcat.assistant.screen.setup;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TextInputEditText;
@@ -38,6 +41,12 @@ public class SetupActivity extends BaseActivity implements SetupViewContract {
 
     @BindView(R.id.cl_container)
     ConstraintLayout mContainer;
+
+    public static void start(@NonNull Activity activity) {
+        Intent launchIntent = new Intent(activity, SetupActivity.class);
+
+        activity.startActivity(launchIntent);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

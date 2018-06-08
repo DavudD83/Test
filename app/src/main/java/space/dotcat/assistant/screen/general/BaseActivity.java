@@ -21,6 +21,7 @@ import space.dotcat.assistant.R;
 import space.dotcat.assistant.content.ApiError;
 import space.dotcat.assistant.repository.authRepository.AuthRepository;
 import space.dotcat.assistant.screen.auth.AuthActivity;
+import space.dotcat.assistant.screen.setup.SetupActivity;
 import space.dotcat.assistant.service.MessageReceiverService;
 import space.dotcat.assistant.service.ServiceHandler;
 
@@ -41,11 +42,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     private final IntentFilter INTENT_FILTER = new IntentFilter(MessageReceiverService.INTENT_ERROR_ACTION);
 
+    private final View.OnClickListener mInvalidAccessTokenHandler = view -> logOut();
+
     private static final String TAG = "BaseActivity";
 
     private static final int INVALID_ACCESS_TOKEN = 2101;
-
-    private final View.OnClickListener mInvalidAccessTokenHandler = view -> logOut();
 
     @CallSuper
     @Override
@@ -137,9 +138,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         mAuthRepository.destroyApiService();
 
+        mAuthRepository.saveSetupState(false);
+
         mMessageReceiverServiceHandler.stopService();
 
-        AuthActivity.start(this);
+        SetupActivity.start(this);
 
         finish();
     }

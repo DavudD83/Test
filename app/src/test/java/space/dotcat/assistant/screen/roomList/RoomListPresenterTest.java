@@ -20,6 +20,8 @@ import space.dotcat.assistant.service.ServiceHandler;
 import space.dotcat.assistant.utils.RxJavaTestRule;
 
 import static junit.framework.Assert.assertNotNull;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(JUnit4.class)
@@ -67,25 +69,27 @@ public class RoomListPresenterTest {
     }
 
     @Test
-    public void testShowRoomsSuccess() {
+    public void testInitSuccessful() {
         when(mRoomRepository.getRooms()).thenReturn(FLOWABLE_ROOMS);
 
         mRoomsPresenter.init();
 
-        Mockito.verify(mRoomsViewContract).showLoading();
-        Mockito.verify(mRoomsViewContract).hideLoading();
-        Mockito.verify(mRoomsViewContract).showRooms(ROOMS);
+        verify(mRoomsViewContract).showLoading();
+        verify(mRoomsViewContract).hideLoading();
+        verify(mRoomsViewContract).showRooms(ROOMS);
+
+        verify(messageServiceHandler).startService();
     }
 
     @Test
-    public void testShowRoomsError() {
+    public void testInitError() {
         when(mRoomRepository.getRooms()).thenReturn(API_ERROR);
 
         mRoomsPresenter.init();
 
-        Mockito.verify(mRoomsViewContract).showLoading();
-        Mockito.verify(mRoomsViewContract).hideLoading();
-        Mockito.verify(mRoomsViewContract).showError(ERROR);
+        verify(mRoomsViewContract).showLoading();
+        verify(mRoomsViewContract).hideLoading();
+        verify(mRoomsViewContract).showError(ERROR);
     }
 
     @Test
@@ -94,14 +98,14 @@ public class RoomListPresenterTest {
 
         mRoomsPresenter.init();
 
-        Mockito.verify(mRoomsViewContract).showEmptyRoomsMessage();
+        verify(mRoomsViewContract).showEmptyRoomsMessage();
     }
 
     @Test
     public void testRoomClick() {
         mRoomsPresenter.onItemClick(ROOMS.get(0));
 
-        Mockito.verify(mRoomsViewContract).showRoomDetail(ROOMS.get(0));
+        verify(mRoomsViewContract).showRoomDetail(ROOMS.get(0));
     }
 
     @Test
@@ -110,7 +114,7 @@ public class RoomListPresenterTest {
 
         mRoomsPresenter.reloadRooms();
 
-        Mockito.verifyNoMoreInteractions(mRoomsViewContract);
+        verifyNoMoreInteractions(mRoomsViewContract);
     }
 
     @Test
@@ -119,7 +123,7 @@ public class RoomListPresenterTest {
 
         mRoomsPresenter.reloadRooms();
 
-        Mockito.verify(mRoomsViewContract).showError(ERROR);
+        verify(mRoomsViewContract).showError(ERROR);
     }
 
     @Test
@@ -128,11 +132,13 @@ public class RoomListPresenterTest {
 
         mRoomsPresenter.init();
 
-        Mockito.verify(mRoomsViewContract).showRooms(ROOMS);
+        verify(mRoomsViewContract).showRooms(ROOMS);
+
+        verify(messageServiceHandler).startService();
 
         mRoomsPresenter.onItemClick(ROOMS.get(1));
 
-        Mockito.verify(mRoomsViewContract).showRoomDetail(ROOMS.get(1));
+        verify(mRoomsViewContract).showRoomDetail(ROOMS.get(1));
     }
 
     private List<Room> createRoomList() {

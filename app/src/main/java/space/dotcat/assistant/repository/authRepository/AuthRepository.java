@@ -147,6 +147,7 @@ public interface AuthRepository {
      * @return boolean that represents state of service
      */
 
+    @Deprecated
     boolean isMessageServiceStarted();
 
     /**
@@ -155,6 +156,7 @@ public interface AuthRepository {
      * @param state state of message service
      */
 
+    @Deprecated
     void saveMessageServiceState(boolean state);
 
 }

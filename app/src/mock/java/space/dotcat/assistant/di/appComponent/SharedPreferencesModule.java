@@ -18,6 +18,6 @@ public class SharedPreferencesModule {
     @Provides
     @Singleton
     SharedPreferences provideSharedPreferences(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context);
+        return context.getSharedPreferences(PREF_NAME_TEST, Context.MODE_PRIVATE);
     }
 }

@@ -21,7 +21,7 @@ public class LocalThingsSourceImpl implements LocalThingsSource {
 
     @Override
     public Flowable<List<Thing>> getThingsById(@NonNull String id) {
-        return mThingsDao.getThingsById(id);
+        return mThingsDao.getAllThingsById(id);
     }
 
     @Override
@@ -47,5 +47,10 @@ public class LocalThingsSourceImpl implements LocalThingsSource {
     @Override
     public void insertThing(Thing thing) {
         mThingsDao.insertThing(thing);
+    }
+
+    @Override
+    public void deleteAndUpdateThings(List<Thing> things) {
+        mThingsDao.deleteAndInsertThings(things);
     }
 }

@@ -51,7 +51,6 @@ public class RxJavaAdapterWithErrorHandling extends CallAdapter.Factory {
 
         @Override
         public Single<R> adapt(Call<R> call) {
-
             return ((Single<R>) mWrapped.adapt(call)).onErrorResumeNext(throwable -> {
                 Throwable t = (Throwable) throwable;
 
@@ -70,7 +69,7 @@ public class RxJavaAdapterWithErrorHandling extends CallAdapter.Factory {
                 }
 
                 if (throwable instanceof UnknownHostException) {
-                    apiError.setUserMessage("Unknown url");
+                    apiError.setUserMessage("Failed to resolve host");
                 }
 
                 if (throwable instanceof SocketTimeoutException) {

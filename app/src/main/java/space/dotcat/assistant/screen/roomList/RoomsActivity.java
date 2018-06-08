@@ -67,15 +67,15 @@ public class RoomsActivity extends BaseActivityWithSettingsMenu implements Rooms
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
 
         mPresenter.init();
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
 
         mPresenter.unsubscribe();
     }

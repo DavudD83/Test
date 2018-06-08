@@ -57,15 +57,15 @@ public class AuthActivity extends BaseActivity implements AuthViewContract {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
 
         mAuthPresenter.init();
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
 
         mAuthPresenter.unsubscribe();
     }

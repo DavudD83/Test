@@ -21,4 +21,6 @@ public interface LocalThingsSource {
     void deleteThingById(String id);
 
     void insertThing(Thing thing);
+
+    void deleteAndUpdateThings(List<Thing> things);
 }

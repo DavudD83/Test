@@ -23,14 +23,19 @@ public class RoomDetailsModule {
 
     private RoomDetailsAdapter.OnItemClickListener<Thing> mOnItemChange;
 
+    private RoomDetailsAdapter.OnThingClick mOnThingClick;
+
     private FragmentManager mFragmentManager;
 
     public RoomDetailsModule(RoomDetailsViewContract roomDetailsViewContract,
                              RoomDetailsAdapter.OnItemClickListener<Thing> onItemChange,
+                             RoomDetailsAdapter.OnThingClick onThingClick,
                              FragmentManager fragmentManager) {
         mRoomDetailsViewContract = roomDetailsViewContract;
 
         mOnItemChange = onItemChange;
+
+        mOnThingClick = onThingClick;
 
         mFragmentManager = fragmentManager;
     }
@@ -44,7 +49,7 @@ public class RoomDetailsModule {
     @Provides
     @ActivityScope
     RoomDetailsAdapter provideRoomDetailsAdapter() {
-        return new RoomDetailsAdapter(new ArrayList<>(), mOnItemChange);
+        return new RoomDetailsAdapter(new ArrayList<>(), mOnItemChange, mOnThingClick);
     }
 
     @Provides

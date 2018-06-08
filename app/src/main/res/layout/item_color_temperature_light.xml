@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <TextView
+            android:id="@+id/tv_light_label"
+
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+
+            tools:text="light_friendly_name"
+
+            style="@style/ThingTextViewCardLabel"
+            />
+
+        <TextView
+            android:id="@+id/tv_light_state_label"
+
+            android:text="@string/light_state"
+
+
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_light_label"
+
+            style="@style/ThingTextViewCardLabel"
+            />
+
+        <ImageView
+            android:id="@+id/iv_light_icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+
+
+            android:layout_margin="16dp"
+            android:src="@drawable/light_icon"
+
+
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <Switch
+            android:id="@+id/sw_light_state_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_margin="16dp"
+
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_light_icon"
+            />
+
+        <TextView
+            android:id="@+id/tv_brightness_label"
+
+            android:text="@string/light_brightness_label"
+
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_light_state_label"
+
+            style="@style/ThingTextViewCardLabel"
+            />
+
+        <SeekBar
+            android:id="@+id/sb_light_brightness"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+
+            android:layout_margin="16dp"
+            android:max="100"
+
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sw_light_state_switch"
+            app:layout_constraintBottom_toBottomOf="@id/tv_brightness_label"
+            />
+
+        <TextView
+            android:id="@+id/tv_color_temperature_label"
+
+            android:text="@string/light_color_temperature_label"
+
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_brightness_label"
+            app:layout_constraintBottom_toBottomOf="parent"
+
+            style="@style/ThingTextViewCardLabel"
+            />
+
+        <SeekBar
+            android:id="@+id/sb_light_color_temperature"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+
+            android:layout_margin="16dp"
+            android:max="10000"
+
+            app:layout_constraintTop_toBottomOf="@+id/sb_light_brightness"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+
+    </android.support.constraint.ConstraintLayout>
+
+
+</android.support.v7.widget.CardView>

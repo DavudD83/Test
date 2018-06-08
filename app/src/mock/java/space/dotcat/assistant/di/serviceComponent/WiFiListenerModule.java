@@ -5,7 +5,7 @@ import android.content.Context;
 
 import dagger.Module;
 import dagger.Provides;
-import space.dotcat.assistant.utils.WiFiListener;
+import space.dotcat.assistant.service.WiFiListener;
 
 @Module
 public class WiFiListenerModule {

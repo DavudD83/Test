@@ -8,12 +8,19 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.reactivestreams.Publisher;
 
+import java.nio.channels.FileLock;
 import java.util.Arrays;
 import java.util.List;
 
 import io.reactivex.Flowable;
+import io.reactivex.functions.Function;
 import space.dotcat.assistant.AppDelegate;
+import space.dotcat.assistant.content.DimmableLamp;
+import space.dotcat.assistant.content.DoorLock;
+import space.dotcat.assistant.content.Lamp;
+import space.dotcat.assistant.content.Player;
 import space.dotcat.assistant.content.Thing;
 import space.dotcat.assistant.repository.thingsRepository.localThingsDataSource.LocalThingsSource;
 
@@ -57,9 +64,9 @@ public class LocalThingsSourceTest {
                 .flatMap(Flowable::fromIterable)
                 .test()
                 .assertValueCount(3)
-                .assertValueAt(0, thing -> !thing.getIsActive())
-                .assertValueAt(1, thing -> !thing.getIsActive())
-                .assertValueAt(2, Thing::getIsActive) ;
+                .assertValueAt(0, thing -> thing.getId().equals("id"))
+                .assertValueAt(1, thing -> thing.getId().equals("id1") && !thing.getIsAvailable())
+                .assertValueAt(2, thing -> thing.getPlacement().equals(ROOM_ID));
     }
 
     @Test
@@ -69,7 +76,7 @@ public class LocalThingsSourceTest {
         mLocalThingsSource.getThingsById(ROOM_ID)
                 .flatMap(Flowable::fromIterable)
                 .test()
-                .assertValueAt(0, thing -> !thing.getIsActive());
+                .assertValueAt(0, thing -> thing.getPlacement().equals(ROOM_ID));
 
         mLocalThingsSource.deleteAllThings();
 
@@ -84,49 +91,70 @@ public class LocalThingsSourceTest {
         mLocalThingsSource.addThingsSync(THINGS);
 
         Thing updatedThing = THINGS.get(0);
-        updatedThing.setActive(true);
+        updatedThing.setAvailable(true);
+
+        mLocalThingsSource.getThingsById(ROOM_ID)
+                .flatMap(Flowable::fromIterable)
+                .test()
+                .assertValueAt(0, thing -> thing.getPlacement().equals(ROOM_ID) && !thing.getIsAvailable());
 
         mLocalThingsSource.updateThing(updatedThing);
+
+        mLocalThingsSource.getThingsById(ROOM_ID)
+                .flatMap(Flowable::fromIterable)
+                .test()
+                .assertValueAt(0, Thing::getIsAvailable);
     }
 
     @Test
     public void testInsertThingsWithReplacing() {
         mLocalThingsSource.addThingsSync(THINGS);
 
-        Thing thing = new Thing();
-        thing.setId("id1");
+        DoorLock thing = new DoorLock();
+        thing.setId("id");
         thing.setPlacement(ROOM_ID);
-        thing.setActive(true);
+        thing.setIsActive(true);
+        thing.setAvailable(true);
 
-        Thing thing1 = new Thing();
-        thing1.setId("id2");
+        Lamp thing1 = new Lamp();
+        thing1.setId("id1");
         thing1.setPlacement(ROOM_ID);
         thing1.setActive(false);
+        thing1.setAvailable(true);
 
-        mLocalThingsSource.addThingsSync(Arrays.asList(thing, thing1));
+        DimmableLamp thing2 = new DimmableLamp();
+        thing2.setId("id2");
+        thing2.setPlacement(ROOM_ID);
+        thing2.setActive(true);
+        thing2.setAvailable(true);
+
+        mLocalThingsSource.addThingsSync(Arrays.asList(thing, thing1, thing2));
 
         mLocalThingsSource.getThingsById(ROOM_ID)
                 .flatMap(Flowable::fromIterable)
                 .test()
-                .assertValueAt(1, Thing::getIsActive)
-                .assertValueAt(2, t-> !t.getIsActive());
+                .assertValueCount(4)
+                .assertValueAt(1, Thing::getIsAvailable)
+                .assertValueAt(2, Thing::getIsAvailable);
     }
 
 
     private List<Thing> createThings() {
-        Thing door = new Thing();
+        DoorLock door = new DoorLock();
 
         door.setPlacement(ROOM_ID);
         door.setId("id");
-        door.setActive(false);
+        door.setIsActive(false);
+        door.setAvailable(false);
 
-        Thing light = new Thing();
+        Lamp light = new Lamp();
 
         light.setPlacement(ROOM_ID);
         light.setId("id1");
         light.setActive(false);
+        light.setAvailable(false);
 
-        Thing player = new Thing();
+        DimmableLamp player = new DimmableLamp();
 
         player.setPlacement(ROOM_ID);
         player.setId("id2");

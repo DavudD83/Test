@@ -9,6 +9,8 @@ import android.arch.persistence.room.Query;
 import java.util.List;
 
 import io.reactivex.Flowable;
+import io.reactivex.Maybe;
+import io.reactivex.Single;
 import space.dotcat.assistant.content.Room;
 
 @Dao
@@ -47,4 +49,14 @@ public interface RoomsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void updateRoom(Room room);
+
+    /**
+     * Get room from db for room's id
+     *
+     * @param id room's id
+     * @return room wrapped in Maybe
+     */
+
+    @Query("Select * from Rooms where room_id = :id")
+    Maybe<Room> getRoomById(String id);
 }

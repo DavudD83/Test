@@ -16,9 +16,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 
+import space.dotcat.assistant.AppDelegate;
+import space.dotcat.assistant.BuildConfig;
 import space.dotcat.assistant.content.Url;
+import space.dotcat.assistant.repository.AuthRepository;
 import space.dotcat.assistant.repository.RepositoryProvider;
 import space.dotcat.assistant.R;
+import space.dotcat.assistant.repository.authRepository.localAuthDataSource.LocalAuthSource;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -28,7 +32,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 @RunWith(AndroidJUnit4.class)
 public class AuthActivityWithSavedUrlTest {
 
-    private final static Url URL = new Url("https://api.ks-cube.tk/") ;
+    private LocalAuthSource mLocalAuthSource;
 
     @Rule
     public ActivityTestRule<AuthActivity> mTestRule =
@@ -37,7 +41,12 @@ public class AuthActivityWithSavedUrlTest {
 
     @Before
     public void init() {
-        RepositoryProvider.provideAuthRepository().saveUrl(URL);
+        mLocalAuthSource = AppDelegate.getInstance()
+                .plusDataLayerComponent()
+                .getFakeLocalAuthSource();
+
+        mLocalAuthSource.saveUrl(BuildConfig.URL_DEFAULT_VALUE);
+
     }
 
     @After

@@ -2,6 +2,8 @@ package space.dotcat.assistant.repository.thingsRepository;
 
 import android.support.test.runner.AndroidJUnit4;
 
+import com.google.gson.JsonObject;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -32,7 +34,7 @@ public class RemoteThingsSourceTest {
 
     private final String THING_ID = "D1";
 
-    private final Message MESSAGE = new Message("toggle", new CommandArgs());
+    private final Message MESSAGE = new Message("toggle", new JsonObject());
 
     @Before
     public void init() {

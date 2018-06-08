@@ -27,6 +27,6 @@ public class RoomDetailsHolder extends BaseViewHolder<Thing> {
 
         mSwitch.setText(item.getId());
         mSwitch.setEnabled(item.getIsAvailable());
-        mSwitch.setChecked(item.getIsActive());
+       // mSwitch.setChecked(item.getIsActive());
     }
 }

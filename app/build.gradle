@@ -13,7 +13,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         buildConfigField "String", "URL_KEY", ' "URL_KEY" '
-        buildConfigField "String", "URL_DEFAULT_VALUE", ' "https://api.ks-cube.tk/" '
+        buildConfigField "String", "URL_DEFAULT_VALUE", ' "https://api.ks-cube.tk/rest/api/v1" '
 
         buildConfigField "String", "TOKEN_KEY", ' "TOKEN" '
         buildConfigField "String", "TOKEN_DEFAULT_VALUE", ' "" '
@@ -83,10 +83,10 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
 
     //Room
-    implementation "android.arch.persistence.room:runtime:1.0.0"
-    annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
-    implementation "android.arch.persistence.room:rxjava2:1.0.0"
-    androidTestImplementation 'android.arch.core:core-testing:1.0.0'
+    implementation "android.arch.persistence.room:runtime:1.1.0"
+    annotationProcessor "android.arch.persistence.room:compiler:1.1.0"
+    implementation "android.arch.persistence.room:rxjava2:1.1.0"
+    androidTestImplementation 'android.arch.core:core-testing:1.1.1'
 
     //ButterKnife
     implementation 'com.jakewharton:butterknife:8.8.1'
@@ -114,4 +114,7 @@ dependencies {
     implementation 'com.google.dagger:dagger:2.13'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.13'
     androidTestAnnotationProcessor 'com.google.dagger:dagger-compiler:2.13'
+
+    //ColorPickerWheel
+    implementation 'com.github.skydoves:colorpickerpreference:1.0.2'
 }

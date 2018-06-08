@@ -23,23 +23,17 @@ public class RoomsModule {
 
     private RoomsViewContract mRoomsViewContract;
 
-    private RoomsAdapter.OnItemClick mOnItemClick;
+    private RoomsAdapter.OnItemClickListener mOnItemClick;
 
     private FragmentManager mFragmentManager;
 
-    public RoomsModule(RoomsViewContract roomsViewContract, RoomsAdapter.OnItemClick onItemClick,
+    public RoomsModule(RoomsViewContract roomsViewContract, RoomsAdapter.OnItemClickListener onItemClick,
                        FragmentManager fragmentManager) {
         mRoomsViewContract = roomsViewContract;
 
         mOnItemClick = onItemClick;
 
         mFragmentManager = fragmentManager;
-    }
-
-    @Provides
-    @ActivityScope
-    ServiceHandler provideMessageReceiverServiceHandler(Context context, AuthRepository authRepository) {
-        return new MessageServiceHandler(context, authRepository);
     }
 
     @Provides

@@ -1,6 +1,7 @@
 package space.dotcat.assistant.screen.roomDetail;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,6 +19,12 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import space.dotcat.assistant.AppDelegate;
 import space.dotcat.assistant.R;
+import space.dotcat.assistant.content.ColorTemperatureLamp;
+import space.dotcat.assistant.content.DimmableLamp;
+import space.dotcat.assistant.content.DoorLock;
+import space.dotcat.assistant.content.Lamp;
+import space.dotcat.assistant.content.Player;
+import space.dotcat.assistant.content.RGBLamp;
 import space.dotcat.assistant.content.Room;
 import space.dotcat.assistant.content.Thing;
 import space.dotcat.assistant.di.activitiesComponents.roomDetails.RoomDetailsModule;
@@ -25,7 +32,7 @@ import space.dotcat.assistant.screen.general.BaseActivityWithSettingsMenu;
 import space.dotcat.assistant.screen.general.LoadingView;
 
 public class RoomDetailsActivity extends BaseActivityWithSettingsMenu implements RoomDetailsViewContract,
-        RoomDetailsAdapter.OnItemClickListener<Thing>, SwipeRefreshLayout.OnRefreshListener {
+        RoomDetailsAdapter.OnItemClickListener<Thing>, RoomDetailsAdapter.OnThingClick, SwipeRefreshLayout.OnRefreshListener {
 
     @Inject
     LoadingView mLoadingView;
@@ -49,11 +56,17 @@ public class RoomDetailsActivity extends BaseActivityWithSettingsMenu implements
 
     private final static String EXTRA_ROOM = "room";
 
-    public static void start(@NonNull Activity activity, @NonNull Room room) {
+    public static Intent getIntent(@NonNull Context activity, @NonNull Room room) {
         Intent intent = new Intent(activity, RoomDetailsActivity.class);
         intent.putExtra(EXTRA_ROOM, room);
 
-        activity.startActivity(intent);
+        return intent;
+    }
+
+    public static void start(@NonNull Activity activity, @NonNull Room room) {
+        Intent launchIntent = getIntent(activity, room);
+
+        activity.startActivity(launchIntent);
     }
 
     @Override
@@ -78,15 +91,15 @@ public class RoomDetailsActivity extends BaseActivityWithSettingsMenu implements
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
 
         mRoomDetailsPresenter.init(mRoom.getId());
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
 
         mRoomDetailsPresenter.unsubscribe();
     }
@@ -96,7 +109,7 @@ public class RoomDetailsActivity extends BaseActivityWithSettingsMenu implements
         AppDelegate.getInstance()
                 .plusDataLayerComponent()
                 .plusRoomDetailsComponent(new RoomDetailsModule(this, this,
-                        getSupportFragmentManager()))
+                        this, getSupportFragmentManager()))
                 .inject(this);
     }
 
@@ -165,5 +178,35 @@ public class RoomDetailsActivity extends BaseActivityWithSettingsMenu implements
     @Override
     public void onItemClick(Thing item) {
         mRoomDetailsPresenter.onItemChange(item);
+    }
+
+    @Override
+    public void onLampSwitchClick(Lamp lamp) {
+        mRoomDetailsPresenter.onLampSwitchClick(lamp);
+    }
+
+    @Override
+    public void onDoorLockSwitchClick(DoorLock doorLock) {
+        mRoomDetailsPresenter.onDoorSwitchClick(doorLock);
+    }
+
+    @Override
+    public void onBrightnessLevelChange(DimmableLamp oldLamp, DimmableLamp newLamp) {
+        mRoomDetailsPresenter.onBrightnessLevelChange(oldLamp, newLamp);
+    }
+
+    @Override
+    public void onColorTemperatureLevelChange(ColorTemperatureLamp oldLamp, ColorTemperatureLamp newLamp) {
+        mRoomDetailsPresenter.onColorTemperatureLevelChange(oldLamp, newLamp);
+    }
+
+    @Override
+    public void onColorChange(RGBLamp oldValue, RGBLamp newValue) {
+        mRoomDetailsPresenter.onColorChange(oldValue, newValue);
+    }
+
+    @Override
+    public void onPlayerChange(Player oldItem, Player newItem, String command) {
+        mRoomDetailsPresenter.onThingChanged(oldItem, newItem, command);
     }
 }

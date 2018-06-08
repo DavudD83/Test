@@ -5,6 +5,8 @@ import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
+import io.reactivex.Maybe;
+import io.reactivex.Single;
 import space.dotcat.assistant.content.Room;
 
 public interface RoomRepository {
@@ -35,4 +37,13 @@ public interface RoomRepository {
      * @return completable wrapper for doing work on particular scheduler
      */
     Completable updateRoom(Room room);
+
+    /**
+     * Get room from database by room id
+     *
+     * @param id room's id that you want to find
+     * @return room wrapped in Maybe
+     */
+
+    Maybe<Room> getRoomById(String id);
 }

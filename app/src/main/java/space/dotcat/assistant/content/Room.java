@@ -70,7 +70,7 @@ public class Room implements Parcelable {
         return mFriendlyName;
     }
 
-    public void setDescription(String friendlyName) {
+    public void setFriendlyName(String friendlyName) {
         mFriendlyName = friendlyName;
     }
 

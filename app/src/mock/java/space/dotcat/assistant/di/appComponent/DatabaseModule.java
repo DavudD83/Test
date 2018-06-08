@@ -1,6 +1,7 @@
 package space.dotcat.assistant.di.appComponent;
 
 import android.arch.persistence.room.Room;
+import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
 import javax.inject.Singleton;
@@ -24,6 +25,7 @@ public class DatabaseModule {
                 .allowMainThreadQueries()
                 .fallbackToDestructiveMigration() //be careful about this line
                 .build();
+
     }
 
     @Provides
