@@ -59,6 +59,7 @@ public class LocalRoomsSourceTest {
         mLocalRoomsSource.getRooms()
                 .test()
                 .assertNoErrors()
+                .assertValueCount(2)
                 .assertValue(list-> list.get(0).getId().equals(ROOMS.get(0).getId()));
     }
 

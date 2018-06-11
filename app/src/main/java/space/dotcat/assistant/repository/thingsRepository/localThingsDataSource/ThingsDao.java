@@ -17,6 +17,7 @@ import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Function4;
 import space.dotcat.assistant.content.BinarySensor;
 import space.dotcat.assistant.content.ColorTemperatureLamp;
+import space.dotcat.assistant.content.ContactSensor;
 import space.dotcat.assistant.content.DimmableLamp;
 import space.dotcat.assistant.content.DoorLock;
 import space.dotcat.assistant.content.Lamp;
@@ -47,6 +48,7 @@ public abstract class ThingsDao {
         mInsertFunctions.put(ValueSensor.class, (Func<ValueSensor>) this::insertThingByType);
         mInsertFunctions.put(BinarySensor.class, (Func<BinarySensor>) this::insertThingByType);
         mInsertFunctions.put(TemperatureSensor.class, (Func<TemperatureSensor>) this::insertThingByType);
+        mInsertFunctions.put(ContactSensor.class, (Func<ContactSensor>) this::insertThingByType);
         mInsertFunctions.put(Player.class, (Func<Player>) this::insertThingByType);
         mInsertFunctions.put(PausablePlayer.class, (Func<PausablePlayer>) this::insertThingByType);
         mInsertFunctions.put(TrackPlayer.class, (Func<TrackPlayer>) this::insertThingByType);
@@ -60,6 +62,7 @@ public abstract class ThingsDao {
         mUpdateFunctions.put(ValueSensor.class, (Func<ValueSensor>) this::updateThingByType);
         mUpdateFunctions.put(BinarySensor.class, (Func<BinarySensor>) this::updateThingByType);
         mUpdateFunctions.put(TemperatureSensor.class, (Func<TemperatureSensor>) this::updateThingByType);
+        mUpdateFunctions.put(ContactSensor.class, (Func<ContactSensor>) this::updateThingByType);
         mUpdateFunctions.put(Player.class, (Func<Player>) this::updateThingByType);
         mUpdateFunctions.put(PausablePlayer.class, (Func<PausablePlayer>) this::updateThingByType);
         mUpdateFunctions.put(TrackPlayer.class, (Func<TrackPlayer>) this::updateThingByType);
@@ -131,13 +134,15 @@ public abstract class ThingsDao {
 
         Flowable<List<Thing>> secondThings = Flowable.combineLatest(
                 getTemperatureSensors(id),
+                getContactSensors(id),
                 getPlayers(id),
                 getPausablePlayers(id),
                 getTrackPlayers(id),
-                (temperatureSensors, players, pausablePlayers, trackPlayers) -> {
+                (temperatureSensors, contactSensors, players, pausablePlayers, trackPlayers) -> {
                     List<Thing> things = new ArrayList<>();
 
                     things.addAll(temperatureSensors);
+                    things.addAll(contactSensors);
                     things.addAll(players);
                     things.addAll(pausablePlayers);
                     things.addAll(trackPlayers);
@@ -184,6 +189,9 @@ public abstract class ThingsDao {
 
     @Query("Select * from Temperature_Sensors where thing_placement = :id")
     public abstract Flowable<List<TemperatureSensor>> getTemperatureSensors(String id);
+
+    @Query("Select * from Contact_Sensors where thing_placement = :id")
+    public abstract Flowable<List<ContactSensor>> getContactSensors(String id);
 
     @Query("Select * from Players where thing_placement = :id")
     public abstract Flowable<List<Player>> getPlayers(String id);
@@ -232,6 +240,9 @@ public abstract class ThingsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insertThingByType(TemperatureSensor tempertatureSensor);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    public abstract void insertThingByType(ContactSensor contactSensor);
 
 
     /**
@@ -322,6 +333,7 @@ public abstract class ThingsDao {
         deleteAllValueSensors();
         deleteAllBinarySensors();
         deleteAllTemperatureSensors();
+        deleteAllContactSensors();
         deleteAllPlayers();
         deleteAllPausablePlayers();
         deleteAllTrackPlayers();
@@ -365,6 +377,9 @@ public abstract class ThingsDao {
 
     @Query("Delete from Track_Players")
     public abstract void deleteAllTrackPlayers();
+
+    @Query("Delete from Contact_Sensors")
+    public abstract void deleteAllContactSensors();
 
 
     /**
@@ -463,6 +478,9 @@ public abstract class ThingsDao {
 
     @Update
     public abstract void updateThingByType(TemperatureSensor tempertatureSensor);
+
+    @Update
+    public abstract void updateThingByType(ContactSensor contactSensor);
 
     @Transaction
     public void deleteAndInsertThings(List<Thing> things) {

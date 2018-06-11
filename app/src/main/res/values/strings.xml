@@ -60,4 +60,5 @@
     <string name="player_track_info">Now playing</string>
     <string name="unknown_string_text">Unknown type of thing. Contact developer if you want to add this type to the system.</string>
     <string name="unknown_string_label">Unknown thing</string>
+    <string name="temperature_label">Temperature</string>
 </resources>

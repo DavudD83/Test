@@ -25,8 +25,8 @@ import space.dotcat.assistant.screen.general.BaseActivityWithSettingsMenu;
 import space.dotcat.assistant.screen.general.LoadingView;
 import space.dotcat.assistant.screen.roomDetail.RoomDetailsActivity;
 
-public class RoomsActivity extends BaseActivityWithSettingsMenu implements RoomsViewContract, RoomsAdapter.OnItemClickListener<Room>,
-        SwipeRefreshLayout.OnRefreshListener {
+public class RoomsActivity extends BaseActivityWithSettingsMenu implements RoomsViewContract,
+        RoomsAdapter.OnItemClickListener<Room>, SwipeRefreshLayout.OnRefreshListener {
 
     @Inject
     RoomsAdapter mAdapter;

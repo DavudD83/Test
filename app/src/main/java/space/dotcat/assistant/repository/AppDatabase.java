@@ -8,6 +8,7 @@ import android.arch.persistence.room.TypeConverters;
 
 import space.dotcat.assistant.content.BinarySensor;
 import space.dotcat.assistant.content.ColorTemperatureLamp;
+import space.dotcat.assistant.content.ContactSensor;
 import space.dotcat.assistant.content.DimmableLamp;
 import space.dotcat.assistant.content.DoorLock;
 import space.dotcat.assistant.content.Lamp;
@@ -26,8 +27,8 @@ import space.dotcat.assistant.repository.thingsRepository.localThingsDataSource.
 
 @Database(entities = {Room.class,  Lamp.class, DoorLock.class,
         Speaker.class, RGBLamp.class, DimmableLamp.class, ColorTemperatureLamp.class,
-        ValueSensor.class, BinarySensor.class, TemperatureSensor.class, Player.class,
-        PausablePlayer.class, TrackPlayer.class, Thing.class}, version = 6, exportSchema = false)
+        ValueSensor.class, BinarySensor.class, TemperatureSensor.class, ContactSensor.class, Player.class,
+        PausablePlayer.class, TrackPlayer.class, Thing.class}, version = 7, exportSchema = false)
 @TypeConverters(StringsConverter.class)
 public abstract class AppDatabase extends RoomDatabase {
 

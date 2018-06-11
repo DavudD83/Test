@@ -43,8 +43,8 @@ public class RoomDetailsPresenter extends BaseRxPresenter {
     public void init(@NonNull String id) {
         Disposable things = mThingRepository.getThingsById(id)
                 .doOnSubscribe(disposable -> mRoomDetailsViewContract.showLoading())
-                .subscribeOn(Schedulers.io(), false)
-                .observeOn(AndroidSchedulers.mainThread(), true)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         thingList -> {
                             mRoomDetailsViewContract.hideLoading();

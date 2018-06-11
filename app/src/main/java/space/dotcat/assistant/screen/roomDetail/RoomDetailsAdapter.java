@@ -22,11 +22,13 @@ import space.dotcat.assistant.screen.general.BaseRecyclerViewAdapter;
 import space.dotcat.assistant.screen.general.BaseViewHolder;
 import space.dotcat.assistant.screen.roomDetail.thingsHolder.ColorLightHolder;
 import space.dotcat.assistant.screen.roomDetail.thingsHolder.ColorTemperatureLightHolder;
+import space.dotcat.assistant.screen.roomDetail.thingsHolder.ContactSensorsHolder;
 import space.dotcat.assistant.screen.roomDetail.thingsHolder.DimmableLightHolder;
 import space.dotcat.assistant.screen.roomDetail.thingsHolder.DoorLockHolder;
 import space.dotcat.assistant.screen.roomDetail.thingsHolder.LightHolder;
 import space.dotcat.assistant.screen.roomDetail.thingsHolder.PausablePlayerHolder;
 import space.dotcat.assistant.screen.roomDetail.thingsHolder.PlayerHolder;
+import space.dotcat.assistant.screen.roomDetail.thingsHolder.TemperatureSensorHolder;
 import space.dotcat.assistant.screen.roomDetail.thingsHolder.TrackPlayerHolder;
 
 import java.util.HashMap;
@@ -53,6 +55,10 @@ public class RoomDetailsAdapter extends BaseRecyclerViewAdapter<Thing, BaseViewH
 
     private static final int TRACK_PLAYER = 8;
 
+    private static final int CONTACT_SENSOR = 9;
+
+    private static final int TEMPERATURE_SENSOR = 10;
+
     private static final HashMap<String, Integer> mTypes = new LinkedHashMap<>();
 
     private final OnThingClick mOnThingClickListener;
@@ -68,6 +74,9 @@ public class RoomDetailsAdapter extends BaseRecyclerViewAdapter<Thing, BaseViewH
         mTypes.put("player", PLAYER);
         mTypes.put("pausable_player", PAUSABLE_PLAYER);
         mTypes.put("track_player", TRACK_PLAYER);
+
+        mTypes.put("contact_sensor", CONTACT_SENSOR);
+        mTypes.put("temperature_sensor", TEMPERATURE_SENSOR);
     }
 
     private final View.OnClickListener mOnClickListener = view -> {
@@ -160,6 +169,22 @@ public class RoomDetailsAdapter extends BaseRecyclerViewAdapter<Thing, BaseViewH
                         new PlayerTrackListener<TrackPlayer>());
 
                 return holder;
+            }
+
+            case CONTACT_SENSOR: {
+                View view = layoutInflater.inflate(R.layout.item_contact_sensor, parent, false);
+
+                final ContactSensorsHolder contactSensorsHolder = new ContactSensorsHolder(view);
+
+                return contactSensorsHolder;
+            }
+
+            case TEMPERATURE_SENSOR: {
+                View view = layoutInflater.inflate(R.layout.item_temperature_sensor, parent, false);
+
+                final TemperatureSensorHolder temperatureSensorHolder = new TemperatureSensorHolder(view);
+
+                return temperatureSensorHolder;
             }
 
             case UNKNOWN_THING: {
@@ -340,5 +365,4 @@ public class RoomDetailsAdapter extends BaseRecyclerViewAdapter<Thing, BaseViewH
             mOnThingClickListener.onPlayerChange(oldItem, newItem, command);
         }
     }
-
 }

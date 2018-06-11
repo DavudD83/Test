@@ -22,9 +22,10 @@ public class RoomRepositoryImpl implements RoomRepository {
     private RemoteRoomsSource mRemoteRoomsSource;
 
     private Flowable<List<Room>> mCacheRooms;
-
+    
     public RoomRepositoryImpl(LocalRoomsSource localRoomsSource, RemoteRoomsSource remoteRoomsSource) {
         mLocalRoomsSource = localRoomsSource;
+
         mRemoteRoomsSource = remoteRoomsSource;
     }
 

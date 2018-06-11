@@ -22,6 +22,7 @@ import space.dotcat.assistant.api.OkHttpFactory;
 import space.dotcat.assistant.api.RxJavaAdapterWithErrorHandling;
 import space.dotcat.assistant.content.BinarySensor;
 import space.dotcat.assistant.content.ColorTemperatureLamp;
+import space.dotcat.assistant.content.ContactSensor;
 import space.dotcat.assistant.content.DimmableLamp;
 import space.dotcat.assistant.content.DoorLock;
 import space.dotcat.assistant.content.Lamp;
@@ -61,6 +62,7 @@ public class NetworkModule {
                 .addSubtype(Lamp.class, "light")
                 .addSubtype(ValueSensor.class, "value_sensor")
                 .addSubtype(BinarySensor.class, "binary_sensor")
+                .addSubtype(ContactSensor.class, "contact_sensor")
                 .addSubtype(DimmableLamp.class, "dimmable_light")
                 .addSubtype(ColorTemperatureLamp.class, "ct_light")
                 .addSubtype(RGBLamp.class, "color_light")
