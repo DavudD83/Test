@@ -2,16 +2,15 @@ package space.dotcat.assistant.screen.settings;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import space.dotcat.assistant.R;
-import space.dotcat.assistant.screen.general.BaseActivity;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -33,7 +32,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         setSupportActionBar(mToolbar);
 
-        if(getSupportActionBar() != null){
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
@@ -42,7 +41,7 @@ public class SettingsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if(id == android.R.id.home){
+        if (id == android.R.id.home) {
             onBackPressed();
             return true;
         }

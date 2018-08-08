@@ -8,26 +8,34 @@ import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
+import butterknife.BindView;
+import space.dotcat.assistant.AppDelegate;
 import space.dotcat.assistant.R;
 import space.dotcat.assistant.content.Room;
-import space.dotcat.assistant.screen.general.BaseActivity;
+import space.dotcat.assistant.di.activitiesComponents.roomsActivity.RoomsModule;
 import space.dotcat.assistant.screen.general.BaseActivityWithSettingsMenu;
-import space.dotcat.assistant.screen.general.LoadingDialog;
 import space.dotcat.assistant.screen.general.LoadingView;
 import space.dotcat.assistant.screen.roomDetail.RoomDetailsActivity;
 
-import java.util.ArrayList;
-import java.util.List;
+public class RoomsActivity extends BaseActivityWithSettingsMenu implements RoomsViewContract,
+        RoomsAdapter.OnItemClickListener<Room>, SwipeRefreshLayout.OnRefreshListener {
 
-import butterknife.BindView;
-import ru.arturvasilov.rxloader.LifecycleHandler;
-import ru.arturvasilov.rxloader.LoaderLifecycleHandler;
+    @Inject
+    RoomsAdapter mAdapter;
 
-public class RoomsActivity extends BaseActivityWithSettingsMenu implements RoomsView, RoomsAdapter.OnItemClick,
-        SwipeRefreshLayout.OnRefreshListener {
+    @Inject
+    RoomsPresenter mPresenter;
+
+    @Inject
+    LoadingView mLoadingView;
 
     @BindView(R.id.recyclerViewRooms)
     RecyclerView mRecyclerView;
@@ -38,14 +46,9 @@ public class RoomsActivity extends BaseActivityWithSettingsMenu implements Rooms
     @BindView(R.id.tv_error_message)
     TextView mErrorMessage;
 
-    private LoadingView mLoadingView;
-
-    private RoomsAdapter mAdapter;
-
-    private RoomsPresenter mPresenter;
-
     public static void start(@NonNull Activity activity) {
         Intent intent = new Intent(activity, RoomsActivity.class);
+
         activity.startActivity(intent);
     }
 
@@ -54,32 +57,49 @@ public class RoomsActivity extends BaseActivityWithSettingsMenu implements Rooms
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rooms);
 
-        if(getSupportActionBar() != null)
-            getSupportActionBar().setTitle(getString(R.string.app_name));
-
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_dark,
                 android.R.color.holo_red_light,
                 android.R.color.holo_green_light);
 
-        mLoadingView = LoadingDialog.view(getSupportFragmentManager());
-
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, getCountOfColumns()));
-
-        mAdapter = new RoomsAdapter(new ArrayList<>(), this);
-
         mRecyclerView.setAdapter(mAdapter);
+    }
 
-        LifecycleHandler lifecycleHandler = LoaderLifecycleHandler.create(this,getSupportLoaderManager());
-        mPresenter = new RoomsPresenter(lifecycleHandler, this);
+    @Override
+    protected void onResume() {
+        super.onResume();
+
         mPresenter.init();
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
 
         mPresenter.unsubscribe();
+    }
+
+    @Override
+    protected void initDependencyGraph() {
+        AppDelegate.getInstance()
+                .plusDataLayerComponent()
+                .plusRoomsComponent(new RoomsModule(this, this,
+                        getSupportFragmentManager()))
+                .inject(this);
+    }
+
+    @Override
+    protected void setupToolbar() {
+        Toolbar toolbar = getToolbar();
+        toolbar.setTitle(getString(R.string.rooms_activity_title));
+
+        super.setupToolbar();
+    }
+
+    @Override
+    protected View getViewForErrorSnackbar() {
+        return mSwipeRefreshLayout;
     }
 
     @Override
@@ -89,21 +109,17 @@ public class RoomsActivity extends BaseActivityWithSettingsMenu implements Rooms
 
     @Override
     public void showRooms(@NonNull List<Room> rooms) {
-        if (!rooms.isEmpty()) {
-            if(getSnackBar() != null){
-                if(getSnackBar().isShown()){
-                    getSnackBar().dismiss();
-                }
+        if (getSnackBar() != null) {
+            if (getSnackBar().isShown()) {
+                getSnackBar().dismiss();
             }
-
-            mRecyclerView.setVisibility(View.VISIBLE);
-            mErrorMessage.setVisibility(View.INVISIBLE);
-            mAdapter.ChangeDataSet(rooms);
-        } else {
-            mRecyclerView.setVisibility(View.INVISIBLE);
-            mErrorMessage.setVisibility(View.VISIBLE);
-            mErrorMessage.setText(getString(R.string.error_empty_rooms));
         }
+
+        mRecyclerView.setVisibility(View.VISIBLE);
+
+        mErrorMessage.setVisibility(View.INVISIBLE);
+
+        mAdapter.updateData(rooms);
     }
 
     @Override
@@ -113,7 +129,15 @@ public class RoomsActivity extends BaseActivityWithSettingsMenu implements Rooms
 
     @Override
     public void showError(Throwable throwable) {
-        super.showBaseError(throwable, mSwipeRefreshLayout);
+        super.showBaseError(throwable);
+    }
+
+    @Override
+    public void showEmptyRoomsMessage() {
+        mRecyclerView.setVisibility(View.INVISIBLE);
+
+        mErrorMessage.setVisibility(View.VISIBLE);
+        mErrorMessage.setText(getResources().getString(R.string.error_empty_rooms));
     }
 
     @Override
@@ -128,7 +152,8 @@ public class RoomsActivity extends BaseActivityWithSettingsMenu implements Rooms
 
     @Override
     public void onRefresh() {
-        mPresenter.reloadData();
+        mPresenter.reloadRooms();
+
         mSwipeRefreshLayout.setRefreshing(false);
     }
 

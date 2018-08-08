@@ -1,61 +1,39 @@
 package space.dotcat.assistant.content;
 
 
+import com.google.gson.JsonElement;
 import com.google.gson.annotations.SerializedName;
 
 public class Message {
 
-    @SerializedName("type")
-    private String mType;
+    @SerializedName("command")
+    private String mCommand;
 
-    @SerializedName("source")
-    private String mSource;
+    @SerializedName("command_args")
+    private JsonElement mCommandArgs;
 
-    @SerializedName("event")
-    private String mEvent;
-
-    @SerializedName("body")
-    private Body mBody;
-
-    public Message(Body body) {
-        mType = "user_request";
-
-        mSource = "android";
-
-        mEvent = "action_requested";
-
-        mBody = body;
+    public Message() {
     }
 
-    public String getType() {
-        return mType;
+    public Message(String command, JsonElement commandArgs) {
+        mCommand = command;
+
+        mCommandArgs = commandArgs;
     }
 
-    public void setType(String type) {
-        mType = type;
+    public String getCommand() {
+        return mCommand;
     }
 
-    public String getSource() {
-        return mSource;
+    public void setCommand(String command) {
+        mCommand = command;
     }
 
-    public void setSource(String source) {
-        mSource = source;
+    public JsonElement getCommandArgs() {
+        return mCommandArgs;
     }
 
-    public String getEvent() {
-        return mEvent;
-    }
-
-    public void setEvent(String event) {
-        mEvent = event;
-    }
-
-    public Body getBody() {
-        return mBody;
-    }
-
-    public void setBody(Body body) {
-        mBody = body;
+    public void setCommandArgs(JsonElement commandArgs) {
+        mCommandArgs = commandArgs;
     }
 }

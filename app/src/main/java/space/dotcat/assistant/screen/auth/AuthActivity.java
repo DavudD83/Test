@@ -5,29 +5,31 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
-import butterknife.ButterKnife;
-import ru.arturvasilov.rxloader.LifecycleHandler;
-import ru.arturvasilov.rxloader.LoaderLifecycleHandler;
+import butterknife.OnClick;
+import space.dotcat.assistant.AppDelegate;
 import space.dotcat.assistant.R;
-import space.dotcat.assistant.content.ApiError;
+import space.dotcat.assistant.di.activitiesComponents.authActivity.AuthActivityModule;
 import space.dotcat.assistant.screen.general.BaseActivity;
-import space.dotcat.assistant.screen.general.LoadingDialog;
 import space.dotcat.assistant.screen.general.LoadingView;
 import space.dotcat.assistant.screen.roomList.RoomsActivity;
+import space.dotcat.assistant.screen.setup.SetupActivity;
 
-public class AuthActivity extends BaseActivity implements AuthView {
+public class AuthActivity extends BaseActivity implements AuthViewContract {
 
-    private LoadingView mLoadingView;
+    @Inject
+    LoadingView mLoadingView;
 
-    private AuthPresenter mAuthPresenter;
+    @Inject
+    AuthPresenter mAuthPresenter;
 
     @BindView(R.id.bt_logIn)
     Button mButton;
@@ -44,8 +46,9 @@ public class AuthActivity extends BaseActivity implements AuthView {
     @BindView(R.id.editText_password)
     TextInputEditText mPassword;
 
-    public static void start(@NonNull Activity activity){
+    public static void start(@NonNull Activity activity) {
         Intent intent = new Intent(activity, AuthActivity.class);
+
         activity.startActivity(intent);
     }
 
@@ -54,26 +57,42 @@ public class AuthActivity extends BaseActivity implements AuthView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
 
-        if(getSupportActionBar() != null)
-            getSupportActionBar().setTitle(getString(R.string.app_name));
+        if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
 
-        mButton.setOnClickListener(this::tryLogIn);
-
-        mLoadingView = LoadingDialog.view(getSupportFragmentManager());
-
-        LifecycleHandler lifecycleHandler = LoaderLifecycleHandler.create(this,
-                getSupportLoaderManager());
-
-        mAuthPresenter = new AuthPresenter(this, lifecycleHandler);
+    @Override
+    protected void onResume() {
+        super.onResume();
 
         mAuthPresenter.init();
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
 
         mAuthPresenter.unsubscribe();
+    }
+
+    @Override
+    protected void initDependencyGraph() {
+        AppDelegate.getInstance()
+                .plusDataLayerComponent()
+                .plusAuthComponent(new AuthActivityModule(this, getSupportFragmentManager()))
+                .inject(this);
+    }
+
+    @Override
+    protected void setupToolbar() {
+        Toolbar toolbar = getToolbar();
+        toolbar.setTitle(getString(R.string.app_name));
+
+        super.setupToolbar();
+    }
+
+    @Override
+    protected View getViewForErrorSnackbar() {
+        return mContainer;
     }
 
     @Override
@@ -119,11 +138,35 @@ public class AuthActivity extends BaseActivity implements AuthView {
 
     @Override
     public void showAuthError(Throwable t) {
-        super.showBaseError(t, mContainer);
+        super.showBaseError(t);
     }
 
-    public void tryLogIn(View view){
+    @Override
+    public void showSetupActivity() {
+        SetupActivity.start(this);
+        finish();
+    }
+
+    @OnClick(R.id.bt_logIn)
+    public void tryLogIn(View view) {
         mAuthPresenter.tryLogin(mUrl.getText().toString(), mLogin.getText().toString(),
                 mPassword.getText().toString());
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            mAuthPresenter.resetSetupState();
+
+            showSetupActivity();
+
+            onBackPressed();
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

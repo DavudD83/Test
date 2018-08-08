@@ -1,26 +1,34 @@
 package space.dotcat.assistant.content;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
 
-import io.realm.RealmObject;
-
-public class Room extends RealmObject implements Parcelable {
+@Entity(tableName = "Rooms")
+public class Room implements Parcelable {
 
     @SerializedName("friendly_name")
+    @ColumnInfo(name = "room_friendly_name")
     private String mFriendlyName;
 
+    @PrimaryKey
     @SerializedName("id")
+    @ColumnInfo(name = "room_id")
+    @NonNull
     private String mId;
 
     @SerializedName("image_url")
+    @ColumnInfo(name = "room_image_path")
     private String mImagePath;
 
+    @Ignore
     public Room() {
     }
 
@@ -32,12 +40,14 @@ public class Room extends RealmObject implements Parcelable {
         mImagePath = imagePath;
     }
 
+    @Ignore
     protected Room(Parcel in) {
         mFriendlyName = in.readString();
         mId = in.readString();
         mImagePath = in.readString();
     }
 
+    @Ignore
     public static final Creator<Room> CREATOR = new Creator<Room>() {
         @Override
         public Room createFromParcel(Parcel in) {
@@ -51,7 +61,7 @@ public class Room extends RealmObject implements Parcelable {
     };
 
     @NonNull
-    public String GetId() {
+    public String getId() {
         return mId;
     }
 
@@ -60,7 +70,7 @@ public class Room extends RealmObject implements Parcelable {
         return mFriendlyName;
     }
 
-    public void setDescription(String friendlyName) {
+    public void setFriendlyName(String friendlyName) {
         mFriendlyName = friendlyName;
     }
 

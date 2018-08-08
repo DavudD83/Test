@@ -1,78 +1,96 @@
 package space.dotcat.assistant.content;
 
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
+
+import android.arch.persistence.room.TypeConverter;
+import android.arch.persistence.room.TypeConverters;
 import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
-import io.realm.RealmList;
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+import java.util.List;
 
-public class Thing extends RealmObject{
+import space.dotcat.assistant.utils.TextUtils;
 
-    @SerializedName("commands")
-    private RealmList<RealmString> mActions;
+@Entity(tableName = "Things")
+@TypeConverters(StringsConverter.class)
+public class Thing implements Cloneable {
 
     @PrimaryKey
     @SerializedName("id")
+    @ColumnInfo(name = "thing_id")
+    @NonNull
     private String mId;
 
-    @SerializedName("is_active")
-    private Boolean mIsActive;
-
-    @SerializedName("is_available")
-    private Boolean mIsAvailable;
-
-    @SerializedName("is_enabled")
-    private Boolean mIsEnabled;
-
-    @SerializedName("placement")
-    private String mPlacement;
-
-    @SerializedName("state")
-    private String mState;
-
     @SerializedName("type")
+    @ColumnInfo(name = "thing_type")
     private String mType;
 
+    @SerializedName("placement")
+    @ColumnInfo(name = "thing_placement")
+    private String mPlacement;
+
     @SerializedName("friendly_name")
+    @ColumnInfo(name = "thing_friendly_name")
     private String mFriendlyName;
 
+    @SerializedName("is_enabled")
+    @ColumnInfo(name = "thing_is_enabled")
+    private Boolean mIsEnabled;
+
+    @SerializedName("is_available")
+    @ColumnInfo(name = "thing_is_available")
+    private Boolean mIsAvailable;
+
+    @SerializedName("capabilities")
+    @ColumnInfo(name = "thing_capabilities")
+    private List<String> mCapabilities;
+
+    @SerializedName("commands")
+    @ColumnInfo(name = "thing_commands")
+    private List<String> mCommands;
+
+    @Ignore
     public Thing() {
     }
 
-    public Thing(@NonNull RealmList<RealmString> actions, @NonNull String id,
-                 @NonNull Boolean isActive, @NonNull Boolean isAvailable, @NonNull String placement,
-                 @NonNull String state, @NonNull String type, @NonNull Boolean isEnabled,
+    public Thing(@NonNull String id, @NonNull List<String> capabilities, @NonNull List<String> commands,
+                 @NonNull Boolean isAvailable, @NonNull Boolean isEnabled,
+                 @NonNull String placement, @NonNull String type,
                  @NonNull String friendlyName) {
-        mActions = actions;
-
         mId = id;
 
-        mIsActive = isActive;
+        mCapabilities = capabilities;
+
+        mCommands = commands;
 
         mIsAvailable = isAvailable;
 
+        mIsEnabled = isEnabled;
+
         mPlacement = placement;
 
-        mState = state;
-
         mType = type;
-
-        mIsEnabled = isEnabled;
 
         mFriendlyName = friendlyName;
     }
 
     @NonNull
-    public RealmList<RealmString> getActions() { return mActions; }
+    public List<String> getCapabilities() {
+        return mCapabilities;
+    }
+
+    @NonNull
+    public List<String> getCommands() {
+        return mCommands;
+    }
 
     @NonNull
     public String getId() { return mId; }
-
-    @NonNull
-    public Boolean getIsActive() { return mIsActive; }
 
     @NonNull
     public Boolean getIsAvailable() { return  mIsAvailable; }
@@ -81,31 +99,32 @@ public class Thing extends RealmObject{
     public String getPlacement() { return mPlacement; }
 
     @NonNull
-    public String getState() { return mState; }
-
-    @NonNull
     public String getType() { return mType; }
 
     @NonNull
-    public Boolean getEnabled() {
+    public Boolean getIsEnabled() {
         return mIsEnabled;
     }
 
     @NonNull
     public String getFriendlyName() {
-        return mFriendlyName;
-    }
+        if (TextUtils.isEmpty(mFriendlyName)) {
+            mFriendlyName = mType + " in the " + mPlacement;
+        }
 
-    public void setActions(RealmList<RealmString> actions) {
-        mActions = actions;
+        return mFriendlyName;
     }
 
     public void setId(String id) {
         mId = id;
     }
 
-    public void setActive(Boolean active) {
-        mIsActive = active;
+    public void setCommands(List<String> commands) {
+        mCommands = commands;
+    }
+
+    public void setCapabilities(List<String> capabilities) {
+        mCapabilities = capabilities;
     }
 
     public void setAvailable(Boolean available) {
@@ -114,10 +133,6 @@ public class Thing extends RealmObject{
 
     public void setPlacement(String placement) {
         mPlacement = placement;
-    }
-
-    public void setState(String state) {
-        mState = state;
     }
 
     public void setType(String type) {
@@ -130,5 +145,13 @@ public class Thing extends RealmObject{
 
     public void setFriendlyName(String friendlyName) {
         mFriendlyName = friendlyName;
+    }
+
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException ex) {
+            return null;
+        }
     }
 }

@@ -1,6 +1,7 @@
 package space.dotcat.assistant.utils;
 
-/* Util class for substitution native TextUtils. Created for unit testing.
+/**
+ *  Util class for substitution native TextUtils. Created for unit testing.
  */
 public class TextUtils {
 

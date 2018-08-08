@@ -2,59 +2,87 @@ package space.dotcat.assistant.screen.roomList;
 
 
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 
-import rx.Subscription;
-import rx.subscriptions.CompositeSubscription;
-import space.dotcat.assistant.R;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import space.dotcat.assistant.content.Room;
-import space.dotcat.assistant.repository.RepositoryProvider;
-
-import ru.arturvasilov.rxloader.LifecycleHandler;
+import space.dotcat.assistant.repository.roomsRepository.RoomRepository;
 import space.dotcat.assistant.screen.general.BasePresenter;
+import space.dotcat.assistant.screen.general.BaseRxPresenter;
+import space.dotcat.assistant.service.ServiceHandler;
 
-public class RoomsPresenter implements BasePresenter {
+public class RoomsPresenter extends BaseRxPresenter {
 
-    private final LifecycleHandler mLifecycleHandler;
+    private final RoomsViewContract mRoomsViewContract;
 
-    private final RoomsView mRoomsView;
+    private final RoomRepository mRoomRepository;
 
-    private CompositeSubscription mCompositeSubscription;
+    private final ServiceHandler mMessageServiceHandler;
 
-    public RoomsPresenter(@NonNull LifecycleHandler lifecycleHandler,
-                          @NonNull RoomsView roomsView) {
-        mLifecycleHandler = lifecycleHandler;
-        mRoomsView = roomsView;
-        mCompositeSubscription = new CompositeSubscription();
+    public RoomsPresenter(@NonNull RoomsViewContract roomsViewContract, @NonNull RoomRepository roomRepository,
+                          ServiceHandler messageServiceHandler) {
+        mRoomsViewContract = roomsViewContract;
+
+        mRoomRepository = roomRepository;
+
+        mMessageServiceHandler = messageServiceHandler;
     }
 
     public void init() {
-        Subscription subscription = RepositoryProvider.provideApiRepository()
-                .rooms()
-                .doOnSubscribe(mRoomsView::showLoading)
-                .doOnTerminate(mRoomsView::hideLoading)
-                .compose(mLifecycleHandler.load(R.id.room_request))
-                .subscribe(mRoomsView::showRooms, mRoomsView::showError);
+        Disposable rooms = mRoomRepository
+                .getRooms()
+                .doOnSubscribe(disposable -> mRoomsViewContract.showLoading())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        roomList -> {
+                            if (roomList.isEmpty()) {
+                                reloadRooms();
 
-        mCompositeSubscription.add(subscription);
+                                mRoomsViewContract.hideLoading();
+
+                                mRoomsViewContract.showEmptyRoomsMessage();
+                            }
+
+                            else {
+                                mRoomsViewContract.hideLoading();
+
+                                mRoomsViewContract.showRooms(roomList);
+                            }
+                        },
+
+                        throwable -> {
+                            mRoomsViewContract.hideLoading();
+
+                            mRoomsViewContract.showError(throwable);
+                        });
+
+        mCompositeDisposable.add(rooms);
+
+        startSyncService();
     }
 
-    public void reloadData() {
-        mCompositeSubscription.clear();
+    public void reloadRooms() {
+        Disposable subscription = mRoomRepository
+                .refreshRooms()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        rooms -> {},
 
-        Subscription subscription = RepositoryProvider.provideApiRepository()
-                .rooms()
-                .compose(mLifecycleHandler.reload(R.id.room_request))
-                .subscribe(mRoomsView::showRooms, mRoomsView::showError);
+                        mRoomsViewContract::showError);
 
-        mCompositeSubscription.add(subscription);
+        mCompositeDisposable.add(subscription);
+    }
+
+    private void startSyncService() {
+        mMessageServiceHandler.startService();
     }
 
     public void onItemClick(@NonNull Room room) {
-        mRoomsView.showRoomDetail(room);
-    }
-
-    @Override
-    public void unsubscribe() {
-        mCompositeSubscription.clear();
+        mRoomsViewContract.showRoomDetail(room);
     }
 }

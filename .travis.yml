@@ -5,8 +5,8 @@ env:
   - ANDROID_EMUL="android-22"
   - ANDROID_ABI="armeabi-v7a"
 # ----------------------------------------------
-  - ANDROID_COMPILE_SDK="26"
-  - ANDROID_BUILD_TOOLS="26.0.2"
+  - ANDROID_COMPILE_SDK="27"
+  - ANDROID_BUILD_TOOLS="27.0.3"
   - ANDROID_SDK_TOOLS="24.4.1"
 # ----------------------------------------------
 

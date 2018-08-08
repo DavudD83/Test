@@ -8,7 +8,7 @@ import android.view.MenuItem;
 import space.dotcat.assistant.R;
 import space.dotcat.assistant.screen.settings.SettingsActivity;
 
-public class BaseActivityWithSettingsMenu extends BaseActivity {
+public abstract class BaseActivityWithSettingsMenu extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -23,8 +23,13 @@ public class BaseActivityWithSettingsMenu extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if(id == R.id.item_settings){
+        if (id == R.id.mi_settings) {
             SettingsActivity.start(this);
+            return true;
+        }
+
+        if (id == R.id.mi_log_out) {
+            logOut();
             return true;
         }
 

@@ -9,12 +9,14 @@ import android.widget.TextView;
 
 import space.dotcat.assistant.R;
 import space.dotcat.assistant.content.Room;
+
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import space.dotcat.assistant.screen.general.BaseViewHolder;
 
-public class RoomHolder extends RecyclerView.ViewHolder {
+public class RoomHolder extends BaseViewHolder<Room> {
 
     @BindView(R.id.tv_roomName)
     TextView mRoomName;
@@ -24,14 +26,16 @@ public class RoomHolder extends RecyclerView.ViewHolder {
 
     public RoomHolder(@NonNull View itemView) {
         super(itemView);
-        ButterKnife.bind(this,itemView);
     }
 
-    public void bind(@NonNull Room room) {
-        mRoomName.setText(room.getFriendlyName());
+    @Override
+    protected void bind(Room item) {
+        itemView.setTag(getAdapterPosition());
+
+        mRoomName.setText(item.getFriendlyName());
 
         Picasso.with(mRoomPicture.getContext())
-                .load(room.getImagePath())
+                .load(item.getImagePath())
                 .noFade()
                 .fit()
                 .into(mRoomPicture);

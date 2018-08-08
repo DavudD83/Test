@@ -5,6 +5,8 @@ import android.os.SystemClock;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
+
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -13,12 +15,9 @@ public class MockingInterceptor implements Interceptor {
 
     private RequestMatcher mRequestMatcher;
 
-    private MockingInterceptor() {
-        mRequestMatcher = new RequestMatcher();
-    }
-
-    public static MockingInterceptor create() {
-        return new MockingInterceptor();
+    @Inject
+    public MockingInterceptor(RequestMatcher requestMatcher) {
+        mRequestMatcher = requestMatcher;
     }
 
     @Override

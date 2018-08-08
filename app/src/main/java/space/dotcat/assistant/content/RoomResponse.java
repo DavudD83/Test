@@ -14,14 +14,13 @@ public class RoomResponse {
     private List<Room> mRooms = new ArrayList<>();
 
     public RoomResponse(@NonNull List<Room> rooms) {
-
         mRooms = rooms;
     }
 
     @NonNull
     public List<Room> getRooms() { return mRooms; }
 
-    public void setRooms(List<Room> mRooms) {
-        mRooms = mRooms;
+    public void setRooms(List<Room> rooms) {
+        mRooms = rooms;
     }
 }

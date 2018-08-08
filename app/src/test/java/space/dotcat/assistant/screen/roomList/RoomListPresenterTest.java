@@ -1,128 +1,150 @@
 package space.dotcat.assistant.screen.roomList;
 
-import android.support.annotation.NonNull;
-
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-import org.mockito.Mockito;
+import org.mockito.Mock;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.arturvasilov.rxloader.LifecycleHandler;
-import rx.Observable;
+import io.reactivex.Flowable;
+import space.dotcat.assistant.base.BasePresenterTest;
 import space.dotcat.assistant.content.Room;
-import space.dotcat.assistant.repository.RepositoryProvider;
-import space.dotcat.assistant.testMock.MockApiRepository;
-import space.dotcat.assistant.testMock.MockLifecycleHandler;
+import space.dotcat.assistant.repository.roomsRepository.RoomRepository;
+import space.dotcat.assistant.service.ServiceHandler;
 
 import static junit.framework.Assert.assertNotNull;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
-@RunWith(JUnit4.class)
-public class RoomListPresenterTest {
+public class RoomListPresenterTest extends BasePresenterTest<RoomsPresenter> {
 
-    private RoomsView mRoomsView;
+    @Mock
+    private RoomsViewContract mRoomsViewContract;
 
-    private LifecycleHandler mLifecycleHandler;
+    @Mock
+    private RoomRepository mRoomRepository;
 
-    private RoomsPresenter mRoomsPresenter;
+    @Mock
+    private ServiceHandler messageServiceHandler;
 
-    private static final Throwable API_ERROR = new Throwable();
+    private final Throwable ERROR = new Throwable();
 
-    private final List<Room> mRooms = createRoomList();
+    private final Flowable<List<Room>> API_ERROR = Flowable.error(ERROR);
 
-    @Before
-    public void init() {
-        mRoomsView = Mockito.mock(RoomsView.class);
+    private final List<Room> ROOMS = createRoomList();
 
-        mLifecycleHandler = new MockLifecycleHandler();
+    private final Flowable<List<Room>> FLOWABLE_ROOMS = Flowable.just(ROOMS);
 
-        mRoomsPresenter = new RoomsPresenter(mLifecycleHandler, mRoomsView);
-    }
+    private final List<Room> EMPTY_ROOMS = new ArrayList<>();
 
-    @After
-    public void clear() {
-        mRoomsView = null;
-        mLifecycleHandler = null;
-        mRoomsPresenter = null;
-        RepositoryProvider.setApiRepository(null);
-    }
+    private final Flowable<List<Room>> FLOWABLE_EMPTY_ROOMS = Flowable.just(EMPTY_ROOMS);
 
-    @Test
-    public void testPresenterCreated() throws Exception {
-        assertNotNull(mRoomsPresenter);
+    @Override
+    protected RoomsPresenter createPresenterForTesting() {
+        return new RoomsPresenter(mRoomsViewContract, mRoomRepository, messageServiceHandler);
     }
 
     @Test
-    public void testShowRoomsSuccess() throws Exception {
-        RepositoryProvider.setApiRepository(new TestRoomsRepo(mRooms));
-
-        mRoomsPresenter.init();
-
-        Mockito.verify(mRoomsView).showLoading();
-        Mockito.verify(mRoomsView).hideLoading();
-        Mockito.verify(mRoomsView).showRooms(mRooms);
+    public void testPresenterCreated() {
+        assertNotNull(mPresenter);
     }
 
     @Test
-    public void testShowRoomsError() throws Exception {
-        RepositoryProvider.setApiRepository(new TestRoomsRepo(null));
+    public void testInitSuccessful() {
+        when(mRoomRepository.getRooms()).thenReturn(FLOWABLE_ROOMS);
 
-        mRoomsPresenter.init();
+        mPresenter.init();
 
-        Mockito.verify(mRoomsView).showLoading();
-        Mockito.verify(mRoomsView).hideLoading();
-        Mockito.verify(mRoomsView).showError(API_ERROR);
+        verify(mRoomsViewContract).showLoading();
+        verify(mRoomsViewContract).hideLoading();
+        verify(mRoomsViewContract).showRooms(ROOMS);
+
+        verify(messageServiceHandler).startService();
     }
 
     @Test
-    public void testRoomClick() throws Exception {
-        mRoomsPresenter.onItemClick(mRooms.get(0));
+    public void testInitError() {
+        when(mRoomRepository.getRooms()).thenReturn(API_ERROR);
 
-        Mockito.verify(mRoomsView).showRoomDetail(mRooms.get(0));
+        mPresenter.init();
+
+        verify(mRoomsViewContract).showLoading();
+        verify(mRoomsViewContract).hideLoading();
+        verify(mRoomsViewContract).showError(ERROR);
     }
 
     @Test
-    public void testReloadRoomsSuccess() throws Exception {
-        RepositoryProvider.setApiRepository(new TestRoomsRepo(mRooms));
+    public void testRoomsEmptyError() {
+        when(mRoomRepository.getRooms()).thenReturn(Flowable.just(new ArrayList<>()));
+        when(mRoomRepository.refreshRooms()).thenReturn(Flowable.just(new ArrayList<>()));
 
-        mRoomsPresenter.reloadData();
+        mPresenter.init();
 
-        Mockito.verify(mRoomsView).showRooms(mRooms);
+        verify(mRoomRepository).refreshRooms();
+
+        verify(mRoomsViewContract).hideLoading();
+
+        verify(mRoomsViewContract).showEmptyRoomsMessage();
     }
 
     @Test
-    public void testReloadRoomsError() throws Exception {
-        RepositoryProvider.setApiRepository(new TestRoomsRepo(null));
+    public void testErrorWhenRoomsEmptyLocally() {
+        when(mRoomRepository.getRooms()).thenReturn(FLOWABLE_EMPTY_ROOMS);
+        when(mRoomRepository.refreshRooms()).thenReturn(API_ERROR);
 
-        mRoomsPresenter.reloadData();
+        mPresenter.init();
 
-        Mockito.verify(mRoomsView).showError(API_ERROR);
+        verify(mRoomRepository).getRooms();
+
+        verify(mRoomRepository).refreshRooms();
+
+        verify(mRoomsViewContract).showError(ERROR);
+        verify(mRoomsViewContract).hideLoading();
+        verify(mRoomsViewContract).showEmptyRoomsMessage();
     }
 
     @Test
-    public void testScenario() throws Exception {
-        RepositoryProvider.setApiRepository(new TestRoomsRepo(null));
+    public void testRoomClick() {
+        mPresenter.onItemClick(ROOMS.get(0));
 
-        mRoomsPresenter.init();
-
-        Mockito.verify(mRoomsView).showError(API_ERROR);
-
-        RepositoryProvider.setApiRepository(new TestRoomsRepo(mRooms));
-
-        mRoomsPresenter.reloadData();
-
-        Mockito.verify(mRoomsView).showRooms(mRooms);
-
-        mRoomsPresenter.onItemClick(mRooms.get(1));
-
-        Mockito.verify(mRoomsView).showRoomDetail(mRooms.get(1));
+        verify(mRoomsViewContract).showRoomDetail(ROOMS.get(0));
     }
 
-    private List<Room> createRoomList(){
+    @Test
+    public void testReloadRoomsSuccess() {
+        when(mRoomRepository.refreshRooms()).thenReturn(FLOWABLE_ROOMS);
+
+        mPresenter.reloadRooms();
+
+        verifyNoMoreInteractions(mRoomsViewContract);
+    }
+
+    @Test
+    public void testReloadRoomsError() {
+        when(mRoomRepository.refreshRooms()).thenReturn(API_ERROR);
+
+        mPresenter.reloadRooms();
+
+        verify(mRoomsViewContract).showError(ERROR);
+    }
+
+    @Test
+    public void testScenario() {
+        when(mRoomRepository.getRooms()).thenReturn(FLOWABLE_ROOMS);
+
+        mPresenter.init();
+
+        verify(mRoomsViewContract).showRooms(ROOMS);
+
+        verify(messageServiceHandler).startService();
+
+        mPresenter.onItemClick(ROOMS.get(1));
+
+        verify(mRoomsViewContract).showRoomDetail(ROOMS.get(1));
+    }
+
+    private List<Room> createRoomList() {
         List<Room> list = new ArrayList<>();
 
         list.add(new Room());
@@ -130,24 +152,5 @@ public class RoomListPresenterTest {
         list.add(new Room());
 
         return list;
-    }
-
-    private class TestRoomsRepo extends MockApiRepository {
-
-        private List<Room> mRooms;
-
-        TestRoomsRepo(List<Room> rooms) {
-            mRooms = rooms;
-        }
-
-        @NonNull
-        @Override
-        public Observable<List<Room>> rooms() {
-            if(mRooms != null){
-                return Observable.just(mRooms);
-            }
-
-            return Observable.error(API_ERROR);
-        }
     }
 }

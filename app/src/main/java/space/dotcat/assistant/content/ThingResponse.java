@@ -10,7 +10,7 @@ import java.util.List;
 public class ThingResponse {
 
     @SerializedName("things")
-    private List<Thing> mThings = new ArrayList<>();
+    private List<Thing> mThings;
 
     private ThingResponse(@NonNull List<Thing> things) {
         mThings = things;

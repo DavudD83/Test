@@ -1,29 +1,29 @@
 package space.dotcat.assistant.api;
 
+import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
+
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
-import space.dotcat.assistant.repository.RepositoryProvider;
+import space.dotcat.assistant.BuildConfig;
 
-class AuthenticationInterceptor implements Interceptor {
+public class AuthenticationInterceptor implements Interceptor {
 
     private final String mToken;
 
-    private AuthenticationInterceptor(){
-        mToken = RepositoryProvider.provideAuthRepository().token();
-    }
-
-    static Interceptor create(){
-        return new AuthenticationInterceptor();
+    public AuthenticationInterceptor(SharedPreferences sharedPreferences) {
+        mToken = sharedPreferences.getString(BuildConfig.TOKEN_KEY, "");
     }
 
     @Override
     public Response intercept(Chain chain) throws IOException {
-        if(TextUtils.isEmpty(mToken)){
+        if(TextUtils.isEmpty(mToken)) {
             return chain.proceed(chain.request());
         }
 

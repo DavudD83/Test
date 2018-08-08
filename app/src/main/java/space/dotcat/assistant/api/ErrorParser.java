@@ -1,32 +1,25 @@
 package space.dotcat.assistant.api;
 
 
-import java.io.IOException;
-import java.lang.annotation.Annotation;
 
-
-import okhttp3.ResponseBody;
-import retrofit2.Converter;
 import retrofit2.Response;
+import retrofit2.Retrofit;
 import space.dotcat.assistant.content.ApiError;
 
-class ErrorParser {
+/**
+ * Base class for error parser which will be provided to Handling Error RxJava2 Factory
+ */
 
-    private ErrorParser(){
-    }
+public abstract class ErrorParser {
 
-    static ApiError parseError(Response response){
-        Converter<ResponseBody, ApiError> converter = ApiFactory.buildRetrofit()
-                .responseBodyConverter(ApiError.class, new Annotation[0]);
+    /**
+     *  Try to parse error from Retrofit response into ApiError. If response can not be parsed, it will
+     *  return null
+     *
+     * @param retrofit retrofit instance that you used for request
+     * @param response response that contains possible error body
+     * @return parsed error from response error body
+     */
 
-        ApiError error;
-
-        try {
-            error = converter.convert(response.errorBody());
-        } catch (IOException e) {
-            return null;
-        }
-
-        return error;
-    }
+    public abstract ApiError parseError(Retrofit retrofit, Response response);
 }

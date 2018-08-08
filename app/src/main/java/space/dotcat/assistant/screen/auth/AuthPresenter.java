@@ -3,76 +3,73 @@ package space.dotcat.assistant.screen.auth;
 
 import android.support.annotation.NonNull;
 
-
-import ru.arturvasilov.rxloader.LifecycleHandler;
-import rx.Subscription;
-import rx.subscriptions.CompositeSubscription;
-import space.dotcat.assistant.R;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import space.dotcat.assistant.content.Authorization;
-import space.dotcat.assistant.content.Url;
-import space.dotcat.assistant.repository.RepositoryProvider;
-import space.dotcat.assistant.screen.general.BasePresenter;
+import space.dotcat.assistant.repository.authRepository.AuthRepository;
+import space.dotcat.assistant.screen.general.BaseRxPresenter;
 import space.dotcat.assistant.utils.TextUtils;
 import space.dotcat.assistant.utils.UrlUtils;
 
-public class AuthPresenter implements BasePresenter {
+public class AuthPresenter extends BaseRxPresenter {
 
-    private final AuthView mAuthView;
+    private final AuthViewContract mAuthViewContract;
 
-    private final LifecycleHandler mLifecycleHandler;
+    private AuthRepository mAuthRepository;
 
-    private CompositeSubscription mCompositeSubscription;
+    public AuthPresenter(@NonNull AuthViewContract authView, @NonNull AuthRepository authRepository) {
+        mAuthViewContract = authView;
 
-    public AuthPresenter(@NonNull AuthView authView,
-                         @NonNull LifecycleHandler lifecycleHandler) {
-        mAuthView = authView;
-        mLifecycleHandler = lifecycleHandler;
-        mCompositeSubscription = new CompositeSubscription();
+        mAuthRepository = authRepository;
     }
 
-    public void init(){
-        String token = RepositoryProvider.provideAuthRepository().token();
+    public void init() {
+        String token = mAuthRepository.getToken();
 
-        if(!TextUtils.isEmpty(token))
-            mAuthView.showRoomList();
+        if (!TextUtils.isEmpty(token)) {
+            mAuthViewContract.showRoomList();
+        }
 
-        String url = RepositoryProvider.provideAuthRepository().url();
+        String url = mAuthRepository.getUrl();
 
-        if(!TextUtils.isEmpty(url)){
-            mAuthView.showExistingUrl(url);
+        if (!TextUtils.isEmpty(url)) {
+            mAuthViewContract.showExistingUrl(url);
         }
     }
 
-    public void tryLogin(String url, String login, String password){
-        if(TextUtils.isEmpty(url)){
-            mAuthView.showUrlEmptyError();
-        } else if(!UrlUtils.isValidURL(url)) {
-            mAuthView.showUrlNotCorrectError();
-        } else if(TextUtils.isEmpty(login)){
-            mAuthView.showLoginError();
-        } else if(TextUtils.isEmpty(password)){
-            mAuthView.showPasswordError();
+    public void tryLogin(@NonNull String url, @NonNull String login, @NonNull String password) {
+        if (TextUtils.isEmpty(url)) {
+            mAuthViewContract.showUrlEmptyError();
+        } else if (!UrlUtils.isValidURL(url)) {
+            mAuthViewContract.showUrlNotCorrectError();
+        } else if (TextUtils.isEmpty(login)) {
+            mAuthViewContract.showLoginError();
+        } else if (TextUtils.isEmpty(password)) {
+            mAuthViewContract.showPasswordError();
         } else {
-            Url urlForRequest = new Url(url);
+            mAuthRepository.saveUrl(url);
 
-            RepositoryProvider.provideAuthRepository().saveUrl(urlForRequest);
+            mAuthRepository.destroyApiService();
 
             Authorization auth = new Authorization(login, password);
 
-            Subscription subscription = RepositoryProvider.provideApiRepository()
-                    .auth(auth)
-                    .doOnSubscribe(mAuthView::showLoading)
-                    .doOnTerminate(mAuthView::hideLoading)
-                    .compose(mLifecycleHandler.reload(R.id.auth_request))
-                    .subscribe(authorizationAnswer ->  mAuthView.showRoomList(),
-                            mAuthView::showAuthError);
+            Disposable authorizationAnswer = mAuthRepository
+                    .authUser(auth)
+                    .doOnSubscribe(disposable1 -> mAuthViewContract.showLoading())
+                    .doAfterTerminate(mAuthViewContract::hideLoading)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            answer -> mAuthViewContract.showRoomList(),
 
-            mCompositeSubscription.add(subscription);
+                            mAuthViewContract::showAuthError);
+
+            mCompositeDisposable.add(authorizationAnswer);
         }
     }
 
-    @Override
-    public void unsubscribe() {
-        mCompositeSubscription.clear();
+    public void resetSetupState() {
+        mAuthRepository.saveSetupState(false);
     }
 }
