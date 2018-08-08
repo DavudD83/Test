@@ -52,6 +52,16 @@ public class AuthRepositoryImpl implements AuthRepository {
     }
 
     @Override
+    public void saveIsUserEnabledSecuredConnection(boolean isSecured) {
+        mLocalAuthSource.saveIsUserEnabledSecuredConnection(isSecured);
+    }
+
+    @Override
+    public boolean getIsConnectionSecured() {
+        return mLocalAuthSource.getIsConnectionSecured();
+    }
+
+    @Override
     public void saveUrl(@NonNull String url) {
         mLocalAuthSource.saveUrl(url);
     }

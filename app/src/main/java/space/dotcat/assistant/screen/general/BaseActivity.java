@@ -22,6 +22,7 @@ import space.dotcat.assistant.content.ApiError;
 import space.dotcat.assistant.repository.authRepository.AuthRepository;
 import space.dotcat.assistant.screen.auth.AuthActivity;
 import space.dotcat.assistant.screen.setup.SetupActivity;
+import space.dotcat.assistant.service.MessageReceiverPresenter;
 import space.dotcat.assistant.service.MessageReceiverService;
 import space.dotcat.assistant.service.ServiceHandler;
 
@@ -40,7 +41,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     private BroadcastReceiver mErrorMessageReceiver;
 
-    private final IntentFilter INTENT_FILTER = new IntentFilter(MessageReceiverService.INTENT_ERROR_ACTION);
+    private final IntentFilter INTENT_FILTER = new IntentFilter(MessageReceiverPresenter.INTENT_ERROR_ACTION);
 
     private final View.OnClickListener mInvalidAccessTokenHandler = view -> logOut();
 
@@ -81,6 +82,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void setupToolbar() {
         if (mToolbar == null) {
             Log.d(TAG, "Toolbar is not found");
+            return;
         }
 
         setSupportActionBar(mToolbar);
@@ -153,7 +155,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            ApiError apiError = (ApiError) intent.getSerializableExtra(MessageReceiverService.ERROR_KEY);
+            ApiError apiError = (ApiError) intent.getSerializableExtra(MessageReceiverPresenter.ERROR_KEY);
 
             showBaseError(apiError);
         }

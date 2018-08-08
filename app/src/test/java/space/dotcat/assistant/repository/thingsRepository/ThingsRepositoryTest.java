@@ -89,23 +89,6 @@ public class ThingsRepositoryTest {
     }
 
     @Test
-    public void testGetThingsWhenThereIsNoLocalThings() {
-        when(mLocalThingsSource.getThingsById(ROOM_ID)).thenReturn(EMPTY_FLOWABLE_THINGS);
-
-        when(mRemoteThingsSource.loadThingsByPlacementId(ROOM_ID)).thenReturn(FLOWABLE_THINGS);
-
-        mThingRepository.getThingsById(ROOM_ID)
-                .test()
-                .assertValue(THINGS);
-
-        verify(mLocalThingsSource).getThingsById(ROOM_ID);
-
-        verify(mRemoteThingsSource).loadThingsByPlacementId(ROOM_ID);
-
-        verify(mLocalThingsSource).deleteAndUpdateThings(THINGS);
-    }
-
-    @Test
     public void testGetThingsWhenLocalThingsExist() {
         when(mLocalThingsSource.getThingsById(ROOM_ID)).thenReturn(FLOWABLE_THINGS);
 
@@ -116,22 +99,6 @@ public class ThingsRepositoryTest {
         verify(mLocalThingsSource).getThingsById(ROOM_ID);
 
         verifyNoMoreInteractions(mRemoteThingsSource);
-    }
-
-    @Test
-    public void testGetThingsWithErrorWhenThereIsNoLocalThings() {
-        when(mLocalThingsSource.getThingsById(ROOM_ID)).thenReturn(EMPTY_FLOWABLE_THINGS);
-
-        when(mRemoteThingsSource.loadThingsByPlacementId(ROOM_ID)).thenReturn(ERROR_FLOWABLE_THINGS);
-
-        mThingRepository.getThingsById(ROOM_ID)
-                .test()
-                .assertValue(EMPTY_THINGS)
-                .assertError(ERROR);
-
-        verify(mLocalThingsSource, times(2)).getThingsById(ROOM_ID);
-
-        verify(mRemoteThingsSource).loadThingsByPlacementId(ROOM_ID);
     }
 
     @Test

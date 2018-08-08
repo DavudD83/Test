@@ -16,7 +16,10 @@
 
         <activity android:name=".screen.roomList.RoomsActivity" />
 
-        <activity android:name=".screen.roomDetail.RoomDetailsActivity" />
+        <activity
+            android:name=".screen.roomDetail.RoomDetailsActivity"
+            android:launchMode="singleTop">
+        </activity>
 
         <activity android:name=".screen.auth.AuthActivity"/>
 

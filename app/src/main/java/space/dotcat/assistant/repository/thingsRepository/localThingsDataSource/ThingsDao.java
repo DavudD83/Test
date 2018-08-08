@@ -1,6 +1,7 @@
 package space.dotcat.assistant.repository.thingsRepository.localThingsDataSource;
 
 import android.arch.persistence.room.Dao;
+import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
@@ -159,7 +160,7 @@ public abstract class ThingsDao {
             return thingList;
         });
     }
-//
+
     @Query("Select * from Things where thing_placement = :id")
     public abstract Flowable<List<Thing>> getDefaultThings(String id);
 
@@ -239,7 +240,7 @@ public abstract class ThingsDao {
     public abstract void insertThingByType(BinarySensor binarySensor);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract void insertThingByType(TemperatureSensor tempertatureSensor);
+    public abstract void insertThingByType(TemperatureSensor temperatureSensor);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insertThingByType(ContactSensor contactSensor);
@@ -391,6 +392,10 @@ public abstract class ThingsDao {
     @Query("Delete from Things where thing_id = :id")
     abstract void deleteThingById(String id);
 
+    @Query("Delete from Things where thing_placement = :id")
+    void deleteThingsByPlacementId(String id) {
+
+    }
 
     /**
      * Update your thing
@@ -477,7 +482,7 @@ public abstract class ThingsDao {
     public abstract void updateThingByType(BinarySensor binarySensor);
 
     @Update
-    public abstract void updateThingByType(TemperatureSensor tempertatureSensor);
+    public abstract void updateThingByType(TemperatureSensor temperatureSensor);
 
     @Update
     public abstract void updateThingByType(ContactSensor contactSensor);

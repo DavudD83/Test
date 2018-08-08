@@ -33,23 +33,20 @@ public class ThingRepositoryImpl implements ThingRepository {
 
     @Override
     public Flowable<List<Thing>> getThingsById(@NonNull String id) {
-        return mLocalThingsSource.getThingsById(id)
-                .flatMap(things -> {
-                    if(things.isEmpty()) {
-                        return loadThingsAndSaveToDb(id).onErrorResumeNext(throwable-> {
-                            Flowable<List<Thing>> localThings = mLocalThingsSource.getThingsById(id);
-
-                            return Flowable.mergeDelayError(localThings, Flowable.error(throwable));
-                        });
-                    }
-
-                    return Flowable.just(things);
-                });
+        return mLocalThingsSource.getThingsById(id);
     }
 
     @Override
     public Flowable<List<Thing>> refreshThings(@NonNull String id) {
-        return loadThingsAndSaveToDb(id);
+        return mRemoteThingsSource.loadThingsByPlacementId(id)
+                .doOnNext(things -> {
+                    if (things.isEmpty()) {
+                        return;
+                    }
+
+                    mLocalThingsSource.deleteAndUpdateThings(things);
+                    //TODO delete All things in placement by id, and insert new things to database
+                });
     }
 
     @Override
@@ -69,7 +66,7 @@ public class ThingRepositoryImpl implements ThingRepository {
                         return;
                     }
 
-                    mLocalThingsSource.deleteAndUpdateThings(things);
+                    mLocalThingsSource.addThingsSync(things);
                 });
     }
 }

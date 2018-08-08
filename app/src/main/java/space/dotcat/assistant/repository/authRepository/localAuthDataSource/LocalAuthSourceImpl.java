@@ -10,7 +10,7 @@ public class LocalAuthSourceImpl implements LocalAuthSource {
 
     private SharedPreferences mSharedPreferences;
 
-    private static final String URL_DEFAULT_VALUE = "https://api.ks-cube.tk/api/rest/v1";
+    private static final String URL_DEFAULT_VALUE = "https://api.ks-cube.tk/api/rest/v1/";
 
     private static final String TOKEN_DEFAULT_VALUE = "";
 
@@ -18,7 +18,7 @@ public class LocalAuthSourceImpl implements LocalAuthSource {
 
     private static final String PORT_DEFAULT_VALUE = "11800";
 
-    private static final String STREAMING_URL_DEFAULT_VALUE = "ws://api.ks-cube.tk/streaming/api/v1";
+    private static final String STREAMING_URL_DEFAULT_VALUE = "ws://api.ks-cube.tk/streaming/api/v1/";
 
     private static final boolean SETUP_PROCESS_DEFAULT_VALUE = false;
 
@@ -102,7 +102,7 @@ public class LocalAuthSourceImpl implements LocalAuthSource {
     public void savePortValue(String port) {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
 
-        editor.putString(BuildConfig.PORT_KEY, PORT_DEFAULT_VALUE);
+        editor.putString(BuildConfig.PORT_KEY, port);
 
         editor.apply();
     }
@@ -119,6 +119,20 @@ public class LocalAuthSourceImpl implements LocalAuthSource {
         editor.putString(BuildConfig.STREAMING_URL_KEY, ws_url);
 
         editor.apply();
+    }
+
+    @Override
+    public void saveIsUserEnabledSecuredConnection(boolean isSecured) {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+
+        editor.putBoolean(BuildConfig.IS_SECURED_KEY, isSecured);
+
+        editor.apply();
+    }
+
+    @Override
+    public boolean getIsConnectionSecured() {
+        return mSharedPreferences.getBoolean(BuildConfig.IS_SECURED_KEY, false);
     }
 
     @Override

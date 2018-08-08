@@ -1,10 +1,11 @@
 package space.dotcat.assistant.screen.setup;
 
 import space.dotcat.assistant.repository.authRepository.AuthRepository;
+import space.dotcat.assistant.screen.general.BasePresenter;
 import space.dotcat.assistant.utils.AddressUtils;
 import space.dotcat.assistant.utils.TextUtils;
 
-public class SetupPresenter {
+public class SetupPresenter implements BasePresenter {
 
     private SetupViewContract mSetupViewContract;
 
@@ -32,6 +33,10 @@ public class SetupPresenter {
         if (!TextUtils.isEmpty(port)) {
             mSetupViewContract.showExistingPort(port);
         }
+
+        boolean is_connection_secured = mAuthRepository.getIsConnectionSecured();
+
+        mSetupViewContract.showExistingIsConnectionSecured(is_connection_secured);
     }
 
     public void completeSetup(boolean isSecured, String host, String port) {
@@ -40,8 +45,9 @@ public class SetupPresenter {
         } else if (TextUtils.isEmpty(port)) {
             mSetupViewContract.showEmptyPort();
         } else {
-            mAuthRepository.saveHostValue(host);
             mAuthRepository.savePortValue(port);
+            mAuthRepository.saveHostValue(host);
+            mAuthRepository.saveIsUserEnabledSecuredConnection(isSecured);
 
             String base_url = AddressUtils.createBaseAddress(isSecured, host, port);
 
@@ -53,5 +59,10 @@ public class SetupPresenter {
 
             mSetupViewContract.showAuthActivity();
         }
+    }
+
+    @Override
+    public void unsubscribe() {
+
     }
 }

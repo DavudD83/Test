@@ -14,6 +14,7 @@ import android.widget.Toast;
 import javax.inject.Inject;
 
 import space.dotcat.assistant.AppDelegate;
+import space.dotcat.assistant.BuildConfig;
 import space.dotcat.assistant.R;
 import space.dotcat.assistant.di.activitiesComponents.preferenceFragment.PreferenceModule;
 
@@ -31,12 +32,6 @@ public class PreferenceFragment extends PreferenceFragmentCompat
                 .plusDataLayerComponent()
                 .plusPreferencesComponent(new PreferenceModule(this))
                 .inject(this);
-
-        EditTextPreference editTextPreference = (EditTextPreference) getPreferenceScreen().
-                findPreference(getResources().getString(R.string.url_key));
-
-        editTextPreference.setOnPreferenceChangeListener((preference, newValue) ->
-                mSettingsPresenter.validateUrl(String.valueOf(newValue)));
 
         mSettingsPresenter.init();
     }
@@ -59,15 +54,23 @@ public class PreferenceFragment extends PreferenceFragmentCompat
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(getResources().getString(R.string.url_key))) {
-            String string_url = mSettingsPresenter.getPreferenceSummary(key,
-                    getResources().getString(R.string.default_url));
+        if (key.equals(getString(R.string.host_key))) {
+            String string_host = mSettingsPresenter.getPreferenceSummary(key,
+                    getString(R.string.default_host));
 
-            mSettingsPresenter.saveNewUrl(string_url);
+            mSettingsPresenter.saveNewHost(string_host);
 
-            mSettingsPresenter.recreateApi();
+            mSettingsPresenter.updateAddresses();
 
-            mSettingsPresenter.updateParticularPreferenceSummary(key, string_url);
+            mSettingsPresenter.updateParticularPreferenceSummary(key, string_host);
+        } else if (key.equals(getString(R.string.port_key))) {
+            String string_port = mSettingsPresenter.getPreferenceSummary(key, getString(R.string.default_port));
+
+            mSettingsPresenter.saveNewPort(string_port);
+
+            mSettingsPresenter.updateAddresses();
+
+            mSettingsPresenter.updateParticularPreferenceSummary(key, string_port);
         }
     }
 

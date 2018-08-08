@@ -18,10 +18,10 @@ public class OkHttpFactory {
 
     public OkHttpClient provideClient(){
         OkHttpClient client = sOkHttpClient;
-        if(client == null){
+        if (client == null){
             synchronized (OkHttpFactory.class){
                 client = sOkHttpClient;
-                if(client == null) {
+                if (client == null) {
                     client = sOkHttpClient = buildClient();
                 }
             }

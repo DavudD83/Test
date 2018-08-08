@@ -28,7 +28,9 @@
             android:id="@+id/editText_url"
             android:hint="@string/url_label"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:editable="false"
+            android:focusable="false"/>
 
     </android.support.design.widget.TextInputLayout>
 

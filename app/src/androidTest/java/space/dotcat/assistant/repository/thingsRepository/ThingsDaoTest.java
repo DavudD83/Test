@@ -47,6 +47,8 @@ public class ThingsDaoTest {
         mThingsDao = AppDelegate.getInstance().getAppComponent().getFakeThingsDao();
 
         mTestSubscriber = new TestSubscriber();
+
+        mThingsDao.deleteAllThings();
     }
 
     public void after() {
@@ -76,7 +78,6 @@ public class ThingsDaoTest {
     public void testObservableQuery() {
         mThingsDao.getDimmableLamps(PLACEMENT_ID)
                 .flatMap(Flowable::fromIterable)
-                .doOnEach(System.out::println)
                 .subscribe(mTestSubscriber);
 
         mTestSubscriber.assertNoErrors();

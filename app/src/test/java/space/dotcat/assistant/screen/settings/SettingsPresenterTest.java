@@ -1,36 +1,30 @@
 package space.dotcat.assistant.screen.settings;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 
+import space.dotcat.assistant.BuildConfig;
+import space.dotcat.assistant.base.BasePresenterTest;
 import space.dotcat.assistant.repository.authRepository.AuthRepository;
-import space.dotcat.assistant.utils.RxJavaTestRule;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(JUnit4.class)
-public class SettingsPresenterTest {
-
-    @Rule
-    public RxJavaTestRule mRxJavaTestRule = new RxJavaTestRule();
+public class SettingsPresenterTest extends BasePresenterTest<SettingsPresenter> {
 
     @Mock
     private SettingsViewContract mSettingsViewContract;
 
     @Mock
     private AuthRepository mAuthRepository;
-
-    private SettingsPresenter mSettingsPresenter;
 
     private final static String VALID_URL = "https://109.23.32.32/";
 
@@ -40,65 +34,51 @@ public class SettingsPresenterTest {
 
     private final static String SUMMARY = "SUMMARY";
 
-    @Before
-    public void init() {
-        MockitoAnnotations.initMocks(this);
+    private final static String HOST = "HOST";
 
-        mSettingsPresenter = new SettingsPresenter(mSettingsViewContract, mAuthRepository);
-    }
+    private final static String PORT = "PORT";
 
-    @After
-    public void clear() {
-        mSettingsViewContract = null;
-        mAuthRepository = null;
-        mSettingsPresenter = null;
+    @Override
+    protected SettingsPresenter createPresenterForTesting() {
+        return new SettingsPresenter(mSettingsViewContract, mAuthRepository);
     }
 
     @Test
     public void testPresenterSuccessfullyCreated() {
-        assertNotNull(mSettingsPresenter);
+        assertNotNull(mPresenter);
     }
 
     @Test
     public void testPresenterInit() {
-        mSettingsPresenter.init();
+        mPresenter.init();
 
         Mockito.verify(mSettingsViewContract).showSummary();
     }
 
     @Test
     public void testUrlSuccessfullySaved() {
-        mSettingsPresenter.saveNewUrl(VALID_URL);
+        mPresenter.saveNewUrl(VALID_URL);
 
         Mockito.verify(mAuthRepository).saveUrl(VALID_URL);
     }
 
     @Test
     public void testUpdateParticularPreferenceSummary() {
-        mSettingsPresenter.updateParticularPreferenceSummary(KEY, SUMMARY);
+        mPresenter.updateParticularPreferenceSummary(KEY, SUMMARY);
 
         Mockito.verify(mSettingsViewContract).updateParticularSummary(KEY, SUMMARY);
     }
 
     @Test
     public void testCheckInvalidUrl() {
-        mSettingsPresenter.validateUrl(INVALID_URL);
+        mPresenter.validateUrl(INVALID_URL);
 
         Mockito.verify(mSettingsViewContract).showUrlError();
     }
 
     @Test
-    public void testCheckValidUrl() {
-        Boolean value = mSettingsPresenter.validateUrl(VALID_URL);
-
-        assertTrue(value);
-
-        Mockito.verifyNoMoreInteractions(mAuthRepository);
-    }
-
-    @Test
     public void testRecreateApi() {
-        mSettingsPresenter.recreateApi();
+        mPresenter.recreateApi();
 
         Mockito.verify(mAuthRepository).destroyApiService();
     }
@@ -110,7 +90,7 @@ public class SettingsPresenterTest {
 
         when(mAuthRepository.getSummaryByKey(KEY, def_value)).thenReturn(result);
 
-        String value = mSettingsPresenter.getPreferenceSummary(KEY, def_value);
+        String value = mPresenter.getPreferenceSummary(KEY, def_value);
 
         assertEquals(value, result);
 
@@ -118,23 +98,47 @@ public class SettingsPresenterTest {
     }
 
     @Test
+    public void getIsConnectionSecured() {
+        boolean is_secured = false;
+
+        when(mAuthRepository.getIsConnectionSecured()).thenReturn(is_secured);
+
+        boolean actual = mPresenter.getIsConnectionSecured();
+
+        verify(mAuthRepository, times(2)).getIsConnectionSecured();
+
+        assertEquals(is_secured, actual);
+    }
+
+    @Test
+    public void testUpdateAddresses() {
+        mPresenter.updateAddresses();
+
+        verify(mAuthRepository).getHostValue();
+        verify(mAuthRepository).getPortValue();
+
+        verify(mAuthRepository).saveStreamingUrl(anyString());
+        verify(mAuthRepository).saveUrl(anyString());
+        verify(mAuthRepository).destroyApiService();
+    }
+
+    @Test
     public void testScenario() {
-        mSettingsPresenter.init();
+        mPresenter.init();
+
         Mockito.verify(mSettingsViewContract).showSummary();
+        verify(mAuthRepository).getIsConnectionSecured();
 
-        mSettingsPresenter.validateUrl(INVALID_URL);
-        Mockito.verify(mSettingsViewContract).showUrlError();
+        mPresenter.saveNewHost(HOST);
+        verify(mAuthRepository).saveHostValue(HOST);
 
-        mSettingsPresenter.validateUrl(VALID_URL);
-        Mockito.verifyZeroInteractions(mSettingsViewContract);
+        mPresenter.updateAddresses();
+        verify(mAuthRepository).getPortValue();
+        verify(mAuthRepository).getHostValue();
+        verify(mAuthRepository).saveStreamingUrl(anyString());
+        verify(mAuthRepository).saveUrl(anyString());
 
-        mSettingsPresenter.saveNewUrl(VALID_URL);
-        Mockito.verify(mAuthRepository).saveUrl(VALID_URL);
-
-        mSettingsPresenter.recreateApi();
-        Mockito.verify(mAuthRepository).destroyApiService();
-
-        mSettingsPresenter.updateParticularPreferenceSummary(KEY, SUMMARY);
+        mPresenter.updateParticularPreferenceSummary(KEY, SUMMARY);
         Mockito.verify(mSettingsViewContract).updateParticularSummary(KEY, SUMMARY);
     }
 }

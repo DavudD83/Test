@@ -60,6 +60,22 @@ public interface AuthRepository {
     String getPortValue();
 
     /**
+     * Save boolean value that represents is user enabled secured connection or not
+     *
+     * @param isSecured value that shows whether user enabled secured connection or not
+     */
+
+    void saveIsUserEnabledSecuredConnection(boolean isSecured);
+
+    /**
+     * Get info that show whether user enabled secured connection or not
+     *
+     * @return boolean value
+     */
+
+    boolean getIsConnectionSecured();
+
+    /**
      * Save particular ulr into a phone's disk memory
      *
      * @param url address of server api which you want to connect with

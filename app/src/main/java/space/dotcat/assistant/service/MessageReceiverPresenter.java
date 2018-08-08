@@ -1,6 +1,8 @@
 package space.dotcat.assistant.service;
 
 import android.arch.lifecycle.LiveData;
+import android.content.Intent;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -8,6 +10,8 @@ import com.google.gson.JsonElement;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import space.dotcat.assistant.content.ApiError;
+import space.dotcat.assistant.content.Message;
 import space.dotcat.assistant.content.webSocketModel.AcknowledgeBody;
 import space.dotcat.assistant.content.webSocketModel.AuthBody;
 import space.dotcat.assistant.content.Room;
@@ -17,6 +21,7 @@ import space.dotcat.assistant.content.webSocketModel.WebSocketAcknowledgeMessage
 import space.dotcat.assistant.content.webSocketModel.WebSocketAuthMessage;
 import space.dotcat.assistant.content.webSocketModel.WebSocketMessage;
 import space.dotcat.assistant.content.webSocketModel.WebSocketSubscribeMessage;
+import space.dotcat.assistant.notifications.NotificationHandler;
 import space.dotcat.assistant.repository.authRepository.AuthRepository;
 import space.dotcat.assistant.repository.roomsRepository.RoomRepository;
 import space.dotcat.assistant.repository.thingsRepository.ThingRepository;
@@ -24,6 +29,8 @@ import space.dotcat.assistant.screen.general.BaseRxPresenter;
 import space.dotcat.assistant.webSocket.WebSocketService;
 
 public class MessageReceiverPresenter extends BaseRxPresenter {
+
+    private MessageReceiverServiceContract mMessageReceiverServiceContract;
 
     private LiveData<Boolean> mWiFiReceiver;
 
@@ -37,9 +44,20 @@ public class MessageReceiverPresenter extends BaseRxPresenter {
 
     private Gson mGson;
 
-    public MessageReceiverPresenter(LiveData<Boolean> wiFiReceiver, WebSocketService webSocketService,
+    private NotificationHandler mNotificationHandler;
+
+    public static final String INTENT_ERROR_ACTION = "ERROR_MESSAGE";
+
+    public static final String ERROR_KEY = "ERROR";
+
+    private final String TAG = this.getClass().getName();
+
+    public MessageReceiverPresenter(MessageReceiverServiceContract serviceContract,
+                                    LiveData<Boolean> wiFiReceiver, WebSocketService webSocketService,
                                     AuthRepository authRepository, RoomRepository roomRepository,
-                                    ThingRepository thingRepository, Gson gson) {
+                                    ThingRepository thingRepository, Gson gson, NotificationHandler notificationHandler) {
+        mMessageReceiverServiceContract = serviceContract;
+
         mWiFiReceiver = wiFiReceiver;
 
         mWebSocketService = webSocketService;
@@ -51,6 +69,8 @@ public class MessageReceiverPresenter extends BaseRxPresenter {
         mThingRepository = thingRepository;
 
         mGson = gson;
+
+        mNotificationHandler = notificationHandler;
     }
 
     public LiveData<Boolean> getWiFiReceiver() {
@@ -75,7 +95,32 @@ public class MessageReceiverPresenter extends BaseRxPresenter {
         mWebSocketService.sendMessage(message);
     }
 
-    public void subscribeOnTopics() {
+    public void handleResponseMessage(WebSocketMessage message) {
+        String topic = message.getTopic();
+
+        if (topic.startsWith("things/")) {
+            Thing newThing = mGson.fromJson(message.getBody(), Thing.class);
+
+            updateThing(newThing);
+
+            Room room = findPlacementById(newThing.getPlacement());
+
+            mNotificationHandler.sendEventNotification("Thing in " + newThing.getPlacement() + " has changed",
+                    room);
+        } else if (topic.startsWith("placements/")) {
+            Room newRoom = mGson.fromJson(message.getBody(), Room.class);
+
+            updateRoom(newRoom);
+        } else if (topic.startsWith("error")) {
+            ApiError apiError = mGson.fromJson(message.getBody(), ApiError.class);
+
+            Log.d(TAG, "Error received. Message : " + apiError.getDevelMessage());
+
+            mMessageReceiverServiceContract.sendErrorBroadcast(apiError);
+        }
+    }
+
+    public void subscribeOnAllTopics() {
         SubscribeBody subscribeBody = new SubscribeBody("things/#", true);
 
         JsonElement jsonBody = mGson.toJsonTree(subscribeBody);

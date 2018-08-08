@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
@@ -20,6 +21,7 @@ import space.dotcat.assistant.di.activitiesComponents.authActivity.AuthActivityM
 import space.dotcat.assistant.screen.general.BaseActivity;
 import space.dotcat.assistant.screen.general.LoadingView;
 import space.dotcat.assistant.screen.roomList.RoomsActivity;
+import space.dotcat.assistant.screen.setup.SetupActivity;
 
 public class AuthActivity extends BaseActivity implements AuthViewContract {
 
@@ -54,6 +56,8 @@ public class AuthActivity extends BaseActivity implements AuthViewContract {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
+
+        if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -137,9 +141,32 @@ public class AuthActivity extends BaseActivity implements AuthViewContract {
         super.showBaseError(t);
     }
 
+    @Override
+    public void showSetupActivity() {
+        SetupActivity.start(this);
+        finish();
+    }
+
     @OnClick(R.id.bt_logIn)
     public void tryLogIn(View view) {
         mAuthPresenter.tryLogin(mUrl.getText().toString(), mLogin.getText().toString(),
                 mPassword.getText().toString());
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            mAuthPresenter.resetSetupState();
+
+            showSetupActivity();
+
+            onBackPressed();
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -57,10 +57,30 @@ public class LocalRoomsSourceTest {
         mLocalRoomsSource.addRoomsSync(ROOMS);
 
         mLocalRoomsSource.getRooms()
+                .flatMap(Flowable::fromIterable)
                 .test()
                 .assertNoErrors()
                 .assertValueCount(2)
-                .assertValue(list-> list.get(0).getId().equals(ROOMS.get(0).getId()));
+                .assertValueAt(0, room-> room.getId().equals(ROOMS.get(0).getId()));
+    }
+
+    @Test
+    public void testUpdateRoom() {
+        mLocalRoomsSource.addRoomsSync(ROOMS);
+
+        mLocalRoomsSource.getRooms()
+                .flatMap(Flowable::fromIterable)
+                .test()
+                .assertValueAt(1, room -> room.getFriendlyName().equals("Bathroom"));
+
+        Room updatedRoom = new Room("newName", "id2", "path");
+
+        mLocalRoomsSource.updateRoom(updatedRoom);
+
+        mLocalRoomsSource.getRooms()
+                .flatMap(Flowable::fromIterable)
+                .test()
+                .assertValueAt(1, room -> room.getFriendlyName().equals("newName"));
     }
 
     @Test

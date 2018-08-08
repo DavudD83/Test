@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
     <EditTextPreference
-        android:id="@+id/editTextPref_url"
-        android:title="@string/url_label"
-        android:key="@string/url_key"
-        android:defaultValue="@string/default_url"
-        />
+        android:id="@+id/editTextPref_host"
+        android:title="@string/host_label"
+        android:key="@string/host_key"
+        android:defaultValue="@string/default_host"/>
+
+    <EditTextPreference
+        android:id="@+id/editTextPref_port"
+        android:title="@string/port_label"
+        android:key="@string/port_key"
+        android:defaultValue="@string/default_port"/>
+
 </PreferenceScreen>

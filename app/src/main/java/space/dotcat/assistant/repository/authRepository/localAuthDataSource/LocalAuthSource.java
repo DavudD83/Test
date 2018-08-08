@@ -31,6 +31,10 @@ public interface LocalAuthSource {
 
     void saveStreamingUrl(String ws_url);
 
+    void saveIsUserEnabledSecuredConnection(boolean isSecured);
+
+    boolean getIsConnectionSecured();
+
     String getStreamingUrl();
 
     boolean isMessageServiceStarted();

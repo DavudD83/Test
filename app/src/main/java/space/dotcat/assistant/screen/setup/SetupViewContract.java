@@ -15,4 +15,6 @@ public interface SetupViewContract {
     void showExistingHost(String host);
 
     void showExistingPort(String port);
+
+    void showExistingIsConnectionSecured(boolean is_connection_secured);
 }

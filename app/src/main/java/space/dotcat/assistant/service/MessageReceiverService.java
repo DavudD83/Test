@@ -1,49 +1,33 @@
 package space.dotcat.assistant.service;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.arch.lifecycle.LifecycleService;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-
-import com.google.gson.Gson;
 
 import javax.inject.Inject;
 
 import space.dotcat.assistant.AppDelegate;
-import space.dotcat.assistant.R;
 import space.dotcat.assistant.content.ApiError;
-import space.dotcat.assistant.content.Room;
-import space.dotcat.assistant.content.Thing;
 import space.dotcat.assistant.content.webSocketModel.WebSocketMessage;
 import space.dotcat.assistant.di.serviceComponent.MessageReceiverPresenterModule;
 import space.dotcat.assistant.di.serviceComponent.WebSocketServiceModule;
 import space.dotcat.assistant.di.serviceComponent.WiFiListenerModule;
-import space.dotcat.assistant.screen.roomDetail.RoomDetailsActivity;
+import space.dotcat.assistant.screen.general.BaseActivity;
 import space.dotcat.assistant.webSocket.WebSocketServiceImpl;
 
 /**
  * Service that is responsible for listening to new updates and dispatching corresponding notifications
  */
 
-public class MessageReceiverService extends LifecycleService {
+public class MessageReceiverService extends LifecycleService implements MessageReceiverServiceContract {
 
     @Inject
     MessageReceiverPresenter mMessageReceiverPresenter;
 
-    @Inject
-    Gson mGson;
-
     private final String TAG = this.getClass().getName();
-
-    public static final String INTENT_ERROR_ACTION = "ERROR_MESSAGE";
-
-    public static final String ERROR_KEY = "ERROR";
 
     public static Boolean sIsWorking;
 
@@ -76,7 +60,7 @@ public class MessageReceiverService extends LifecycleService {
 
                 mMessageReceiverPresenter.sendAuthMessage();
 
-                mMessageReceiverPresenter.subscribeOnTopics();
+                mMessageReceiverPresenter.subscribeOnAllTopics();
             } else {
                 Log.d(TAG, "WiFi is disconnected");
             }
@@ -90,7 +74,7 @@ public class MessageReceiverService extends LifecycleService {
                 .plusDataLayerComponent()
                 .plusMessageReceiverComponent(new WiFiListenerModule(),
                         new WebSocketServiceModule(new MessageServiceListener()),
-                        new MessageReceiverPresenterModule())
+                        new MessageReceiverPresenterModule(this))
                 .inject(this);
     }
 
@@ -116,6 +100,14 @@ public class MessageReceiverService extends LifecycleService {
         sIsWorking = false;
     }
 
+    @Override
+    public void sendErrorBroadcast(ApiError error) {
+        Intent errorIntent = new Intent(MessageReceiverPresenter.INTENT_ERROR_ACTION);
+        errorIntent.putExtra(MessageReceiverPresenter.ERROR_KEY, error);
+
+        sendBroadcast(errorIntent);
+    }
+
     private class MessageServiceListener implements WebSocketServiceImpl.ServerListener {
 
         @Override
@@ -123,54 +115,12 @@ public class MessageReceiverService extends LifecycleService {
             if (message.getMessageId() != null) {
                 mMessageReceiverPresenter.sendAcknowledgeMessage(message.getMessageId());
 
-                Log.d(TAG, "message id received " + message.getMessageId());
+                Log.d(TAG, "Message id received " + message.getMessageId());
             }
 
-            String topic = message.getTopic();
+            mMessageReceiverPresenter.handleResponseMessage(message);
 
-            if (topic.startsWith("things/")) {
-                Thing newThing = mGson.fromJson(message.getBody(), Thing.class);
-
-                mMessageReceiverPresenter.updateThing(newThing);
-
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "updates")
-                        .setContentTitle("Update notification")
-                        .setContentText("Thing in" + newThing.getPlacement() + " has changed")
-                        .setSmallIcon(R.drawable.ic_notification)
-                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                        .setDefaults(NotificationCompat.DEFAULT_ALL)
-                        .setAutoCancel(true);
-
-                final Room placement = mMessageReceiverPresenter.findPlacementById(newThing.getPlacement());
-
-                if (placement != null) {
-                    Intent launchIntent = RoomDetailsActivity.getIntent(getApplicationContext(), placement);
-
-                    PendingIntent launchPendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,
-                            launchIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                    builder.setContentIntent(launchPendingIntent);
-                }
-
-                NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-                notificationManager.notify(0, builder.build());
-            } else if (topic.startsWith("placements/")) {
-                Room newRoom = mGson.fromJson(message.getBody(), Room.class);
-
-                mMessageReceiverPresenter.updateRoom(newRoom);
-            } else if (topic.startsWith("error")) {
-                ApiError apiError = mGson.fromJson(message.getBody(), ApiError.class);
-
-                Log.d(TAG, apiError.getDevelMessage());
-
-                Intent errorBroadcast = new Intent(INTENT_ERROR_ACTION);
-                errorBroadcast.putExtra(ERROR_KEY, apiError);
-
-                sendBroadcast(errorBroadcast);
-            }
-
-            Log.d("MessageReceiverService", "message received " + message.getTopic());
+            Log.d(TAG, "Message received. Topic is " + message.getTopic());
         }
 
         @Override
@@ -185,7 +135,7 @@ public class MessageReceiverService extends LifecycleService {
 
             mMessageReceiverPresenter.sendAuthMessage();
 
-            mMessageReceiverPresenter.subscribeOnTopics();
+            mMessageReceiverPresenter.subscribeOnAllTopics();
 
             Log.d(TAG, "error received " + throwable.getLocalizedMessage());
         }

@@ -15,7 +15,6 @@ import okhttp3.Response;
 import space.dotcat.assistant.AppDelegate;
 import space.dotcat.assistant.BuildConfig;
 import space.dotcat.assistant.repository.authRepository.AuthRepository;
-import space.dotcat.assistant.repository.RepositoryProvider;
 import space.dotcat.assistant.utils.AddressUtils;
 
 public class RequestMatcher {

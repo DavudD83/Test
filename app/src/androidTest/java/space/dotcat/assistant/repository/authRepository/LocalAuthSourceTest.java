@@ -27,6 +27,12 @@ public class LocalAuthSourceTest {
 
     private static final String DEF_VALUE = "DEF_VALUE";
 
+    private static final String PORT = "443";
+
+    private static final String HOST = "host";
+
+    private static final boolean IS_SECURED = false;
+
     private SharedPreferences mSharedPreferences;
 
     private LocalAuthSource mLocalAuthSource;
@@ -70,7 +76,28 @@ public class LocalAuthSourceTest {
     public void testSaveToken() {
         mLocalAuthSource.saveToken(TOKEN);
 
-        assertEquals(mLocalAuthSource.getToken(), TOKEN);
+        assertEquals(TOKEN, mLocalAuthSource.getToken());
+    }
+
+    @Test
+    public void testSavePort() {
+        mLocalAuthSource.savePortValue(PORT);
+
+        assertEquals(PORT, mLocalAuthSource.getPort());
+    }
+
+    @Test
+    public void testSaveHost() {
+        mLocalAuthSource.saveHostValue(HOST);
+
+        assertEquals(HOST, mLocalAuthSource.getHost());
+    }
+
+    @Test
+    public void testSaveIsConnectionSecured() {
+        mLocalAuthSource.saveIsUserEnabledSecuredConnection(IS_SECURED);
+
+        assertEquals(IS_SECURED, mLocalAuthSource.getIsConnectionSecured());
     }
 
     @Test

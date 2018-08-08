@@ -133,7 +133,7 @@ public class LocalThingsSourceTest {
         mLocalThingsSource.getThingsById(ROOM_ID)
                 .flatMap(Flowable::fromIterable)
                 .test()
-                .assertValueCount(4)
+                .assertValueCount(3)
                 .assertValueAt(1, Thing::getIsAvailable)
                 .assertValueAt(2, Thing::getIsAvailable);
     }

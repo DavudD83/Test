@@ -22,7 +22,7 @@ public class RoomRepositoryImpl implements RoomRepository {
     private RemoteRoomsSource mRemoteRoomsSource;
 
     private Flowable<List<Room>> mCacheRooms;
-    
+
     public RoomRepositoryImpl(LocalRoomsSource localRoomsSource, RemoteRoomsSource remoteRoomsSource) {
         mLocalRoomsSource = localRoomsSource;
 
@@ -34,17 +34,7 @@ public class RoomRepositoryImpl implements RoomRepository {
         if(mCacheRooms != null)
             return mCacheRooms;
 
-        return mCacheRooms = mLocalRoomsSource.getRooms()
-                .flatMap(rooms-> {
-                    if(rooms.isEmpty()) {
-                        return loadRoomsRemotelyAndSaveToDb().onErrorResumeNext(throwable -> {
-                            return Flowable.mergeDelayError(mLocalRoomsSource.getRooms(),
-                                    Flowable.error(throwable));
-                        });
-                    }
-
-                    return Flowable.just(rooms);
-                });
+        return mCacheRooms = mLocalRoomsSource.getRooms();
     }
 
     @Override
@@ -54,9 +44,7 @@ public class RoomRepositoryImpl implements RoomRepository {
 
     @Override
     public Completable updateRoom(Room room) {
-        return Completable.fromAction(()-> {
-            mLocalRoomsSource.updateRoom(room);
-        });
+        return Completable.fromAction(()-> mLocalRoomsSource.updateRoom(room));
     }
 
     @Override

@@ -122,4 +122,9 @@ public class SetupActivity extends BaseActivity implements SetupViewContract {
     public void showExistingPort(String port) {
         mPort.setText(port);
     }
+
+    @Override
+    public void showExistingIsConnectionSecured(boolean is_connection_secured) {
+        mIsSecured.setChecked(is_connection_secured);
+    }
 }

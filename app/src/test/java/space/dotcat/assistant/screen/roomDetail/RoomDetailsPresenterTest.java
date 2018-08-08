@@ -1,14 +1,8 @@
 package space.dotcat.assistant.screen.roomDetail;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,30 +10,24 @@ import java.util.List;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
+import space.dotcat.assistant.base.BasePresenterTest;
 import space.dotcat.assistant.content.Message;
 import space.dotcat.assistant.content.ResponseActionMessage;
 import space.dotcat.assistant.content.Thing;
 import space.dotcat.assistant.repository.thingsRepository.ThingRepository;
-import space.dotcat.assistant.utils.RxJavaTestRule;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-@RunWith(JUnit4.class)
-public class RoomDetailsPresenterTest {
-
-    @Rule
-    public RxJavaTestRule mRxJavaTestRule = new RxJavaTestRule();
+public class RoomDetailsPresenterTest extends BasePresenterTest<RoomDetailsPresenter> {
 
     @Mock
     private RoomDetailsViewContract mRoomDetailsViewContract;
 
     @Mock
     private ThingRepository mThingRepository;
-
-    private RoomDetailsPresenter mRoomDetailsPresenter;
 
     private final String ROOM_ID = "R1";
 
@@ -58,30 +46,25 @@ public class RoomDetailsPresenterTest {
 
     private final Completable SUCCESSFULL_COMPLETABLE = Completable.complete();
 
-    @Before
-    public void init() {
-        MockitoAnnotations.initMocks(this);
+    private final List<Thing> EMPTY_THINGS = new ArrayList<>();
 
-        mRoomDetailsPresenter = new RoomDetailsPresenter(mRoomDetailsViewContract, mThingRepository);
-    }
+    private final Flowable<List<Thing>> EMPTY_FLOWABLE = Flowable.just(EMPTY_THINGS);
 
-    @After
-    public void clear() {
-        mRoomDetailsPresenter = null;
-        mRoomDetailsViewContract = null;
-        mThingRepository = null;
+    @Override
+    protected RoomDetailsPresenter createPresenterForTesting() {
+        return new RoomDetailsPresenter(mRoomDetailsViewContract, mThingRepository);
     }
 
     @Test
     public void testPresenterCreated() {
-        assertNotNull(mRoomDetailsPresenter);
+        assertNotNull(mPresenter);
     }
 
     @Test
     public void testLoadThingsSuccessfully() {
         when(mThingRepository.getThingsById(ROOM_ID)).thenReturn(FLOWABLE_LIST);
 
-        mRoomDetailsPresenter.init(ROOM_ID);
+        mPresenter.init(ROOM_ID);
 
         Mockito.verify(mRoomDetailsViewContract).showLoading();
         Mockito.verify(mRoomDetailsViewContract).hideLoading();
@@ -90,9 +73,12 @@ public class RoomDetailsPresenterTest {
 
     @Test
     public void testLoadEmptyListOfThingsSuccessfully() {
-        when(mThingRepository.getThingsById(ROOM_ID)).thenReturn(Flowable.just(new ArrayList<>()));
+        when(mThingRepository.getThingsById(ROOM_ID)).thenReturn(EMPTY_FLOWABLE);
+        when(mThingRepository.refreshThings(ROOM_ID)).thenReturn(FLOWABLE_LIST);
 
-        mRoomDetailsPresenter.init(ROOM_ID);
+        mPresenter.init(ROOM_ID);
+
+        Mockito.verify(mThingRepository).refreshThings(ROOM_ID);
 
         Mockito.verify(mRoomDetailsViewContract).showLoading();
         Mockito.verify(mRoomDetailsViewContract).hideLoading();
@@ -100,10 +86,24 @@ public class RoomDetailsPresenterTest {
     }
 
     @Test
+    public void testLoadThingsWithErrorWhileThereIsNoThingsLocally() {
+        when(mThingRepository.getThingsById(ROOM_ID)).thenReturn(EMPTY_FLOWABLE);
+        when(mThingRepository.refreshThings(ROOM_ID)).thenReturn(FLOWABLE_ERROR);
+
+        mPresenter.init(ROOM_ID);
+
+        Mockito.verify(mThingRepository).refreshThings(ROOM_ID);
+
+        Mockito.verify(mRoomDetailsViewContract).hideLoading();
+        Mockito.verify(mRoomDetailsViewContract).showEmptyThingsError();
+        Mockito.verify(mRoomDetailsViewContract).showError(API_ERROR);
+    }
+
+    @Test
     public void testLoadThingsWithError() {
         when(mThingRepository.getThingsById(ROOM_ID)).thenReturn(FLOWABLE_ERROR);
 
-        mRoomDetailsPresenter.init(ROOM_ID);
+        mPresenter.init(ROOM_ID);
 
         Mockito.verify(mRoomDetailsViewContract).showLoading();
         Mockito.verify(mRoomDetailsViewContract).hideLoading();
@@ -114,7 +114,7 @@ public class RoomDetailsPresenterTest {
     public void testReloadThingsSuccessfully() {
         when(mThingRepository.refreshThings(ROOM_ID)).thenReturn(FLOWABLE_LIST);
 
-        mRoomDetailsPresenter.reloadThings(ROOM_ID);
+        mPresenter.reloadThings(ROOM_ID);
 
         Mockito.verifyNoMoreInteractions(mRoomDetailsViewContract);
     }
@@ -123,7 +123,7 @@ public class RoomDetailsPresenterTest {
     public void testReloadThingsFail() {
         when(mThingRepository.refreshThings(ROOM_ID)).thenReturn(FLOWABLE_ERROR);
 
-        mRoomDetailsPresenter.reloadThings(ROOM_ID);
+        mPresenter.reloadThings(ROOM_ID);
 
         Mockito.verify(mRoomDetailsViewContract, Mockito.times(0)).showLoading();
         Mockito.verify(mRoomDetailsViewContract, Mockito.times(0)).hideLoading();
@@ -139,7 +139,7 @@ public class RoomDetailsPresenterTest {
 
         Thing thing = mThings.get(0);
 
-        mRoomDetailsPresenter.onItemChange(thing);
+        mPresenter.onItemChange(thing);
 
         Mockito.verify(mRoomDetailsViewContract).showLoading();
         Mockito.verify(mRoomDetailsViewContract).hideLoading();
@@ -158,7 +158,7 @@ public class RoomDetailsPresenterTest {
 
         when(mThingRepository.updateThing(any(Thing.class))).thenReturn(SUCCESSFULL_COMPLETABLE);
 
-        mRoomDetailsPresenter.onItemChange(thing);
+        mPresenter.onItemChange(thing);
 
         Mockito.verify(mRoomDetailsViewContract).showError(API_ERROR);
 
@@ -169,7 +169,7 @@ public class RoomDetailsPresenterTest {
     public void testScenario() {
         when(mThingRepository.getThingsById(ROOM_ID)).thenReturn(FLOWABLE_ERROR);
 
-        mRoomDetailsPresenter.init(ROOM_ID);
+        mPresenter.init(ROOM_ID);
 
         Mockito.verify(mRoomDetailsViewContract).showLoading();
         Mockito.verify(mRoomDetailsViewContract).hideLoading();
@@ -177,7 +177,7 @@ public class RoomDetailsPresenterTest {
 
         when(mThingRepository.refreshThings(ROOM_ID)).thenReturn(FLOWABLE_LIST);
 
-        mRoomDetailsPresenter.reloadThings(ROOM_ID);
+        mPresenter.reloadThings(ROOM_ID);
 
         Thing thing = mThings.get(2);
 
@@ -185,7 +185,7 @@ public class RoomDetailsPresenterTest {
 
         when(mThingRepository.updateThing(thing)).thenReturn(SUCCESSFULL_COMPLETABLE);
 
-        mRoomDetailsPresenter.onItemChange(thing);
+        mPresenter.onItemChange(thing);
 
         Mockito.verify(mRoomDetailsViewContract, Mockito.times(2)).showLoading();
         Mockito.verify(mRoomDetailsViewContract, Mockito.times(2)).hideLoading();
@@ -198,7 +198,7 @@ public class RoomDetailsPresenterTest {
 
 //        thing.setActive(false);
 
-        mRoomDetailsPresenter.onItemChange(thing);
+        mPresenter.onItemChange(thing);
 
         Mockito.verify(mRoomDetailsViewContract, Mockito.times(2)).showError(API_ERROR);
     }

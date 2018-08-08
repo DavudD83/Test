@@ -73,43 +73,6 @@ public class RoomRepositoryTest {
     }
 
     @Test
-    public void testNoRoomsInDbLoadRemotely() {
-        when(mLocalAuthSource.getRooms()).thenReturn(FLOWABLE_ROOMS_EMPTY);
-
-        when(mRemoteAuthSource.getRooms()).thenReturn(FLOWABLE_ROOMS);
-
-        mRoomRepository.getRooms()
-                .test()
-                .assertValue(ROOMS);
-
-        verify(mLocalAuthSource).getRooms();
-
-        verify(mRemoteAuthSource).getRooms();
-
-        verify(mLocalAuthSource).deleteRoomsSync();
-
-        verify(mLocalAuthSource).addRoomsSync(ROOMS);
-    }
-
-    @Test
-    public void testNoRoomsIsDbLoadRemotelyFailed() {
-        when(mLocalAuthSource.getRooms()).thenReturn(FLOWABLE_ROOMS_EMPTY);
-
-        when(mRemoteAuthSource.getRooms()).thenReturn(FLOWABLE_WITH_ERROR);
-
-        mRoomRepository.getRooms()
-                .test()
-                .assertValue(EMPTY_ROOMS)
-                .assertError(THROWABLE);
-
-        verify(mLocalAuthSource, times(2)).getRooms();
-
-        verify(mRemoteAuthSource).getRooms();
-
-        verifyNoMoreInteractions(mLocalAuthSource);
-    }
-
-    @Test
     public void testRefreshRoomsWithError() {
         when(mRemoteAuthSource.getRooms()).thenReturn(FLOWABLE_WITH_ERROR);
 

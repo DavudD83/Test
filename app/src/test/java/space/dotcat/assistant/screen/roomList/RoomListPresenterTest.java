@@ -1,34 +1,23 @@
 package space.dotcat.assistant.screen.roomList;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Flowable;
+import space.dotcat.assistant.base.BasePresenterTest;
 import space.dotcat.assistant.content.Room;
 import space.dotcat.assistant.repository.roomsRepository.RoomRepository;
 import space.dotcat.assistant.service.ServiceHandler;
-import space.dotcat.assistant.utils.RxJavaTestRule;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-@RunWith(JUnit4.class)
-public class RoomListPresenterTest {
-
-    @Rule
-    public RxJavaTestRule mRxJavaTestRule = new RxJavaTestRule();
+public class RoomListPresenterTest extends BasePresenterTest<RoomsPresenter> {
 
     @Mock
     private RoomsViewContract mRoomsViewContract;
@@ -39,8 +28,6 @@ public class RoomListPresenterTest {
     @Mock
     private ServiceHandler messageServiceHandler;
 
-    private RoomsPresenter mRoomsPresenter;
-
     private final Throwable ERROR = new Throwable();
 
     private final Flowable<List<Room>> API_ERROR = Flowable.error(ERROR);
@@ -49,30 +36,25 @@ public class RoomListPresenterTest {
 
     private final Flowable<List<Room>> FLOWABLE_ROOMS = Flowable.just(ROOMS);
 
-    @Before
-    public void init() {
-        MockitoAnnotations.initMocks(this);
+    private final List<Room> EMPTY_ROOMS = new ArrayList<>();
 
-        mRoomsPresenter = new RoomsPresenter(mRoomsViewContract, mRoomRepository, messageServiceHandler);
-    }
+    private final Flowable<List<Room>> FLOWABLE_EMPTY_ROOMS = Flowable.just(EMPTY_ROOMS);
 
-    @After
-    public void clear() {
-        mRoomsViewContract = null;
-        mRoomsPresenter = null;
-        mRoomRepository = null;
+    @Override
+    protected RoomsPresenter createPresenterForTesting() {
+        return new RoomsPresenter(mRoomsViewContract, mRoomRepository, messageServiceHandler);
     }
 
     @Test
     public void testPresenterCreated() {
-        assertNotNull(mRoomsPresenter);
+        assertNotNull(mPresenter);
     }
 
     @Test
     public void testInitSuccessful() {
         when(mRoomRepository.getRooms()).thenReturn(FLOWABLE_ROOMS);
 
-        mRoomsPresenter.init();
+        mPresenter.init();
 
         verify(mRoomsViewContract).showLoading();
         verify(mRoomsViewContract).hideLoading();
@@ -85,7 +67,7 @@ public class RoomListPresenterTest {
     public void testInitError() {
         when(mRoomRepository.getRooms()).thenReturn(API_ERROR);
 
-        mRoomsPresenter.init();
+        mPresenter.init();
 
         verify(mRoomsViewContract).showLoading();
         verify(mRoomsViewContract).hideLoading();
@@ -95,15 +77,36 @@ public class RoomListPresenterTest {
     @Test
     public void testRoomsEmptyError() {
         when(mRoomRepository.getRooms()).thenReturn(Flowable.just(new ArrayList<>()));
+        when(mRoomRepository.refreshRooms()).thenReturn(Flowable.just(new ArrayList<>()));
 
-        mRoomsPresenter.init();
+        mPresenter.init();
+
+        verify(mRoomRepository).refreshRooms();
+
+        verify(mRoomsViewContract).hideLoading();
 
         verify(mRoomsViewContract).showEmptyRoomsMessage();
     }
 
     @Test
+    public void testErrorWhenRoomsEmptyLocally() {
+        when(mRoomRepository.getRooms()).thenReturn(FLOWABLE_EMPTY_ROOMS);
+        when(mRoomRepository.refreshRooms()).thenReturn(API_ERROR);
+
+        mPresenter.init();
+
+        verify(mRoomRepository).getRooms();
+
+        verify(mRoomRepository).refreshRooms();
+
+        verify(mRoomsViewContract).showError(ERROR);
+        verify(mRoomsViewContract).hideLoading();
+        verify(mRoomsViewContract).showEmptyRoomsMessage();
+    }
+
+    @Test
     public void testRoomClick() {
-        mRoomsPresenter.onItemClick(ROOMS.get(0));
+        mPresenter.onItemClick(ROOMS.get(0));
 
         verify(mRoomsViewContract).showRoomDetail(ROOMS.get(0));
     }
@@ -112,7 +115,7 @@ public class RoomListPresenterTest {
     public void testReloadRoomsSuccess() {
         when(mRoomRepository.refreshRooms()).thenReturn(FLOWABLE_ROOMS);
 
-        mRoomsPresenter.reloadRooms();
+        mPresenter.reloadRooms();
 
         verifyNoMoreInteractions(mRoomsViewContract);
     }
@@ -121,7 +124,7 @@ public class RoomListPresenterTest {
     public void testReloadRoomsError() {
         when(mRoomRepository.refreshRooms()).thenReturn(API_ERROR);
 
-        mRoomsPresenter.reloadRooms();
+        mPresenter.reloadRooms();
 
         verify(mRoomsViewContract).showError(ERROR);
     }
@@ -130,13 +133,13 @@ public class RoomListPresenterTest {
     public void testScenario() {
         when(mRoomRepository.getRooms()).thenReturn(FLOWABLE_ROOMS);
 
-        mRoomsPresenter.init();
+        mPresenter.init();
 
         verify(mRoomsViewContract).showRooms(ROOMS);
 
         verify(messageServiceHandler).startService();
 
-        mRoomsPresenter.onItemClick(ROOMS.get(1));
+        mPresenter.onItemClick(ROOMS.get(1));
 
         verify(mRoomsViewContract).showRoomDetail(ROOMS.get(1));
     }

@@ -36,16 +36,22 @@ public class RoomsPresenter extends BaseRxPresenter {
                 .getRooms()
                 .doOnSubscribe(disposable -> mRoomsViewContract.showLoading())
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread(), true)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         roomList -> {
-                            mRoomsViewContract.hideLoading();
+                            if (roomList.isEmpty()) {
+                                reloadRooms();
 
-                            if (roomList.isEmpty())
+                                mRoomsViewContract.hideLoading();
+
                                 mRoomsViewContract.showEmptyRoomsMessage();
+                            }
 
-                            else
+                            else {
+                                mRoomsViewContract.hideLoading();
+
                                 mRoomsViewContract.showRooms(roomList);
+                            }
                         },
 
                         throwable -> {

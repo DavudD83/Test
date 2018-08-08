@@ -20,4 +20,6 @@ public interface AuthViewContract extends LoadingView {
     void showPasswordError();
 
     void showAuthError(Throwable t);
+
+    void showSetupActivity();
 }

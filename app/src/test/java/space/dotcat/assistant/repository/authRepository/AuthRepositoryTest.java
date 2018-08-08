@@ -24,6 +24,7 @@ import static org.mockito.Mockito.when;
 @RunWith(JUnit4.class)
 public class AuthRepositoryTest {
 
+    private static final boolean IS_SECURED = true;
     @Mock
     private LocalAuthSource mLocalAuthSource;
 
@@ -85,6 +86,24 @@ public class AuthRepositoryTest {
         verify(mLocalAuthSource).getUrl();
 
         assertEquals(url, URL);
+    }
+
+    @Test
+    public void testSaveIsConnectionSecured() {
+        mAuthRepository.saveIsUserEnabledSecuredConnection(IS_SECURED);
+
+        verify(mLocalAuthSource).saveIsUserEnabledSecuredConnection(IS_SECURED);
+    }
+
+    @Test
+    public void testGetIsSecuredConnection() {
+        when(mLocalAuthSource.getIsConnectionSecured()).thenReturn(IS_SECURED);
+
+        boolean is_secured = mAuthRepository.getIsConnectionSecured();
+
+        verify(mLocalAuthSource).getIsConnectionSecured();
+
+        assertEquals(IS_SECURED, is_secured);
     }
 
     @Test

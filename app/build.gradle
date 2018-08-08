@@ -13,7 +13,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         buildConfigField "String", "URL_KEY", ' "URL_KEY" '
-        buildConfigField "String", "URL_DEFAULT_VALUE", ' "https://api.ks-cube.tk/rest/api/v1" '
+        buildConfigField "String", "URL_DEFAULT_VALUE", ' "https://api.ks-cube.tk/api/rest/v1/" '
 
         buildConfigField "String", "TOKEN_KEY", ' "TOKEN" '
         buildConfigField "String", "TOKEN_DEFAULT_VALUE", ' "" '
@@ -27,6 +27,8 @@ android {
         buildConfigField "String", "STREAMING_URL_KEY", ' "STREAMING_URL_KEY" '
 
         buildConfigField "String", "MESSAGE_SERVICE_STATE_KEY", ' "MESSAGE_SERVICE_STATE_KEY"  '
+
+        buildConfigField "String", "IS_SECURED_KEY", ' "IS_SECURED_KEY"  '
     }
 
     buildTypes {
@@ -35,12 +37,18 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         targetCompatibility 1.8
         sourceCompatibility 1.8
     }
+
     lintOptions {
         abortOnError false
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
     }
 
     flavorDimensions 'mode'
